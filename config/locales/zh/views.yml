@@ -1,0 +1,36 @@
+# Subjects engine view localization file for Chinese.
+zh:
+    app:
+        short: 'Terms'
+        this: 'Knowledge Maps of Terms'
+    entry: 'Terms Entry'
+    feature:
+        detail:
+            one: 'Term Detail'
+            other: 'Term Details'
+        id_generator: 'Term ID Generator'
+        numbers_to_generate: 'Number of terms to generate'
+        range: 'Term Range'
+        record:
+            one: '%{what} term'
+            other: '%{what} terms'
+        unused_ids: 'Unused Term IDs'
+    priorit:
+        ization_of:
+            feature_types: 'Prioritization of Term Types'
+    snippet:
+        characteristic_needs_feature: 'Knowledge Map characteristics can only be associated from a term.'
+        feature:
+            geo_code_needs_resource: 'A Term Code can only be created from a resource that uses one.'
+            name:
+                drag_priority: 'Click a name and drag to a new location to indicate the priority between the different names. This priority sequencing of names will be used to decide which name to show on the navigational tree, and other contexts. Thus if there are two version of popular romanization of a name, for example, the prioritized one will be chosen; of if there are two alternative names, the prioritized one will be displayed; and so forth.'
+                not_related: 'Sorry, this term does not currently have any related terms.'
+            not:
+                contains: 'This term does not contain other terms.'
+                found: 'Sorry, this term couldn''t be found. Please use the menu on the right to search or browse for a term.'
+                related: 'Currently not related to any other term names.'
+            return: 'Return to this terms''s home page'
+            too_many: 'Sorry, this term contains too many terms for us to currently be able to provide this data.'
+            type:
+                drag_priority: 'Click a term type and drag to a new location to indicate the priority between the different term types. This priority sequencing of term types will be used to decide which term types to show on the navigational tree, and other contexts.'
+        search: 'Use the search field above to search for terms.'

@@ -1,0 +1,38 @@
+# Subjects engine model localization file for English.
+en:
+    activerecord:
+        # Model names will be kept in lower case. Invoke .capitalize or .titleize if you need them in uppercase.
+        models:
+            feature:
+                one: 'term'
+                other: 'terms'
+            feature_geo_code:
+                one: 'term code'
+                other: 'term codes'
+            feature_name_relation:
+                one: 'term name relation'
+                other: 'term name relations'
+            feature_relation:
+                one: 'term relation'
+                other: 'term relations'
+            feature_relation_type:
+                one: 'term relation type'
+                other: 'term relation types'
+            geo_code_type:
+                one: 'term code type'
+                other: 'term code types'
+            view:
+                one: 'term language'
+                other: 'term languages'
+        # Attribute names will be titleized.
+        attributes:
+            feature:
+                descendant:
+                    one: 'Contained Term'
+                    other: 'Contained Term'
+                is_public: 'Public?'
+                object_type:
+                    one: 'Term Type'
+                    other: 'Term Types'
+                old_pid: 'OLD TID'
+                pid: 'Term ID'
