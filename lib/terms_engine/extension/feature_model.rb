@@ -4,6 +4,7 @@ module TermsEngine
       extend ActiveSupport::Concern
 
       included do
+        has_many :subject_term_associations, dependent: :destroy
       end
       
       def pid

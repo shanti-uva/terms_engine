@@ -1,0 +1,116 @@
+<%= javascript_on_load("ActivateDraggablePopups('.has-draggable-popups');") %>
+<%= content_tag :h6, "#{feature_name_header(feature)} #{edit_item_link(admin_feature_path(feature.fid)) if logged_in? && object_authorized?(feature)}".html_safe %>
+<%= time_units_for(feature) %>
+<%  summary = feature.summary
+    if summary.nil?
+      caption = feature.caption
+	  if !caption.nil? %>
+		<div class="summary-overview">
+<%=     caption.content.html_safe %>
+        </div>
+<%	  end
+    else %>
+	  <div class="summary-overview">
+<%=   summary.content.html_safe %>
+      </div>
+<%  end
+    illustration = feature.illustration
+    if !illustration.nil?
+	  picture = illustration.picture
+      place = illustration.place
+      if place.nil?
+	    location = nil
+	  else
+	    location = link_to place.header, PlacesIntegration::Feature.element_url(place.id, format: 'html')
+		location_plain = place.header
+	    parent_place = place.context_feature
+		if !parent_place.nil?
+	      location << ", #{link_to parent_place.header, PlacesIntegration::Feature.element_url(parent_place.id, format: 'html')}".html_safe
+		  location_plain << ", #{parent_place.header}"
+	    end
+	  end
+      if picture.caption.nil?
+		if location.nil?
+          caption = nil
+		  caption_plain = nil
+	    else
+		  caption = location
+		  caption_plain = location_plain
+	    end
+      else
+		caption = picture.caption.html_safe
+		caption_plain = picture.caption.strip_tags
+		if !location.nil?
+		  caption << " (#{location})"
+		  caption_plain << " (#{location_plain})"
+	    end
+      end %>
+	  <div class="resource-overview-image">
+<%      html_options = { class: 'img-responsive img-thumbnail' }
+        html_options[:alt] = caption_plain if !caption_plain.nil?
+  	    rendered_width = picture.width.nil? || picture.width>576 ? 576 : picture.width
+		html_options[:width] = rendered_width
+        if picture.instance_of?(MmsIntegration::Picture) %>
+<%=     link_to image_tag(picture.url, html_options), MmsIntegration::Medium.element_url(picture.id, :format => 'html') %>
+<%      else %>
+<%=       link_to image_tag(picture.url, html_options), picture.url %>
+<%      end
+        if !caption_plain.nil? %>
+        <p class = "view-on-map"><%= caption_plain %></p>
+<%      end %>
+      </div> <!-- END resource-overview-image -->
+<%  end %>
+<div id="accordion" class="panel-group">
+  <section class="panel panel-default">
+    <div class="panel-heading">
+      <h6><a class="accordion-toggle" data-parent="#accordion" data-toggle="collapse" href="#collapseOne" aria-expanded="true"><span class="glyphicon glyphicon-plus"></span><%= FeatureName.model_name.human(count: feature.names.size).titleize.s %></a></h6>
+	</div>
+    <div id="collapseOne" class="panel-collapse collapse in">
+	  <div class="panel-body">
+<%=     feature_name_ul(feature,false) %>
+        <dl class="no-style">
+<%      feature.names.roots.order('position').each do |name| %>
+<%=       "<dt><strong>#{ts(:for, what: FeatureName.human_attribute_name(:etymology), whom: name.name.to_s)}:</dt></strong><dd>#{name.etymology.to_s.s}</dd>".html_safe unless name.etymology.blank? %>
+<%      end %>
+        </dl>
+<%=     note_popup_link_list_for(feature, {association_type: FeatureName.name}) %>
+      </div>
+    </div>
+  </section>
+<% subject_term_associations = feature.subject_term_associations
+	 if !subject_term_associations.empty? %>
+	  <section class="panel panel-default">
+	    <div class="panel-heading">
+	      <h6><a href="#collapseTwo" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= SubjectsIntegration::Feature.human_name(:count => subject_term_associations.size).titleize.s %></a></h6>
+	    </div>
+	    <div id="collapseTwo" class="panel-collapse collapse">
+	      <div class="panel-body">
+<%=     render :partial => 'subjects', :locals => { feature: feature, subject_term_associations: subject_term_associations } %>
+	      </div>
+	    </div>
+	  </section>
+<% end %>
+  <section class="panel panel-default">
+    <div class="panel-heading">
+      <h6><a href="#collapseThree" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= ts 'id.this', count: :many %></a></h6>
+	</div>
+	<div id="collapseThree" class="panel-collapse collapse">
+	  <div class="panel-body">
+<%      if show_old_pid %>
+          <p><%= "#{ts :current, what: Feature.human_attribute_name(:pid)}: #{feature.pid}" %></p>
+          <p><%= "#{Feature.human_attribute_name(:old_pid).s}: #{feature.old_pid}" %></p>
+<%      else %>
+          <p><%= "#{Feature.human_attribute_name(:pid).s}: #{feature.pid}" %></p>
+<%      end %>
+<%      feature.geo_codes.each do |geo_code| %>
+        <p>
+<%=       geo_code %>: <%= geo_code.geo_code_value %>
+<%=       note_popup_link_for(geo_code) %>
+<%=       time_units_for(geo_code) %>
+        </p>
+<%      end %>
+<%=     note_popup_link_list_for(feature, {association_type: FeatureGeoCode.name}) %>
+      </div>
+    </div>
+  </section>
+</div>
