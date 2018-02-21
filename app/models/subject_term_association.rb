@@ -9,7 +9,7 @@
 #  updated_at :datetime         not null
 #
 
-class SubjectTermAssociation < ApplicationRecord
+class SubjectTermAssociation < ActiveRecord::Base
   belongs_to :feature
   
   extend KmapsEngine::HasTimespan

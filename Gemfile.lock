@@ -62,7 +62,7 @@ GIT
 PATH
   remote: .
   specs:
-    terms_engine (0.1.0)
+    terms_engine (0.1.1)
       rails (>= 5.1.4)
 
 GEM

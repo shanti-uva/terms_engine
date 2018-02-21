@@ -1,0 +1,23 @@
+# == Schema Information
+#
+# Table name: definition_relations
+#
+#  id             :integer          not null, primary key
+#  child_node_id  :integer          not null
+#  parent_node_id :integer          not null
+#  ancestor_ids   :string
+#  created_at     :datetime         not null
+#  updated_at     :datetime         not null
+#
+
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  child_node_id: 1
+  parent_node_id: 1
+  ancestor_ids: 1
+
+two:
+  child_node_id: 1
+  parent_node_id: 1
+  ancestor_ids: 1
