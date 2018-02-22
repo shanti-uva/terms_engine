@@ -1,0 +1,5 @@
+<ol>
+<% definitions.each do |definition| %>
+	   <li><%= render partial: 'definition', locals: { definition: definition } %></li>
+<% end %>
+</ol>

@@ -4,9 +4,9 @@
 <%  summary = feature.summary
     if summary.nil?
       caption = feature.caption
-	  if !caption.nil? %>
-		<div class="summary-overview">
-<%=     caption.content.html_safe %>
+	    if !caption.nil? %>
+		    <div class="summary-overview">
+<%=       caption.content.html_safe %>
         </div>
 <%	  end
     else %>
@@ -77,13 +77,26 @@
       </div>
     </div>
   </section>
-<% subject_term_associations = feature.subject_term_associations
+<% definitions = feature.definitions.roots
+   if !definitions.empty? %>
+	  <section class="panel panel-default">
+	    <div class="panel-heading">
+	      <h6><a href="#collapseTwo" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= Definition.model_name.human(count: definitions.size).titleize.s %></a></h6>
+	    </div>
+	    <div id="collapseTwo" class="panel-collapse collapse">
+	      <div class="panel-body">
+<%=       render :partial => 'definitions', :locals => { definitions: definitions } %>
+	      </div>
+	    </div>
+	  </section>
+<% end
+   subject_term_associations = feature.subject_term_associations
 	 if !subject_term_associations.empty? %>
 	  <section class="panel panel-default">
 	    <div class="panel-heading">
-	      <h6><a href="#collapseTwo" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= SubjectsIntegration::Feature.human_name(:count => subject_term_associations.size).titleize.s %></a></h6>
+	      <h6><a href="#collapseThree" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= SubjectsIntegration::Feature.human_name(:count => subject_term_associations.size).titleize.s %></a></h6>
 	    </div>
-	    <div id="collapseTwo" class="panel-collapse collapse">
+	    <div id="collapseThree" class="panel-collapse collapse">
 	      <div class="panel-body">
 <%=     render :partial => 'subjects', :locals => { feature: feature, subject_term_associations: subject_term_associations } %>
 	      </div>
@@ -92,9 +105,9 @@
 <% end %>
   <section class="panel panel-default">
     <div class="panel-heading">
-      <h6><a href="#collapseThree" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= ts 'id.this', count: :many %></a></h6>
+      <h6><a href="#collapseFour" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= ts 'id.this', count: :many %></a></h6>
 	</div>
-	<div id="collapseThree" class="panel-collapse collapse">
+	<div id="collapseFour" class="panel-collapse collapse">
 	  <div class="panel-body">
 <%      if show_old_pid %>
           <p><%= "#{ts :current, what: Feature.human_attribute_name(:pid)}: #{feature.pid}" %></p>

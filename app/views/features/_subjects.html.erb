@@ -1,5 +1,5 @@
 <ul id="SubjectTermList">
-  <% feature.subject_term_associations.collect{|sta| [sta, sta.subject] }.reject{|a| a[1].nil? }.collect{|a| "#{link_to a[1]['header'], SubjectsIntegration::Feature.get_url(a[0].subject_id)}#{note_popup_link_for(a[0])}#{time_units_for(a[0])}"}.each do |a| %>
+  <% subject_term_associations.collect{|sta| [sta, sta.subject] }.reject{|a| a[1].nil? }.collect{|a| "#{link_to a[1]['header'], SubjectsIntegration::Feature.get_url(a[0].subject_id)}#{note_popup_link_for(a[0])}#{time_units_for(a[0])}"}.each do |a| %>
     <li><%= a.html_safe %></li>
 <% end %>
 </ul>
