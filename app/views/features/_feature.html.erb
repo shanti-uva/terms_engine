@@ -77,28 +77,36 @@
       </div>
     </div>
   </section>
-<% definitions = feature.definitions.roots.joins(:citations).where.not(citations: { info_source_type: InfoSource.model_name.name })
-   if !definitions.empty? %>
+<% definitions = feature.definitions.roots.includes(:citations)
+   in_house_definitions = []
+   legacy_definitions = []
+   definitions.each do |d|
+   	 if d.citations.where(info_source_type: InfoSource.model_name.name).blank?
+   	   in_house_definitions << d
+   	 else
+   	   legacy_definitions << d
+     end
+   end
+   if !in_house_definitions.empty? %>
 	  <section class="panel panel-default">
 	    <div class="panel-heading">
 	      <h6><a href="#collapseTwo" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= Definition.model_name.human(count: definitions.size).titleize.s %></a></h6>
 	    </div>
 	    <div id="collapseTwo" class="panel-collapse collapse">
 	      <div class="panel-body">
-<%=       render :partial => 'definitions', :locals => { definitions: definitions } %>
+<%=       render :partial => 'definitions', :locals => { definitions: in_house_definitions } %>
 	      </div>
 	    </div>
 	  </section>
 <% end
-   definitions = feature.definitions.joins(:citations).where(citations: { info_source_type: InfoSource.model_name.name })
-   if !definitions.empty? %>
+   if !legacy_definitions.empty? %>
 	  <section class="panel panel-default">
 	    <div class="panel-heading">
 	      <h6><a href="#collapseThree" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span>Legacy Definitions</a></h6>
 	    </div>
 	    <div id="collapseThree" class="panel-collapse collapse">
 	      <div class="panel-body">
-<%=       render :partial => 'definitions', :locals => { definitions: definitions } %>
+<%=       render :partial => 'definitions', :locals => { definitions: legacy_definitions } %>
 	      </div>
 	    </div>
 	  </section>
