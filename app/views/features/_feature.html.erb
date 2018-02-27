@@ -77,7 +77,7 @@
       </div>
     </div>
   </section>
-<% definitions = feature.definitions.roots
+<% definitions = feature.definitions.roots.joins(:citations).where.not(citations: { info_source_type: InfoSource.model_name.name })
    if !definitions.empty? %>
 	  <section class="panel panel-default">
 	    <div class="panel-heading">
@@ -90,13 +90,26 @@
 	    </div>
 	  </section>
 <% end
+   definitions = feature.definitions.joins(:citations).where(citations: { info_source_type: InfoSource.model_name.name })
+   if !definitions.empty? %>
+	  <section class="panel panel-default">
+	    <div class="panel-heading">
+	      <h6><a href="#collapseThree" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span>Legacy Definitions</a></h6>
+	    </div>
+	    <div id="collapseThree" class="panel-collapse collapse">
+	      <div class="panel-body">
+<%=       render :partial => 'definitions', :locals => { definitions: definitions } %>
+	      </div>
+	    </div>
+	  </section>
+<% end
    subject_term_associations = feature.subject_term_associations
 	 if !subject_term_associations.empty? %>
 	  <section class="panel panel-default">
 	    <div class="panel-heading">
-	      <h6><a href="#collapseThree" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= SubjectsIntegration::Feature.human_name(:count => subject_term_associations.size).titleize.s %></a></h6>
+	      <h6><a href="#collapseFour" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= SubjectsIntegration::Feature.human_name(:count => subject_term_associations.size).titleize.s %></a></h6>
 	    </div>
-	    <div id="collapseThree" class="panel-collapse collapse">
+	    <div id="collapseFour" class="panel-collapse collapse">
 	      <div class="panel-body">
 <%=     render :partial => 'subjects', :locals => { feature: feature, subject_term_associations: subject_term_associations } %>
 	      </div>
@@ -105,9 +118,9 @@
 <% end %>
   <section class="panel panel-default">
     <div class="panel-heading">
-      <h6><a href="#collapseFour" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= ts 'id.this', count: :many %></a></h6>
+      <h6><a href="#collapseFive" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= ts 'id.this', count: :many %></a></h6>
 	</div>
-	<div id="collapseFour" class="panel-collapse collapse">
+	<div id="collapseFive" class="panel-collapse collapse">
 	  <div class="panel-body">
 <%      if show_old_pid %>
           <p><%= "#{ts :current, what: Feature.human_attribute_name(:pid)}: #{feature.pid}" %></p>
