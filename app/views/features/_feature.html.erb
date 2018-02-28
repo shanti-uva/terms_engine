@@ -59,13 +59,23 @@
         <p class = "view-on-map"><%= caption_plain %></p>
 <%      end %>
       </div> <!-- END resource-overview-image -->
-<%  end %>
+<%  end
+    definitions = feature.definitions.roots.includes(:citations)
+    in_house_definitions = []
+    legacy_definitions = []
+    definitions.each do |d|
+   	  if d.citations.where(info_source_type: InfoSource.model_name.name).blank?
+   	    in_house_definitions << d
+   	  else
+   	    legacy_definitions << d
+      end
+    end %>
 <div id="accordion" class="panel-group">
   <section class="panel panel-default">
     <div class="panel-heading">
-      <h6><a class="accordion-toggle" data-parent="#accordion" data-toggle="collapse" href="#collapseOne" aria-expanded="true"><span class="glyphicon glyphicon-plus"></span><%= FeatureName.model_name.human(count: feature.names.size).titleize.s %></a></h6>
+      <h6><a href="#collapseOne" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle <%= 'collapsed' if !definitions.blank? %>" <%= 'aria-expanded="true"' if definitions.blank? %>><span class="glyphicon glyphicon-plus"></span><%= FeatureName.model_name.human(count: feature.names.size).titleize.s %></a></h6>
 	</div>
-    <div id="collapseOne" class="panel-collapse collapse in">
+    <div id="collapseOne" class="panel-collapse collapse <%= 'in' if definitions.blank? %>">
 	  <div class="panel-body">
 <%=     feature_name_ul(feature,false) %>
         <dl class="no-style">
@@ -77,22 +87,12 @@
       </div>
     </div>
   </section>
-<% definitions = feature.definitions.roots.includes(:citations)
-   in_house_definitions = []
-   legacy_definitions = []
-   definitions.each do |d|
-   	 if d.citations.where(info_source_type: InfoSource.model_name.name).blank?
-   	   in_house_definitions << d
-   	 else
-   	   legacy_definitions << d
-     end
-   end
-   if !in_house_definitions.empty? %>
+<%  if !in_house_definitions.empty? %>
 	  <section class="panel panel-default">
 	    <div class="panel-heading">
-	      <h6><a href="#collapseTwo" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= Definition.model_name.human(count: definitions.size).titleize.s %></a></h6>
+	      <h6><a href="#collapseTwo" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle <%= 'collapsed' if in_house_definitions.blank? %>" <%= 'aria-expanded="true"' if !in_house_definitions.blank? %>><span class="glyphicon glyphicon-plus"></span><%= Definition.model_name.human(count: definitions.size).titleize.s %></a></h6>
 	    </div>
-	    <div id="collapseTwo" class="panel-collapse collapse">
+	    <div id="collapseTwo" class="panel-collapse collapse <%= 'in' if !in_house_definitions.blank? %>">
 	      <div class="panel-body">
 <%=       render :partial => 'definitions', :locals => { definitions: in_house_definitions } %>
 	      </div>
@@ -102,9 +102,9 @@
    if !legacy_definitions.empty? %>
 	  <section class="panel panel-default">
 	    <div class="panel-heading">
-	      <h6><a href="#collapseThree" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span>Legacy Definitions</a></h6>
+	      <h6><a href="#collapseThree" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle <%= 'collapsed' if !in_house_definitions.blank? %>" <%= 'aria-expanded="true"' if in_house_definitions.blank? %>><span class="glyphicon glyphicon-plus"></span>Legacy Definitions</a></h6>
 	    </div>
-	    <div id="collapseThree" class="panel-collapse collapse">
+	    <div id="collapseThree" class="panel-collapse collapse <%= 'in' if in_house_definitions.blank? %>">
 	      <div class="panel-body">
 <%=       render :partial => 'definitions', :locals => { definitions: legacy_definitions } %>
 	      </div>
