@@ -1,0 +1,32 @@
+<%= form_with(model: definition_relation, local: true) do |form| %>
+  <% if definition_relation.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(definition_relation.errors.count, "error") %> prohibited this definition_relation from being saved:</h2>
+
+      <ul>
+      <% definition_relation.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :child_node_id %>
+    <%= form.number_field :child_node_id, id: :definition_relation_child_node_id %>
+  </div>
+
+  <div class="field">
+    <%= form.label :parent_node_id %>
+    <%= form.number_field :parent_node_id, id: :definition_relation_parent_node_id %>
+  </div>
+
+  <div class="field">
+    <%= form.label :ancestor_ids %>
+    <%= form.number_field :ancestor_ids, id: :definition_relation_ancestor_ids %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

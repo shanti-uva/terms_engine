@@ -1,0 +1,31 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Definition Relations</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Child node</th>
+      <th>Parent node</th>
+      <th>Ancestor ids</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @definition_relations.each do |definition_relation| %>
+      <tr>
+        <td><%= definition_relation.child_node_id %></td>
+        <td><%= definition_relation.parent_node_id %></td>
+        <td><%= definition_relation.ancestor_ids %></td>
+        <td><%= link_to 'Show', definition_relation %></td>
+        <td><%= link_to 'Edit', edit_definition_relation_path(definition_relation) %></td>
+        <td><%= link_to 'Destroy', definition_relation, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Definition Relation', new_definition_relation_path %>

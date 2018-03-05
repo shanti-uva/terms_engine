@@ -2,7 +2,7 @@
    if !info_source.nil? %>
      <h4><%= info_source.title %></h4>
 <% end %>
-<%= definition.content.html_safe %>
+<%= definition.content.s.html_safe %>
 <p><b><%= Language.model_name.human %></b>: <%= definition.language.name %>
 <% if !definition.tense.blank? %>
 	   <br><b><%= Definition.human_attribute_name(:tense).s %></b>: <%= definition.tense %>

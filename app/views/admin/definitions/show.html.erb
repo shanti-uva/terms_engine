@@ -1,0 +1,49 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Feature:</strong>
+  <%= @definition.feature_id %>
+</p>
+
+<p>
+  <strong>Is public:</strong>
+  <%= @definition.is_public %>
+</p>
+
+<p>
+  <strong>Is primary:</strong>
+  <%= @definition.is_primary %>
+</p>
+
+<p>
+  <strong>Ancestor ids:</strong>
+  <%= @definition.ancestor_ids %>
+</p>
+
+<p>
+  <strong>Position:</strong>
+  <%= @definition.position %>
+</p>
+
+<p>
+  <strong>Content:</strong>
+  <%= @definition.content %>
+</p>
+
+<p>
+  <strong>Author:</strong>
+  <%= @definition.author_id %>
+</p>
+
+<p>
+  <strong>Numerology:</strong>
+  <%= @definition.numerology %>
+</p>
+
+<p>
+  <strong>Tense:</strong>
+  <%= @definition.tense %>
+</p>
+
+<%= link_to 'Edit', edit_definition_path(@definition) %> |
+<%= link_to 'Back', definitions_path %>

@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Child node:</strong>
+  <%= @definition_relation.child_node_id %>
+</p>
+
+<p>
+  <strong>Parent node:</strong>
+  <%= @definition_relation.parent_node_id %>
+</p>
+
+<p>
+  <strong>Ancestor ids:</strong>
+  <%= @definition_relation.ancestor_ids %>
+</p>
+
+<%= link_to 'Edit', edit_definition_relation_path(@definition_relation) %> |
+<%= link_to 'Back', definition_relations_path %>

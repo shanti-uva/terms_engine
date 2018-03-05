@@ -1,0 +1,62 @@
+<%= form_with(model: definition, local: true) do |form| %>
+  <% if definition.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(definition.errors.count, "error") %> prohibited this definition from being saved:</h2>
+
+      <ul>
+      <% definition.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :feature_id %>
+    <%= form.number_field :feature_id, id: :definition_feature_id %>
+  </div>
+
+  <div class="field">
+    <%= form.label :is_public %>
+    <%= form.check_box :is_public, id: :definition_is_public %>
+  </div>
+
+  <div class="field">
+    <%= form.label :is_primary %>
+    <%= form.check_box :is_primary, id: :definition_is_primary %>
+  </div>
+
+  <div class="field">
+    <%= form.label :ancestor_ids %>
+    <%= form.text_field :ancestor_ids, id: :definition_ancestor_ids %>
+  </div>
+
+  <div class="field">
+    <%= form.label :position %>
+    <%= form.number_field :position, id: :definition_position %>
+  </div>
+
+  <div class="field">
+    <%= form.label :content %>
+    <%= form.text_area :content, id: :definition_content %>
+  </div>
+
+  <div class="field">
+    <%= form.label :author_id %>
+    <%= form.number_field :author_id, id: :definition_author_id %>
+  </div>
+
+  <div class="field">
+    <%= form.label :numerology %>
+    <%= form.number_field :numerology, id: :definition_numerology %>
+  </div>
+
+  <div class="field">
+    <%= form.label :tense %>
+    <%= form.text_field :tense, id: :definition_tense %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>
