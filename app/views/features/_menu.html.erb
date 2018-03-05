@@ -1,0 +1,115 @@
+<% active_item = active_menu_item %>
+<section id="kmaps-search" role="search">
+  <!-- BEGIN Input section -->
+  <section class="input-section" style="display:none">
+<%= form_for @search_form, url: search_features_path, remote: true do |form| %>
+    <div class="search-group">
+      <!-- typeahead search -->
+<div class="kmap-typeahead-picker">
+  <label class="flyout-search-label"><span>Search:</span></label>
+    <%=     text_field_tag "kmaps-explorer-search-term", "",  class: 'kmap-search-term form-control form-text', placeholder: 'Enter Search...', autocomplete: :off %>
+  <span class="icon shanticon-magnify"></span>
+  <button type="button" class="btn searchreset" aria-label="Clear search text" style="display: none;"><span class="icon"></span></button>
+</div>
+      <!-- END - typeahead search -->
+	  <div class="form-group">
+<%=     link_to '#', class: 'advanced-link toggle-link' do %>
+          <span class="icon"></span><%= ts(:advanced) %>
+<%      end %>
+	  </div>
+<%=   javascript_on_load do %>
+        $('.advanced-link').click ( function () {
+          $(this).toggleClass("show-advanced",'fast');
+          $(".advanced-view").slideToggle('fast');
+          $(".advanced-view").toggleClass("show-options");
+        });
+<%    end %>
+    </div>
+	<section class="advanced-view" style="<%= 'display:none;' unless current_show_advanced_search  %>">
+	   <div class="form-group" id="searchScopeGroup">
+       <label><span>Filter:</span> search scope</label>
+        <div>
+<%=       form.radio_button :scope, 'full_text' %>
+<%=       form.label :scope, ts('search.full_text'), value: 'full_text' %>
+<%=       form.radio_button :scope, 'name' %>
+<%=       form.label :scope, FeatureName.model_name.human.titleize.s, value: 'name'%>
+        </div>
+        <div>
+          <%=       form.radio_button :match, 'contains' %>
+          <%= form.label :match, ts('search.contains'), value: 'contains' %>
+<%=       form.radio_button :match, 'begins' %>
+<%=       form.label :match, ts('search.begins'), value: 'begins' %>
+<%=       form.radio_button :match, 'exactly' %>
+<%=       form.label :match, ts('search.exactly'), value: 'exactly' %>
+        </div>
+        <div id="search-note" style='display:none'><p>'Starts with' and 'Exactly' filters are case sensitive</p></div>
+        <hr />
+<hr>
+    <div id='goto-fid' class="input-group">
+      <input type="text" class="form-control" placeholder="Go to <%= Feature.human_attribute_name(:pid).s %>...">
+      <span class="input-group-btn">
+        <button class="btn btn-default" type="button">Go!</button>
+      </span>
+    </div><!-- /input-group -->
+      </div>
+	</section>
+<%  end %>
+<%= javascript_on_load do %>
+  $("#kmaps-explorer-search-term").focusin(function(){
+   $(".view-section .nav.nav-tabs a[href='.listview']").tab("show");
+  });
+  $("#kmaps-explorer-search-term").flyoutKmapsTypeahead({
+    hostname: "<%= Feature.config.url %>",
+    hostname_assets: "<%= Flare.config.asset_url %>",
+    domain: '<%= Feature.uid_prefix %>',
+    filters_domain: '<%= Feature.uid_prefix %>',
+    root_kmap_path: null,
+    features_path: "<%= (defined?(admin) && admin) ? admin_features_path : features_path %>/"
+  });
+<% end %>
+  </section>
+  <!-- END input section -->
+  <!-- BEGIN view section -->
+  <section class="view-section">
+    <ul class="nav nav-tabs">
+<%    active_item = active_menu_item %>
+      <li class="treeview<%= ' active' if active_item == 'browse' %>"><a href=".treeview" data-toggle="tab"><span class="icon shanticon-tree"></span>Tree</a></li>
+      <li class="listview<%= ' active' if active_item == 'results' %>"><a href=".listview" data-toggle="tab"><span class="icon shanticon-list"></span>Results</a></li>
+    </ul>
+	  <div class="tab-content">
+	    <div class="treeview tab-pane<%= ' active' if active_item == 'browse' %>">
+	      <div id="tree" class="view-wrap">
+	      </div>
+	    </div>
+      <div class="listview tab-pane<%= ' active' if active_item == 'results' %>">
+        <div class="view-wrap"></div>
+      </div>
+	  </div>
+  </section>
+</section>
+<%  feature = contextual_feature %>
+<%= javascript_include_tag 'kmaps_engine/kmaps_relations_tree' %>
+    <script type='text/javascript'>
+      $(document).ready(function(){
+        $("#tree").kmapsTree({
+          termindex_root: "<%= Feature.config.url %>",
+          kmindex_root: "<%= MmsIntegration::Picture.config.url %>",
+          type: "<%= Feature.uid_prefix %>", //subjects
+          root_kmap_path: '',
+          baseUrl: "<%= (defined?(admin) && admin) ? admin_features_path : features_path %>/%%ID%%",
+          expand_path: "",
+          perspective: "<%= current_perspective.code %>",
+<%        unless feature.nil? %>
+            activeNodeId: "<%= feature.fid %>",
+<%        end %>
+					sortChildren:false,
+        });
+      });
+    </script>
+<%= javascript_on_load do %>
+      var session_search = Cookies.getJSON('search_<%= Feature.uid_prefix %>');
+      if(session_search) {
+        $("#kmaps-explorer-search-term").flyoutKmapsTypeahead('restoreSavedSearch', session_search,'kmaps-explorer');
+				Cookies.remove('search_<%= Feature.uid_prefix %>');
+      }
+<% end %>
