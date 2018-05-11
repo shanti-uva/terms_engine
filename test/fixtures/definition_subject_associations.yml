@@ -1,0 +1,23 @@
+# == Schema Information
+#
+# Table name: definition_subject_associations
+#
+#  id            :integer          not null, primary key
+#  definition_id :integer          not null
+#  subject_id    :integer          not null
+#  branch_id     :integer          not null
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#
+
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  definition: one
+  subject_id: 1
+  branch_id: 1
+
+two:
+  definition: two
+  subject_id: 1
+  branch_id: 1

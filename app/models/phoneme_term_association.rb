@@ -10,10 +10,6 @@
 #  branch_id  :integer          not null
 #
 
-require 'test_helper'
-
-class SubjectTermAssociationTest < ActiveSupport::TestCase
-  # test "the truth" do
-  #   assert true
-  # end
+class PhonemeTermAssociation < SubjectTermAssociation
+  default_scope { where(branch_id: 9310) }
 end

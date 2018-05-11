@@ -26,6 +26,8 @@ class Definition < ApplicationRecord
   belongs_to :feature
   belongs_to :language
   belongs_to :author, :class_name => 'AuthenticatedSystem::Person', optional: true
+  has_many :definition_subject_associations, dependent: :destroy
+  has_many :association_notes, as: :notable, dependent: :destroy
   
   validates_presence_of :feature_id, :content, :language_id
 end
