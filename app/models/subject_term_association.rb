@@ -25,4 +25,8 @@ class SubjectTermAssociation < ApplicationRecord
   def subject
     SubjectsIntegration::Feature.flare_search(self.subject_id)
   end
+  
+  def branch
+    SubjectsIntegration::Feature.flare_search(self.branch_id)
+  end
 end

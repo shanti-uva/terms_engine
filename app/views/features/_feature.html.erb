@@ -51,7 +51,7 @@
   	    rendered_width = picture.width.nil? || picture.width>576 ? 576 : picture.width
 		html_options[:width] = rendered_width
         if picture.instance_of?(MmsIntegration::Picture) %>
-<%=     link_to image_tag(picture.url, html_options), MmsIntegration::Medium.element_url(picture.id, :format => 'html') %>
+<%=     link_to image_tag(picture.url, html_options), MmsIntegration::Medium.element_url(picture.id, format: 'html') %>
 <%      else %>
 <%=       link_to image_tag(picture.url, html_options), picture.url %>
 <%      end
@@ -94,7 +94,7 @@
 	    </div>
 	    <div id="collapseTwo" class="panel-collapse collapse <%= 'in' if !in_house_definitions.blank? %>">
 	      <div class="panel-body">
-<%=       render :partial => 'definitions', :locals => { definitions: in_house_definitions } %>
+<%=       render partial: 'definitions', locals: { definitions: in_house_definitions } %>
 	      </div>
 	    </div>
 	  </section>
@@ -106,7 +106,7 @@
 	    </div>
 	    <div id="collapseThree" class="panel-collapse collapse <%= 'in' if in_house_definitions.blank? %>">
 	      <div class="panel-body">
-<%=       render :partial => 'definitions', :locals => { definitions: legacy_definitions } %>
+<%=       render partial: 'definitions', locals: { definitions: legacy_definitions } %>
 	      </div>
 	    </div>
 	  </section>
@@ -115,11 +115,12 @@
 	 if !subject_term_associations.empty? %>
 	  <section class="panel panel-default">
 	    <div class="panel-heading">
-	      <h6><a href="#collapseFour" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= SubjectsIntegration::Feature.human_name(:count => subject_term_associations.size).titleize.s %></a></h6>
+	      <h6><a href="#collapseFour" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= SubjectsIntegration::Feature.human_name(count: subject_term_associations.size).titleize.s %></a></h6>
 	    </div>
 	    <div id="collapseFour" class="panel-collapse collapse">
 	      <div class="panel-body">
-<%=     render :partial => 'subjects', :locals => { feature: feature, subject_term_associations: subject_term_associations } %>
+<%=       render partial: 'subjects', locals: { associations: subject_term_associations } %>
+<%=       note_popup_link_list_for(feature, {:association_type => SubjectTermAssociation.name}) %>
 	      </div>
 	    </div>
 	  </section>

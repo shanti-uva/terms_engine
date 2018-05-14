@@ -1,6 +1,4 @@
-<ul id="SubjectTermList">
-  <% subject_term_associations.collect{|sta| [sta, sta.subject] }.reject{|a| a[1].nil? }.collect{|a| "#{link_to a[1]['header'], SubjectsIntegration::Feature.get_url(a[0].subject_id)}#{note_popup_link_for(a[0])}#{time_units_for(a[0])}"}.each do |a| %>
-    <li><%= a.html_safe %></li>
+<% for branch_id in associations.select(:branch_id).distinct.collect(&:branch_id)
+     branch = SubjectsIntegration::Feature.flare_search(branch_id) %>
+     <p><b><%= branch['header'] %></b>: <%= associations.where(branch_id: branch_id).collect{ |a| "#{link_to a.subject['header'], SubjectsIntegration::Feature.get_url(a.subject_id)}#{note_popup_link_for(a)}#{time_units_for(a)}" }.join(', ').html_safe %></p>
 <% end %>
-</ul>
-<%= note_popup_link_list_for(feature, {:association_type => SubjectTermAssociation.name}) %>

@@ -5,17 +5,21 @@
 <%= definition.content.s.html_safe %>
 <p><b><%= Language.model_name.human %></b>: <%= definition.language.name %>
 <% if !definition.tense.blank? %>
-	   <br><b><%= Definition.human_attribute_name(:tense).s %></b>: <%= definition.tense %>
+     <br><b><%= Definition.human_attribute_name(:tense).s %></b>: <%= definition.tense %>
 <% end %>
 <% if !definition.numerology.nil? %>
-	   <br><b><%= Definition.human_attribute_name(:numerology).s %></b>: <%= definition.numerology %>
+     <br><b><%= Definition.human_attribute_name(:numerology).s %></b>: <%= definition.numerology %>
 <% end %>
 </p>
+<% definition_subject_associations = definition.definition_subject_associations
+   if !definition_subject_associations.empty? %>
+<%=  render partial: 'subjects', locals: { associations: definition_subject_associations } %>
+<% end %>
 <% if !definition.author.nil? %>
      <p><b><%= Definition.human_attribute_name(:author).s %></b>: <%= definition.author.fullname %></p>
 <% end %>
-<% definitions = definition.children 
+<% definitions = definition.children
    if !definitions.empty? %>
-		 <h6>Subdefinitions</h6>
-<%=  render :partial => 'definitions', :locals => { definitions: definitions } %>		 
+     <h6>Subdefinitions</h6>
+<%=  render partial: 'definitions', locals: { definitions: definitions } %>
 <% end %>
