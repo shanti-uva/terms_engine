@@ -24,6 +24,12 @@ module TermsEngine
             pa = proxy_association
             pa.reflection.class_name.constantize.roots.where('definitions.feature_id' => pa.owner.id).order(:position) #.sort !!! See the FeatureName.<=> method
           end
+          
+          def recursive_roots_with_path
+            res = []
+            self.roots.order('position').where(is_public: true).collect{ |r| res += r.recursive_roots_with_path }
+            res
+          end
         end
       end
       
@@ -33,6 +39,123 @@ module TermsEngine
       
       def phonemes
         self.phoneme_term_associations.collect(&:subject)
+      end
+      
+      def document_for_rsolr
+        per = Perspective.get_by_code(KmapsEngine::ApplicationSettings.default_perspective_code)
+        v = View.get_by_code(KmapsEngine::ApplicationSettings.default_view_code)
+        child_documents = self.parent_relations.collect do |pr|
+          parent_node = pr.parent_node
+          name = parent_node.prioritized_name(v)
+          name_str = name.nil? ? nil : name.name
+          parent = pr.parent_node
+          cd =
+          { id: "#{self.uid}_#{pr.feature_relation_type.code}_#{parent.fid}",
+            related_uid_s: parent.uid,
+            origin_uid_s: self.uid,
+            block_child_type: ["related_#{Feature.uid_prefix}"],
+            "related_#{Feature.uid_prefix}_id_s" => "#{Feature.uid_prefix}-#{parent.fid}",
+            "related_#{Feature.uid_prefix}_header_s" => name_str,
+            "related_#{Feature.uid_prefix}_path_s" => parent_node.closest_ancestors_by_perspective(per).collect(&:fid).join('/'),
+            "related_#{Feature.uid_prefix}_relation_label_s" => pr.feature_relation_type.asymmetric_label,
+            "related_#{Feature.uid_prefix}_relation_code_s" => pr.feature_relation_type.code,
+            related_kmaps_node_type: 'parent',
+            block_type: ['child']
+          }
+          subject_associations = parent_node.subject_term_associations
+          related_branches = subject_associations.select(:branch_id).distinct.collect(&:branch_id)
+          related_branches.each do |branch_id|
+            branch = SubjectsIntegration::Feature.find(branch_id)
+            cd["related_#{Feature.uid_prefix}_branch_#{branch.uid}_header_s"] = branch.header
+            headers = []
+            uids = []
+            subject_associations.where(branch_id: branch_id).each do |association|
+              subject = SubjectsIntegration::Feature.find(association.subject_id)
+              uids << subject.uid
+              headers << subject.header
+            end
+            cd["related_#{Feature.uid_prefix}_branch_#{branch.uid}_#{SubjectsIntegration::Feature.uid_prefix}_headers_t"] = headers
+            cd["related_#{Feature.uid_prefix}_branch_#{branch.uid}_#{SubjectsIntegration::Feature.uid_prefix}_uids_t"] = uids
+          end
+          cd
+        end
+        child_documents = child_documents + self.child_relations.collect do |pr|
+          child_node = pr.child_node
+          name = child_node.prioritized_name(v)
+          name_str = name.nil? ? nil : name.name
+          child = pr.child_node
+          cd =
+          { id: "#{self.uid}_#{pr.feature_relation_type.asymmetric_code}_#{child.fid}",
+            related_uid_s: child.uid,
+            origin_uid_s: self.uid,
+            block_child_type: ["related_#{Feature.uid_prefix}"],
+            "related_#{Feature.uid_prefix}_id_s" => "#{Feature.uid_prefix}-#{child.fid}",
+            "related_#{Feature.uid_prefix}_header_s" => name_str,
+            "related_#{Feature.uid_prefix}_path_s" => child_node.closest_ancestors_by_perspective(per).collect(&:fid).join('/'),
+            "related_#{Feature.uid_prefix}_relation_label_s" => pr.feature_relation_type.label,
+            "related_#{Feature.uid_prefix}_relation_code_s" => pr.feature_relation_type.asymmetric_code,
+            related_kmaps_node_type: 'child',
+            block_type: ['child']
+          }
+          subject_associations = child_node.subject_term_associations
+          related_branches = subject_associations.select(:branch_id).distinct.collect(&:branch_id)
+          related_branches.each do |branch_id|
+            branch = SubjectsIntegration::Feature.find(branch_id)
+            cd["related_#{Feature.uid_prefix}_branch_#{branch.uid}_header_s"] = branch.header
+            headers = []
+            uids = []
+            subject_associations.where(branch_id: branch_id).each do |association|
+              subject = SubjectsIntegration::Feature.find(association.subject_id)
+              uids << subject.uid
+              headers << subject.header
+            end
+            cd["related_#{Feature.uid_prefix}_branch_#{branch.uid}_#{SubjectsIntegration::Feature.uid_prefix}_headers_t"] = headers
+            cd["related_#{Feature.uid_prefix}_branch_#{branch.uid}_#{SubjectsIntegration::Feature.uid_prefix}_uids_t"] = uids
+          end
+          cd
+        end
+        child_documents = child_documents + self.definitions.recursive_roots_with_path.collect do |dp|
+          d = dp.first
+          path = dp.second
+          uid = "#{Definition.uid_prefix}-#{d.id}"
+          cd =
+          { id: "#{self.uid}_#{uid}",
+            origin_uid_s: self.uid,
+            block_child_type: ["related_definitions"],
+            "related_#{Definition.uid_prefix}_content_s" => d.content,
+            "related_#{Definition.uid_prefix}_path_s" => path.join('/'),
+            "related_#{Definition.uid_prefix}_level_i" => path.size,
+            "related_#{Definition.uid_prefix}_language_s" => d.language.name,
+            "related_#{Definition.uid_prefix}_language_code_s" => d.language.code,
+            block_type: ['child']
+          }
+          author = d.author
+          cd["related_#{Definition.uid_prefix}_author_s"] = d.author.fullname if !author.nil?
+          cd["related_#{Definition.uid_prefix}_numerology_i"] = d.numerology if !d.numerology.nil?
+          cd["related_#{Definition.uid_prefix}_tense_s"] = d.tense if !d.tense.nil?
+          info_source = d.citations.where(info_source_type: InfoSource.model_name.name).collect(&:info_source).first
+          cd["related_#{Definition.uid_prefix}_source_s"] = info_source.title if !info_source.nil?
+          subject_associations = d.definition_subject_associations
+          related_branches = subject_associations.select(:branch_id).distinct.collect(&:branch_id)
+          related_branches.each do |branch_id|
+            branch = SubjectsIntegration::Feature.find(branch_id)
+            cd["related_#{Definition.uid_prefix}_branch_#{branch.uid}_header_s"] = branch.header
+            headers = []
+            uids = []
+            subject_associations.where(branch_id: branch_id).each do |association|
+              subject = SubjectsIntegration::Feature.find(association.subject_id)
+              uids << subject.uid
+              headers << subject.header
+            end
+            cd["related_#{Definition.uid_prefix}_branch_#{branch.uid}_#{SubjectsIntegration::Feature.uid_prefix}_headers_t"] = headers
+            cd["related_#{Definition.uid_prefix}_branch_#{branch.uid}_#{SubjectsIntegration::Feature.uid_prefix}_uids_t"] = uids
+          end
+          cd
+        end
+        doc = { tree: Feature.uid_prefix,
+                block_type: ['parent'],
+                '_childDocuments_'  => child_documents }
+        doc
       end
       
       module ClassMethods

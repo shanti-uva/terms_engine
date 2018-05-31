@@ -30,4 +30,15 @@ class Definition < ApplicationRecord
   has_many :association_notes, as: :notable, dependent: :destroy
   
   validates_presence_of :feature_id, :content, :language_id
+  
+  def recursive_roots_with_path(path_prefix = [])
+    path = path_prefix + [self.id]
+    res = [[self, path]]
+    self.children.order(:position).where(is_public: true).collect{ |r| res += r.recursive_roots_with_path(path) }
+    res
+  end
+  
+  def self.uid_prefix
+    'definitions'
+  end
 end

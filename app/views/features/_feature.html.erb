@@ -64,7 +64,7 @@
     in_house_definitions = []
     legacy_definitions = []
     definitions.each do |d|
-   	  if d.citations.where(info_source_type: InfoSource.model_name.name).blank?
+   	  if d.citations.where(info_source_type: InfoSource.model_name.name).empty?
    	    in_house_definitions << d
    	  else
    	    legacy_definitions << d
