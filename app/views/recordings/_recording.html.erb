@@ -1,0 +1,4 @@
+<div class="recording-audio">
+  <p><strong>Dialect:</strong> <%= recording.dialect["header"] %></p>
+  <%= audio_tag url_for(recording.audio_file), controls: true %>
+</div>
