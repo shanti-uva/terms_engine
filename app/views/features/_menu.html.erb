@@ -19,9 +19,11 @@
 	  </div>
 <%=   javascript_on_load do %>
         $('.advanced-link').click ( function () {
-          $(this).toggleClass("show-advanced",'fast');
+        var tg = $('.advanced-view').is(":visible");
+         $(this).toggleClass("show-advanced",'fast');
           $(".advanced-view").slideToggle('fast');
           $(".advanced-view").toggleClass("show-options");
+          ShantiSarvaka.searchTabHeight(!tg);
         });
 <%    end %>
     </div>
@@ -64,7 +66,7 @@
     domain: '<%= Feature.uid_prefix %>',
     filters_domain: '<%= Feature.uid_prefix %>',
     root_kmap_path: null,
-    features_path: "<%= (defined?(admin) && admin) ? admin_features_path : features_path %>/"
+    features_path: "<%= (defined?(admin) && admin) ? admin_features_path : features_path %>/%%ID%%"
   });
 <% end %>
   </section>

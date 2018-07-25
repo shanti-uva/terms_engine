@@ -84,6 +84,7 @@
 <%      end %>
         </dl>
 <%=     note_popup_link_list_for(feature, {association_type: FeatureName.name}) %>
+<%= render partial: "recordings/recording", collection: feature.recordings %>
       </div>
     </div>
   </section>

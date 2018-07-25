@@ -62,7 +62,7 @@ GIT
 PATH
   remote: .
   specs:
-    terms_engine (0.2.0)
+    terms_engine (0.2.3)
       rails (>= 5.1.4)
 
 GEM
@@ -234,4 +234,4 @@ DEPENDENCIES
   terms_engine!
 
 BUNDLED WITH
-   1.16.0
+   1.16.2
