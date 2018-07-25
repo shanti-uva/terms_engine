@@ -19,9 +19,11 @@
 	  </div>
 <%=   javascript_on_load do %>
         $('.advanced-link').click ( function () {
-          $(this).toggleClass("show-advanced",'fast');
+        var tg = $('.advanced-view').is(":visible");
+         $(this).toggleClass("show-advanced",'fast');
           $(".advanced-view").slideToggle('fast');
           $(".advanced-view").toggleClass("show-options");
+          ShantiSarvaka.searchTabHeight(!tg);
         });
 <%    end %>
     </div>

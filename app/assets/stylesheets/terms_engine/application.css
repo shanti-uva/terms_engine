@@ -52,3 +52,9 @@ body.page-terms .main-col {
 .ui-resizable-handle.ui-resizable-w{
 	border-color: #3270d6 transparent transparent transparent;
 }
+
+.page-terms .input-section a.toggle-link.advanced-link {
+  display: inline-block;
+  width: 90%;
+  padding: 0px 0px 0px 0px;
+}
