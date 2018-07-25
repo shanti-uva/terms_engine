@@ -152,9 +152,17 @@ module TermsEngine
           end
           cd
         end
+        subject_associations = self.subject_term_associations
         doc = { tree: Feature.uid_prefix,
+                associated_subjects: subject_associations.collect{ |a| a.subject['header'] },
+                associated_subject_ids: subject_associations.collect(&:subject_id),
                 block_type: ['parent'],
                 '_childDocuments_'  => child_documents }
+        for branch_id in subject_associations.select(:branch_id).distinct.collect(&:branch_id)
+          associations = subject_associations.where(branch_id: branch_id)
+          doc["associated_subject_#{branch_id}_ls"] = associations.collect(&:subject_id)
+          doc["associated_subject_#{branch_id}_ss"] = associations.collect{ |a| a.subject['header'] }
+        end
         doc
       end
       
