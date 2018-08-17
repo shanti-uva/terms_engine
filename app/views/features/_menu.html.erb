@@ -104,7 +104,8 @@
 <%        unless feature.nil? %>
             activeNodeId: "<%= feature.fid %>",
 <%        end %>
-					sortChildren:false,
+					sortNodes: true,
+					sortNodesBy: "position_i"
         });
       });
     </script>
