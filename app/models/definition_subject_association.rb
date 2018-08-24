@@ -2,8 +2,8 @@
 #
 # Table name: definition_subject_associations
 #
-#  id            :integer          not null, primary key
-#  definition_id :integer          not null
+#  id            :bigint(8)        not null, primary key
+#  definition_id :bigint(8)        not null
 #  subject_id    :integer          not null
 #  branch_id     :integer          not null
 #  created_at    :datetime         not null

@@ -13,6 +13,7 @@ module TermsEngine
         has_many :subject_term_associations, dependent: :destroy
         has_many :phoneme_term_associations
         has_many :recordings, dependent: :destroy
+        has_many :etymologies, as: :context, dependent: :destroy
         
         # This fetches root *Definitions* (definitions that don't have parents),
         # within the scope of the current feature

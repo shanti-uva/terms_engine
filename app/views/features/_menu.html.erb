@@ -67,6 +67,7 @@
     filters_domain: '<%= Feature.uid_prefix %>',
     filters: ["-associated_subjects:Letter"],
     root_kmap_path: null,
+    filters: ["-associated_subjects:Letter"],
     features_path: "<%= (defined?(admin) && admin) ? admin_features_path : features_path %>/%%ID%%"
   });
 <% end %>

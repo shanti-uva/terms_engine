@@ -2,7 +2,7 @@
 #
 # Table name: definition_relations
 #
-#  id             :integer          not null, primary key
+#  id             :bigint(8)        not null, primary key
 #  child_node_id  :integer          not null
 #  parent_node_id :integer          not null
 #  ancestor_ids   :string
