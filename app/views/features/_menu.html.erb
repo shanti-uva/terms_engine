@@ -65,6 +65,7 @@
     hostname_assets: "<%= Flare.config.asset_url %>",
     domain: '<%= Feature.uid_prefix %>',
     filters_domain: '<%= Feature.uid_prefix %>',
+    filters: ["-associated_subjects:Letter"],
     root_kmap_path: null,
     features_path: "<%= (defined?(admin) && admin) ? admin_features_path : features_path %>/%%ID%%"
   });
@@ -106,7 +107,8 @@
             activeNodeId: "<%= feature.fid %>",
 <%        end %>
 					sortNodes: true,
-					sortNodesBy: "position_i"
+          sortNodesBy: "position_i",
+          autoCollapse: true
         });
       });
     </script>
