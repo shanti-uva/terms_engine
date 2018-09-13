@@ -8,5 +8,8 @@
 
 Perspective.update_or_create name: 'Tibetan Alphabetical', code: 'tib.alpha', is_public: true
 
-[ { is_symmetric: true,  label: 'is beginning of', asymmetric_label: 'starts with', code: 'is.beginning.of', is_hierarchical: true},
-].each{|a| FeatureRelationType.update_or_create(a)}
+[ { label: 'is beginning of', asymmetric_label: 'starts with', is_hierarchical: true,
+    code: 'is.beginning.of', asymmetric_code: 'begins.with', is_symmetric: false },
+  { label: 'heads', asymmetric_label: 'is headed by', is_hierarchical: true,
+    code: 'heads', asymmetric_code: 'is.headed.by', is_symmetric: false }
+].each{ |a| FeatureRelationType.update_or_create(a) }
