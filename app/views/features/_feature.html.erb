@@ -1,55 +1,121 @@
-<%= javascript_on_load("ActivateDraggablePopups('.has-draggable-popups');") %>
+<div class="field field-name-body field-type-text-with-summary field-label-hidden">
+  <div class="field-items"><div class="field-item even" property="content:encoded">
+      <div class="terms-node-wrapper">
+        <div class="terms-introduction-tabs">
+          <ul id="terms-intro-tabs" class="nav nav-tabs nav-justified terms-intro-tabs" role="tablist">
+            <li class="active">
+              <a href="#terms-intro" role="tab" data-toggle="tab">
+                Term Definition
+              </a>
+            </li>
+            <li>
+              <a href="#terms-intro-details" role="tab" data-toggle="tab">Term details</a>
+            </li>
+          </ul>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane terms-intro active" id="terms-intro">
+              <%=  "#{edit_item_link(admin_feature_path(feature.fid)) if logged_in? && object_authorized?(feature)}".html_safe %>
+              <!-- INTRO TAB 1 --><div class="row">
+                <div class="col-xs-12">
+                  <dl>
+                    <div class="term-definition-title">
+                      <dt class="sr-only">
+                      <dfn><%= feature_name_header(feature) %></dfn>
+                      </dt>
+                    </div>
+                      <div class="terms-kmaps-id">
+                        <dt>ID:</dt><dd><%= feature.pid %></dd>
+                      </div>
+                      <%=     feature_name_ul(feature,false) %>
+                      <%      feature.names.roots.order('position').each do |name| %>
+                        <%=       "<dt><strong>#{ts(:for, what: FeatureName.human_attribute_name(:etymology), whom: name.name.to_s)}:</dt></strong><dd>#{name.etymology.to_s.s}</dd>".html_safe unless name.etymology.blank? %>
+                      <%      end %>
+                      <%=     note_popup_link_list_for(feature, {association_type: FeatureName.name}) %>
+                      <%= render partial: 'recordings/recordings', locals: { recordings: feature.recordings } %>
+                  </dl><!-- BEGIN terms-definitions -->
+            <!-- BEGIN terms-definitions -->
+            <div class="terms-definition-list-wrapper">
+              <%=  render partial: 'definitions', locals: { definitions: feature.definitions.in_house_definitions, is_child: false, prefix: '', def_level: 0 } %>
+            </div> <!-- END terms-definition-list-wrapper -->
+            <div class="terms-dictionaries-other row">
+              <div class="col-xs-12">
+              <%=  render partial: 'other_dictionaries_definitions', locals: { definitions: feature.definitions.legacy_definitions } %>
+              </div>
+            </div><!-- END terms-dictionaries-other -->
+                </div>
+              </div>
+            </div>
+            <div role="tabpanel" class="tab-pane terms-intro-details" id="terms-intro-details">
+              <!-- INTRO TAB 2 --><div class="row">
+                <div class="col-xs-12">
+                  <% subject_term_associations = feature.subject_term_associations
+                  if !subject_term_associations.empty? %>
+                <dl>
+                <%=       render partial: 'subjects', locals: { associations: subject_term_associations } %>
+                <%=       note_popup_link_list_for(feature, {:association_type => SubjectTermAssociation.name}) %>
+                </dl>
+              <% end %>
+                </div>
+                <!-- END tab panels --></div>
+              <!-- END tab-content --></div>
+            <!-- END terms-introduction-tabs -->
+          </div> <!-- END tab-content -->
+        </div> <!-- END terms-introduction-tabs -->
+      </div> <!-- END terms-node-wrapper -->
+    </div> <!-- END field-item -->
+  </div> <!-- END field-items -->
+<% if false %>
 <%= content_tag :h6, "#{feature_name_header(feature)} #{edit_item_link(admin_feature_path(feature.fid)) if logged_in? && object_authorized?(feature)}".html_safe %>
 <%= time_units_for(feature) %>
 <%  summary = feature.summary
     if summary.nil?
       caption = feature.caption
-	    if !caption.nil? %>
-		    <div class="summary-overview">
+      if !caption.nil? %>
+        <div class="summary-overview">
 <%=       caption.content.html_safe %>
         </div>
-<%	  end
+<%    end
     else %>
-	  <div class="summary-overview">
+    <div class="summary-overview">
 <%=   summary.content.html_safe %>
       </div>
 <%  end
     illustration = feature.illustration
     if !illustration.nil?
-	  picture = illustration.picture
+    picture = illustration.picture
       place = illustration.place
       if place.nil?
-	    location = nil
-	  else
-	    location = link_to place.header, PlacesIntegration::Feature.element_url(place.id, format: 'html')
-		location_plain = place.header
-	    parent_place = place.context_feature
-		if !parent_place.nil?
-	      location << ", #{link_to parent_place.header, PlacesIntegration::Feature.element_url(parent_place.id, format: 'html')}".html_safe
-		  location_plain << ", #{parent_place.header}"
-	    end
-	  end
+      location = nil
+    else
+      location = link_to place.header, PlacesIntegration::Feature.element_url(place.id, format: 'html')
+    location_plain = place.header
+      parent_place = place.context_feature
+    if !parent_place.nil?
+        location << ", #{link_to parent_place.header, PlacesIntegration::Feature.element_url(parent_place.id, format: 'html')}".html_safe
+      location_plain << ", #{parent_place.header}"
+      end
+    end
       if picture.caption.nil?
-		if location.nil?
+    if location.nil?
           caption = nil
-		  caption_plain = nil
-	    else
-		  caption = location
-		  caption_plain = location_plain
-	    end
+      caption_plain = nil
       else
-		caption = picture.caption.html_safe
-		caption_plain = picture.caption.strip_tags
-		if !location.nil?
-		  caption << " (#{location})"
-		  caption_plain << " (#{location_plain})"
-	    end
+      caption = location
+      caption_plain = location_plain
+      end
+      else
+    caption = picture.caption.html_safe
+    caption_plain = picture.caption.strip_tags
+    if !location.nil?
+      caption << " (#{location})"
+      caption_plain << " (#{location_plain})"
+      end
       end %>
-	  <div class="resource-overview-image">
+    <div class="resource-overview-image">
 <%      html_options = { class: 'img-responsive img-thumbnail' }
         html_options[:alt] = caption_plain if !caption_plain.nil?
-  	    rendered_width = picture.width.nil? || picture.width>576 ? 576 : picture.width
-		html_options[:width] = rendered_width
+        rendered_width = picture.width.nil? || picture.width>576 ? 576 : picture.width
+    html_options[:width] = rendered_width
         if picture.instance_of?(MmsIntegration::Picture) %>
 <%=     link_to image_tag(picture.url, html_options), MmsIntegration::Medium.element_url(picture.id, format: 'html') %>
 <%      else %>
@@ -64,19 +130,19 @@
     in_house_definitions = []
     legacy_definitions = []
     definitions.each do |d|
-   	  if d.citations.where(info_source_type: InfoSource.model_name.name).empty?
-   	    in_house_definitions << d
-   	  else
-   	    legacy_definitions << d
+       if d.citations.where(info_source_type: InfoSource.model_name.name).empty?
+         in_house_definitions << d
+       else
+         legacy_definitions << d
       end
     end %>
 <div id="accordion" class="panel-group">
   <section class="panel panel-default">
     <div class="panel-heading">
       <h6><a href="#collapseOne" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle <%= 'collapsed' if !definitions.blank? %>" <%= 'aria-expanded="true"' if definitions.blank? %>><span class="glyphicon glyphicon-plus"></span><%= FeatureName.model_name.human(count: feature.names.size).titleize.s %></a></h6>
-	</div>
+  </div>
     <div id="collapseOne" class="panel-collapse collapse <%= 'in' if definitions.blank? %>">
-	  <div class="panel-body">
+    <div class="panel-body">
 <%=     feature_name_ul(feature,false) %>
         <dl class="no-style">
 <%      feature.names.roots.order('position').each do |name| %>
@@ -89,49 +155,49 @@
     </div>
   </section>
 <%  if !in_house_definitions.empty? %>
-	  <section class="panel panel-default">
-	    <div class="panel-heading">
-	      <h6><a href="#collapseTwo" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle <%= 'collapsed' if in_house_definitions.blank? %>" <%= 'aria-expanded="true"' if !in_house_definitions.blank? %>><span class="glyphicon glyphicon-plus"></span><%= Definition.model_name.human(count: definitions.size).titleize.s %></a></h6>
-	    </div>
-	    <div id="collapseTwo" class="panel-collapse collapse <%= 'in' if !in_house_definitions.blank? %>">
-	      <div class="panel-body">
+    <section class="panel panel-default">
+      <div class="panel-heading">
+        <h6><a href="#collapseTwo" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle <%= 'collapsed' if in_house_definitions.blank? %>" <%= 'aria-expanded="true"' if !in_house_definitions.blank? %>><span class="glyphicon glyphicon-plus"></span><%= Definition.model_name.human(count: definitions.size).titleize.s %></a></h6>
+      </div>
+      <div id="collapseTwo" class="panel-collapse collapse <%= 'in' if !in_house_definitions.blank? %>">
+        <div class="panel-body">
 <%=       render partial: 'definitions', locals: { definitions: in_house_definitions } %>
-	      </div>
-	    </div>
-	  </section>
+        </div>
+      </div>
+    </section>
 <% end
    if !legacy_definitions.empty? %>
-	  <section class="panel panel-default">
-	    <div class="panel-heading">
-	      <h6><a href="#collapseThree" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle <%= 'collapsed' if !in_house_definitions.blank? %>" <%= 'aria-expanded="true"' if in_house_definitions.blank? %>><span class="glyphicon glyphicon-plus"></span>External Definitions</a></h6>
-	    </div>
-	    <div id="collapseThree" class="panel-collapse collapse <%= 'in' if in_house_definitions.blank? %>">
-	      <div class="panel-body">
+    <section class="panel panel-default">
+      <div class="panel-heading">
+        <h6><a href="#collapseThree" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle <%= 'collapsed' if !in_house_definitions.blank? %>" <%= 'aria-expanded="true"' if in_house_definitions.blank? %>><span class="glyphicon glyphicon-plus"></span>External Definitions</a></h6>
+      </div>
+      <div id="collapseThree" class="panel-collapse collapse <%= 'in' if in_house_definitions.blank? %>">
+        <div class="panel-body">
 <%=       render partial: 'definitions', locals: { definitions: legacy_definitions } %>
-	      </div>
-	    </div>
-	  </section>
+        </div>
+      </div>
+    </section>
 <% end
    subject_term_associations = feature.subject_term_associations
-	 if !subject_term_associations.empty? %>
-	  <section class="panel panel-default">
-	    <div class="panel-heading">
-	      <h6><a href="#collapseFour" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= SubjectsIntegration::Feature.human_name(count: subject_term_associations.size).titleize.s %></a></h6>
-	    </div>
-	    <div id="collapseFour" class="panel-collapse collapse">
-	      <div class="panel-body">
+   if !subject_term_associations.empty? %>
+    <section class="panel panel-default">
+      <div class="panel-heading">
+        <h6><a href="#collapseFour" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= SubjectsIntegration::Feature.human_name(count: subject_term_associations.size).titleize.s %></a></h6>
+      </div>
+      <div id="collapseFour" class="panel-collapse collapse">
+        <div class="panel-body">
 <%=       render partial: 'subjects', locals: { associations: subject_term_associations } %>
 <%=       note_popup_link_list_for(feature, {:association_type => SubjectTermAssociation.name}) %>
-	      </div>
-	    </div>
-	  </section>
+        </div>
+      </div>
+    </section>
 <% end %>
   <section class="panel panel-default">
     <div class="panel-heading">
       <h6><a href="#collapseFive" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= ts 'id.this', count: :many %></a></h6>
-	</div>
-	<div id="collapseFive" class="panel-collapse collapse">
-	  <div class="panel-body">
+  </div>
+  <div id="collapseFive" class="panel-collapse collapse">
+    <div class="panel-body">
 <%      if show_old_pid %>
           <p><%= "#{ts :current, what: Feature.human_attribute_name(:pid)}: #{feature.pid}" %></p>
           <p><%= "#{Feature.human_attribute_name(:old_pid).s}: #{feature.old_pid}" %></p>
@@ -150,3 +216,9 @@
     </div>
   </section>
 </div>
+<% end %> <!-- END of toogle flag hidden -->
+<%= javascript_on_load do %>
+      jQuery('[data-js-kmaps-popup]').kmapsPopup({
+        type: POPUP_TYPE_INFO,
+      });
+<%  end %>

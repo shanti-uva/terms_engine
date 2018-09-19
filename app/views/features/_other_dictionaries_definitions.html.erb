@@ -1,0 +1,7 @@
+<% if !definitions.empty? %>
+  <header class="sr-only">Other Dictionaries</header>
+  <h3>Other Dictionaries</h3>
+  <% definitions.each_with_index do |definition, index| %>
+    <%= render partial: 'other_dictionaries_definition', locals: { definition: definition, index: index + 1 } %>
+  <% end %>
+<% end %>
