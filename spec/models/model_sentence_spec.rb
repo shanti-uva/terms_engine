@@ -1,0 +1,55 @@
+# == Schema Information
+#
+# Table name: model_sentences
+#
+#  id           :bigint(8)        not null, primary key
+#  context_id   :integer          not null
+#  context_type :string           not null
+#  content      :text             not null
+#  created_at   :datetime         not null
+#  updated_at   :datetime         not null
+#
+
+require 'rails_helper'
+
+    # a model sentence should have a Model_sentence
+    # language
+    # language_type_id
+    # sentence_type
+    # source
+    # spelling
+    # major_dialect_family
+    # major_dialect_family_type_id
+    # specific_dialect
+    # literary_genre
+    # literary_genre_type_id
+    # literary_period
+    # literary_period_type_id
+    # literary_form
+    # literary_form_type_id
+    # 
+RSpec.describe ModelSentence, type: :model do
+  context "when valid" do
+    it "adds model sentences to definition" do
+
+      language = Language.get_by_code('bod')
+      term = Feature.create(fid: Feature.generate_pid)
+      definition = term.definitions.create(language: language, content: "This is a test definition")
+      if(definition.valid?)
+        sentence = definition.model_sentences.create(content: "this is a sentence")
+      end
+      expect(sentence.content).to eq("this is a sentence")
+    end
+  end
+  context "when invalid" do
+    it "doesn't accept empty sentences" do
+      language = Language.get_by_code('bod')
+      term = Feature.create(fid: Feature.generate_pid)
+      definition = term.definitions.create(language: language, content: "This is a test definition")
+      if(definition.valid?)
+        sentence = definition.model_sentences.create(content: "")
+      end
+      expect(sentence.valid?).to eq(false)
+    end
+  end
+end

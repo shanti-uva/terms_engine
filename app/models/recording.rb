@@ -1,3 +1,14 @@
+# == Schema Information
+#
+# Table name: recordings
+#
+#  id         :bigint(8)        not null, primary key
+#  feature_id :bigint(8)        not null
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#  dialect_id :integer
+#
+
 class Recording < ApplicationRecord
   belongs_to :feature
   has_one_attached :audio_file

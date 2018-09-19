@@ -10,10 +10,31 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180206203623) do
+ActiveRecord::Schema.define(version: 2018_09_18_074518) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "active_storage_attachments", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "record_type", null: false
+    t.bigint "record_id", null: false
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", force: :cascade do |t|
+    t.string "key", null: false
+    t.string "filename", null: false
+    t.string "content_type"
+    t.text "metadata"
+    t.bigint "byte_size", null: false
+    t.string "checksum", null: false
+    t.datetime "created_at", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
 
   create_table "affiliations", force: :cascade do |t|
     t.integer "collection_id", null: false
@@ -62,9 +83,9 @@ ActiveRecord::Schema.define(version: 20180206203623) do
   end
 
   create_table "citations", force: :cascade do |t|
-    t.integer "info_source_id"
-    t.string "citable_type"
-    t.integer "citable_id"
+    t.integer "info_source_id", null: false
+    t.string "citable_type", null: false
+    t.integer "citable_id", null: false
     t.text "notes"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -123,6 +144,38 @@ ActiveRecord::Schema.define(version: 20180206203623) do
     t.integer "intercalary_day_end_id"
   end
 
+  create_table "definition_relations", force: :cascade do |t|
+    t.integer "child_node_id", null: false
+    t.integer "parent_node_id", null: false
+    t.string "ancestor_ids"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "definition_subject_associations", force: :cascade do |t|
+    t.bigint "definition_id", null: false
+    t.integer "subject_id", null: false
+    t.integer "branch_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["definition_id"], name: "index_definition_subject_associations_on_definition_id"
+  end
+
+  create_table "definitions", force: :cascade do |t|
+    t.integer "feature_id", null: false
+    t.integer "language_id", null: false
+    t.boolean "is_public", default: false, null: false
+    t.boolean "is_primary"
+    t.string "ancestor_ids"
+    t.integer "position", default: 0
+    t.text "content", null: false
+    t.integer "author_id"
+    t.integer "numerology"
+    t.string "tense"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "descriptions", force: :cascade do |t|
     t.integer "feature_id", null: false
     t.text "content", null: false
@@ -134,6 +187,32 @@ ActiveRecord::Schema.define(version: 20180206203623) do
     t.integer "language_id", null: false
   end
 
+  create_table "etymologies", force: :cascade do |t|
+    t.integer "context_id"
+    t.string "context_type"
+    t.text "content"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "etymology_subject_associations", force: :cascade do |t|
+    t.bigint "etymology_id", null: false
+    t.integer "subject_id", null: false
+    t.integer "branch_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["etymology_id"], name: "index_etymology_subject_associations_on_etymology_id"
+  end
+
+  create_table "etymology_type_associations", force: :cascade do |t|
+    t.bigint "etymology_id", null: false
+    t.integer "subject_id"
+    t.integer "branch_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["etymology_id"], name: "index_etymology_type_associations_on_etymology_id"
+  end
+
   create_table "external_pictures", force: :cascade do |t|
     t.string "url", null: false
     t.text "caption"
@@ -143,10 +222,10 @@ ActiveRecord::Schema.define(version: 20180206203623) do
   end
 
   create_table "feature_geo_codes", force: :cascade do |t|
-    t.integer "feature_id"
-    t.integer "geo_code_type_id"
+    t.integer "feature_id", null: false
+    t.integer "geo_code_type_id", null: false
     t.integer "timespan_id"
-    t.string "geo_code_value"
+    t.string "geo_code_value", null: false
     t.text "notes"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -270,6 +349,14 @@ ActiveRecord::Schema.define(version: 20180206203623) do
     t.index ["code"], name: "info_sources_code_key", unique: true
   end
 
+  create_table "model_sentences", force: :cascade do |t|
+    t.integer "context_id"
+    t.string "context_type"
+    t.text "content"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "note_titles", force: :cascade do |t|
     t.string "title"
     t.datetime "created_at"
@@ -277,11 +364,11 @@ ActiveRecord::Schema.define(version: 20180206203623) do
   end
 
   create_table "notes", force: :cascade do |t|
-    t.string "notable_type"
-    t.integer "notable_id"
+    t.string "notable_type", null: false
+    t.integer "notable_id", null: false
     t.integer "note_title_id"
     t.string "custom_note_title"
-    t.text "content"
+    t.text "content", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string "association_type"
@@ -289,7 +376,7 @@ ActiveRecord::Schema.define(version: 20180206203623) do
   end
 
   create_table "pages", force: :cascade do |t|
-    t.integer "citation_id"
+    t.integer "citation_id", null: false
     t.integer "volume"
     t.integer "start_page"
     t.integer "start_line"
@@ -297,6 +384,14 @@ ActiveRecord::Schema.define(version: 20180206203623) do
     t.integer "end_line"
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "passages", force: :cascade do |t|
+    t.integer "context_id"
+    t.string "context_type"
+    t.text "content"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "people", force: :cascade do |t|
@@ -324,6 +419,14 @@ ActiveRecord::Schema.define(version: 20180206203623) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.index ["code"], name: "index_perspectives_on_code"
+  end
+
+  create_table "recordings", force: :cascade do |t|
+    t.bigint "feature_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "dialect_id"
+    t.index ["feature_id"], name: "index_recordings_on_feature_id"
   end
 
   create_table "roles", force: :cascade do |t|
@@ -355,6 +458,7 @@ ActiveRecord::Schema.define(version: 20180206203623) do
     t.integer "subject_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "branch_id", null: false
   end
 
   create_table "summaries", force: :cascade do |t|
@@ -385,8 +489,8 @@ ActiveRecord::Schema.define(version: 20180206203623) do
     t.integer "start_date_fuzz"
     t.integer "end_date_fuzz"
     t.integer "is_current", limit: 2
-    t.integer "dateable_id"
-    t.string "dateable_type"
+    t.integer "dateable_id", null: false
+    t.string "dateable_type", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.index ["dateable_id", "dateable_type"], name: "timespans_1_idx"
@@ -424,4 +528,8 @@ ActiveRecord::Schema.define(version: 20180206203623) do
     t.index ["feature_id"], name: "xml_documents_feature_id_idx"
   end
 
+  add_foreign_key "definition_subject_associations", "definitions"
+  add_foreign_key "etymology_subject_associations", "etymologies"
+  add_foreign_key "etymology_type_associations", "etymologies"
+  add_foreign_key "recordings", "features"
 end

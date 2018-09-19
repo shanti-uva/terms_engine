@@ -2,7 +2,7 @@
 #
 # Table name: definitions
 #
-#  id           :integer          not null, primary key
+#  id           :bigint(8)        not null, primary key
 #  feature_id   :integer          not null
 #  language_id  :integer          not null
 #  is_public    :boolean          default(FALSE), not null
@@ -22,6 +22,8 @@ class Definition < ApplicationRecord
   
   include KmapsEngine::IsCitable
   include KmapsEngine::IsNotable
+  include TermsEngine::HasModelSentences
+  include TermsEngine::HasPassages
   
   belongs_to :feature
   belongs_to :language
