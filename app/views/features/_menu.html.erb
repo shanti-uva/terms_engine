@@ -12,11 +12,11 @@
   <button type="button" class="btn searchreset" aria-label="Clear search text" style="display: none;"><span class="icon"></span></button>
 </div>
       <!-- END - typeahead search -->
-	  <div class="form-group">
+    <div class="form-group">
 <%=     link_to '#', class: 'advanced-link toggle-link' do %>
           <span class="icon"></span><%= ts(:advanced) %>
 <%      end %>
-	  </div>
+    </div>
 <%=   javascript_on_load do %>
         $('.advanced-link').click ( function () {
         var tg = $('.advanced-view').is(":visible");
@@ -27,8 +27,8 @@
         });
 <%    end %>
     </div>
-	<section class="advanced-view" style="<%= 'display:none;' unless current_show_advanced_search  %>">
-	   <div class="form-group" id="searchScopeGroup">
+  <section class="advanced-view" style="<%= 'display:none;' unless current_show_advanced_search  %>">
+     <div class="form-group" id="searchScopeGroup">
        <label><span>Filter:</span> search scope</label>
         <div>
 <%=       form.radio_button :scope, 'full_text' %>
@@ -54,7 +54,7 @@
       </span>
     </div><!-- /input-group -->
       </div>
-	</section>
+  </section>
 <%  end %>
 <%= javascript_on_load do %>
   $("#kmaps-explorer-search-term").focusin(function(){
@@ -80,15 +80,15 @@
       <li class="treeview<%= ' active' if active_item == 'browse' %>"><a href=".treeview" data-toggle="tab"><span class="icon shanticon-tree"></span>Tree</a></li>
       <li class="listview<%= ' active' if active_item == 'results' %>"><a href=".listview" data-toggle="tab"><span class="icon shanticon-list"></span>Results</a></li>
     </ul>
-	  <div class="tab-content">
-	    <div class="treeview tab-pane<%= ' active' if active_item == 'browse' %>">
-	      <div id="tree" class="view-wrap">
-	      </div>
-	    </div>
+    <div class="tab-content">
+      <div class="treeview tab-pane<%= ' active' if active_item == 'browse' %>">
+        <div id="tree" class="view-wrap">
+        </div>
+      </div>
       <div class="listview tab-pane<%= ' active' if active_item == 'results' %>">
         <div class="view-wrap"></div>
       </div>
-	  </div>
+    </div>
   </section>
 </section>
 <%  feature = contextual_feature %>
@@ -107,9 +107,9 @@
 <%        unless feature.nil? %>
             activeNodeId: "<%= feature.fid %>",
 <%        end %>
-					sortNodes: true,
+          sortNodes: true,
           sortNodesBy: "position_i",
-          autoCollapse: true
+          autoCollapse: false
         });
       });
     </script>
@@ -117,6 +117,6 @@
       var session_search = Cookies.getJSON('search_<%= Feature.uid_prefix %>');
       if(session_search) {
         $("#kmaps-explorer-search-term").flyoutKmapsTypeahead('restoreSavedSearch', session_search,'kmaps-explorer');
-				Cookies.remove('search_<%= Feature.uid_prefix %>');
+        Cookies.remove('search_<%= Feature.uid_prefix %>');
       }
 <% end %>

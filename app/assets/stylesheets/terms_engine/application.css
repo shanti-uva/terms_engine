@@ -9,48 +9,44 @@
  * compiled file, but it's generally better to create a new file per style scope.
  *
  *= require_self
+ *= require mandala_terms/shanti-main-terms
+ *= require terms_engine/recordings
  */
 
 body.page-terms .content-section {
   padding-left: 0 !important;
 }
 
-body.page-terms  article.main-col{
-  max-width: 100% !important;
-}
-
-/*Theme-Color: #3270d6*/
-
 .titlearea{
-	background-color: #3270d6 !important;
+  background-color: #3270d6 !important;
 }
 
 .fancytree-container .glyphicon{
-	color: #3270d6 !important;
-	opacity:.9;
+  color: #3270d6 !important;
+  opacity:.9;
 }
 
 body.page-terms .main-col {
-	max-width: 950px !important;
+  max-width: 950px !important;
 }
 
 .kmaps .view-section .nav-tabs>li.treeview{
-	width: 35%;
-	max-width: 120px;
+  width: 35%;
+  max-width: 120px;
 }
 
 .navbar-header .mandala{
-	margin-left:7px;
+  margin-left:7px;
 }
 
 @media (min-width: 768px), all{
 .page-terms #place > .col-sm-9{
-		width:100%;
+    width:100%;
 }
 }
 
 .ui-resizable-handle.ui-resizable-w{
-	border-color: #3270d6 transparent transparent transparent;
+  border-color: #3270d6 transparent transparent transparent;
 }
 
 .page-terms .input-section a.toggle-link.advanced-link {

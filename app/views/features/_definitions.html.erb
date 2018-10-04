@@ -1,5 +1,9 @@
-<ol>
-<% definitions.each do |definition| %>
-	   <li><%= render partial: 'definition', locals: { definition: definition } %></li>
-<% end %>
-</ol>
+<!-- BEGIN terms-definitions -->
+<div class="terms-definition-list-wrapper row">
+  <div class="col-xs-12"> <!-- Column 1 -->
+    <!-- <header class="sr-only">Term Definitions</header> -->
+    <% definitions.each_with_index do |definition,index| %>
+      <%= render partial: 'definition', locals: { definition: definition, index: (index + 1), is_child: is_child, prefix: prefix, def_level: def_level } %>
+    <% end %>
+  </div> <!-- END Column 1 -->
+</div> <!-- END terms-definition-list-wrapper -->

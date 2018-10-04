@@ -1,0 +1,13 @@
+<div class="terms-dictionaries-other-node">
+  <% info_source = definition.citations.where(info_source_type: InfoSource.model_name.name).collect(&:info_source).first
+  if !info_source.nil? %>
+<h4><%= "#{index}. "%><cite><a href="#"><%=" #{info_source.title}" %></a></cite></h4>
+  <% end %>
+  <%= definition.content.s.html_safe %>
+  <dl>
+    <dt><%= Language.model_name.human %>:</dt> <dd><%= definition.language.name %></dd>
+    <% if !definition.author.nil? %>
+      <dt><%= Definition.human_attribute_name(:author).s %>:</dt> <dd><%= definition.author.fullname %></dd>
+    <% end %>
+  </dl>
+</div>

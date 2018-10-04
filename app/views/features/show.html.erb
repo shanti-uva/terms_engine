@@ -1,4 +1,4 @@
 <div class="col-sm-9"> <!-- so the text can be read with the fly-out open -->
 <%= render :partial => 'feature', :locals => {:feature => @feature, :show_old_pid => false} %>
-<%= javascript_on_load "document.title = '#{t 'app.short'} - #{feature_name_header(@feature)}'" %>
+<%= javascript_on_load "document.title = '#{t 'app.short'} - #{feature_name_header(@feature).strip_tags}'" %>
 </div>

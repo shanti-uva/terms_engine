@@ -32,6 +32,31 @@ module TermsEngine
             self.roots.order('position').where(is_public: true).collect{ |r| res += r.recursive_roots_with_path }
             res
           end
+
+          def all_definitions
+            if @all_definitions.nil?
+              definitions = self.roots.includes(:citations)
+              in_house_definitions = []
+              legacy_definitions = []
+              definitions.each do |d|
+                if d.citations.where(info_source_type: InfoSource.model_name.name).empty?
+                  in_house_definitions << d
+                else
+                  legacy_definitions << d
+                end
+              end
+              @all_definitions = { in_house_definitions: in_house_definitions, legacy_definitions: legacy_definitions }
+            end
+            @all_definitions
+          end
+
+          def in_house_definitions
+            all_definitions[:in_house_definitions]
+          end
+
+          def legacy_definitions
+            all_definitions[:legacy_definitions]
+          end
         end
       end
       
