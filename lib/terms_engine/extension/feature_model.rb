@@ -35,14 +35,19 @@ module TermsEngine
 
           def all_definitions
             if @all_definitions.nil?
-              definitions = self.roots.includes(:citations)
+              definitions = self.roots.includes(:legacy_citations)
               in_house_definitions = []
-              legacy_definitions = []
+              legacy_definitions = {}
               definitions.each do |d|
-                if d.citations.where(info_source_type: InfoSource.model_name.name).empty?
+                citations = d.legacy_citations
+                #citations = d.citations.where(info_source_type: InfoSource.model_name.name)
+                if citations.empty?
                   in_house_definitions << d
                 else
-                  legacy_definitions << d
+                  citation_id = citations.first.info_source_id
+                  legacy_definitions[citation_id] ||= []
+                  legacy_definitions[citation_id] << d
+                  #legacy_definitions << d
                 end
               end
               @all_definitions = { in_house_definitions: in_house_definitions, legacy_definitions: legacy_definitions }
@@ -54,7 +59,7 @@ module TermsEngine
             all_definitions[:in_house_definitions]
           end
 
-          def legacy_definitions
+          def legacy_definitions_by_info_source
             all_definitions[:legacy_definitions]
           end
         end

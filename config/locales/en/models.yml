@@ -3,6 +3,9 @@ en:
     activerecord:
         # Model names will be kept in lower case. Invoke .capitalize or .titleize if you need them in uppercase.
         models:
+            definition_subject_association:
+                one: 'resource'
+                other: 'resources'
             feature:
                 one: 'term'
                 other: 'terms'
@@ -21,6 +24,9 @@ en:
             geo_code_type:
                 one: 'term code type'
                 other: 'term code types'
+            passage:
+                one: 'passage'
+                other: 'passages'
             view:
                 one: 'term language'
                 other: 'term languages'

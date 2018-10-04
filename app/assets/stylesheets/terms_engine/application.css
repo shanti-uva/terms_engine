@@ -54,3 +54,26 @@ body.page-terms .main-col {
   width: 90%;
   padding: 0px 0px 0px 0px;
 }
+
+/* fancytree */
+.fancytree-title{
+    padding-left: 8px;
+}
+
+.fancytree-title::before {
+ top: 0.65rem;
+ width: 8px;
+ height: 8px;
+}
+
+.fancytree-title:hover::before {
+ background: #707070;
+ /* box-shadow:none; */
+}
+
+.fancytree-active .fancytree-title::before,
+.fancytree-selected .fancytree-title::before {
+ background: #777;
+ /* box-shadow:none; */
+}
+/* END - fancytree */

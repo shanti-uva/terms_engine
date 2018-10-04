@@ -30,6 +30,7 @@ class Definition < ApplicationRecord
   belongs_to :author, :class_name => 'AuthenticatedSystem::Person', optional: true
   has_many :definition_subject_associations, dependent: :destroy
   has_many :association_notes, as: :notable, dependent: :destroy
+  has_many :legacy_citations, -> { where(info_source_type: InfoSource.model_name.name) }, as: :citable, class_name: 'Citation'
   
   validates_presence_of :feature_id, :content, :language_id
   

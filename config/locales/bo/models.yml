@@ -3,6 +3,9 @@ bo:
     activerecord:
         # Model names will be kept in lower case. Invoke .capitalize or .titleize if you need them in uppercase.
         models:
+            definition_subject_association:
+                one: 'resource'
+                other: 'resources'
             feature:
                 one: 'term'
                 other: 'terms'

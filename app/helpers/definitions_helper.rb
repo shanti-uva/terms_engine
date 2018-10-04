@@ -2,10 +2,12 @@ module DefinitionsHelper
   def definition_node_classes(is_child,level=0)
     css_classes = ['terms-definition-node']
     css_class = 'terms-def-child'
-    if is_child && level == 2
-      css_class << '-2'
+    if is_child
+      if level == 2
+        css_class << '-2'
+      end
+      css_classes << css_class
     end
-    css_classes << css_class
     css_classes.join(' ')
   end
 
