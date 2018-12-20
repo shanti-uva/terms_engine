@@ -1,17 +1,17 @@
+require 'kmaps_engine/progress_bar'
+
 module TermsEngine
   class FlareUtils < KmapsEngine::FlareUtils
+    include KmapsEngine::ProgressBar
     
-    def self.reindex_all(options)
-      from = options[:from]
-      to = options[:to]
-      level = options[:level]
+    def reindex_all(from:, to:, level:, letter:, phoneme:, daylight:, log_level:)
       level = level.to_i if !level.blank?
-      letter = options[:letter]
-      phoneme = options[:phoneme]
-      daylight = options[:daylight]
       from_i = from.blank? ? nil : from.to_i
       to_i = to.blank? ? nil : to.to_i
       fids = nil
+      self.log = ActiveSupport::Logger.new("log/reindexing_#{Rails.env}.log")
+      self.log.level = log_level.nil? ? Rails.logger.level : log_level.to_i
+      
       if (!level.blank? && level<=2) || (level.blank? && letter.blank? && phoneme.blank?)
         if level==1
           features = Feature.roots.order(:fid)
