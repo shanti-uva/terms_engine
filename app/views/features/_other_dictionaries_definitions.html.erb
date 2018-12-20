@@ -1,7 +1,23 @@
-<% if !definitions.empty? %>
-  <header class="sr-only">Other Dictionaries</header>
-  <h3>Other Dictionaries</h3>
-  <% definitions.each_with_index do |definition, index| %>
-    <%= render partial: 'other_dictionaries_definition', locals: { definition: definition, index: index + 1 } %>
-  <% end %>
+<header class="sr-only">Other Dictionaries</header>
+<h3>Other Dictionaries</h3>
+<% index = 1
+   grouped_definitions.each do |info_source_id, definitions|
+     info_source = InfoSource.find(info_source_id) %>
+<div class="terms-dictionaries-other-node">
+<%   if !info_source.nil? %>
+       <h4><%= "#{index}. "%><cite><a href="#"><%=" #{info_source.title}" %></a></cite></h4>
+<%   end
+if definitions.size==1 %>
+<%=  render partial: 'other_dictionaries_definition', object: definitions.first %>
+<% else %>
+    <ul>
+<%  definitions.each do |definition| %>
+      <li>
+<%=   render partial: 'other_dictionaries_definition', object: definition %>
+      </li>
+<%  end %>
+    </ul>
 <% end %>
+</div>
+<%   index += 1
+   end %>

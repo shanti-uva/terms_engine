@@ -95,7 +95,11 @@ body.page-terms article.main-col{
 .terms-node-wrapper .tab-pane.terms-intro,
 .terms-node-wrapper .tab-pane.terms-intro-details,
 .terms-node-wrapper .tab-pane.terms-intro-citations{
-  padding: 3rem 4rem 7rem;
+  padding: 3rem 2.5rem 7rem;
+}
+
+.dz, .bo, .bigger input {
+    font-size: 160%; /* convert percentage with testing */
 }
 
 
@@ -239,33 +243,14 @@ body.page-terms article.main-col{
 }
 
 .terms-definition-node .tab-pane{
-  padding: 2rem 2.5rem 0.25rem;
+  padding: 1.75rem 2.5rem 0.25rem .5rem;
 }
 
-.terms-definition-node .tab-pane#terms-resources-1 h4{
+.terms-definition-node .tab-pane.terms-resources-tab-content h4{
   font-family: 'Helvetica-Neue',helvetica,arial,sans-serif;
   color: #000;
   letter-spacing: 0.08rem;
   font-size: 1.12em;
-}
-
-.terms-node-wrapper dl dt{
-font-weight: normal;
-text-transform: uppercase !important;
-padding-right: .6rem;
-font-family: 'Helvetica-Neue',helvetica,arial,sans-serif;
-float: left;
-font-size: 0.93em;
-color: #000;
-line-height: 1.18em;
-letter-spacing: 0.0575rem;
-}
-
-.terms-node-wrapper dl dd{
-  line-height: 1em;
-  font-size: 1.06em;
-  color: #222;
-  margin-bottom: 1.25rem;
 }
 
 .terms-definition-node.terms-def-child{
@@ -456,7 +441,7 @@ letter-spacing: 0.0575rem;
 
 .terms-dictionaries-other-node{
   margin-left:1.5rem;
-  margin-bottom: 2.75rem;
+  margin-bottom: 4.75rem;
   border-top: 2px solid rgba(165, 117, 70, 0.45);
 }
 
@@ -466,6 +451,9 @@ letter-spacing: 0.0575rem;
   margin-top:1rem;
 }
 
+.terms-dictionaries-other-node dl{
+  margin-top:0rem;
+}
 
 
 
@@ -513,17 +501,17 @@ letter-spacing: 0.0575rem;
   font-size: 1.06em;
   color:#222;
   position: relative;
-  top: -.2rem;
+  /*top: -.2rem;*/
 }
 
 .terms-node-wrapper dl dt{
   font-weight:bold;
   padding-right: .4rem;
-  font-family: 'Helvetica-Neue',helvetica,arial,sans-serif;
+  font-family: 'museo-sans-700',helvetica,arial,sans-serif;
   float:left;
   font-size: 1.12em;
-  color: #555;
-  line-height: 1.62em;
+  color: #333;
+  line-height: .88em;
   text-transform:capitalize;
 }
 
@@ -577,9 +565,84 @@ letter-spacing: 0.0575rem;
   top: -.3rem;
 }
 
-.terms-node-wrapper .tab-pane p{
-  margin:0 2rem 1.5rem 1.75rem;
+.terms-node-wrapper dl dt{
+font-weight: normal;
+text-transform: uppercase !important;
+padding-right: .6rem;
+font-family: 'Helvetica-Neue',helvetica,arial,sans-serif;
+float: left;
+font-size: 0.93em;
+color: #000;
+line-height: 1.18em;
+letter-spacing: 0.0575rem;
+}
+
+.terms-node-wrapper dl dd{
+  line-height: 1em;
   font-size: 1.06em;
   color: #222;
+  margin-bottom: 1.25rem;
+}
+
+.terms-node-wrapper .tab-pane p{
+  margin:0 2rem 2.5rem 1.75rem;
+  font-size: 1.06em;
+  color: #111;
   line-height: 1.56em;
+}
+
+.terms-definition-node .definition-details-control,
+.terms-dictionaries-other-node .definition-details-control{
+    float: right;
+    margin-top: -2rem;
+    font-family: 'museo-sans-500',helvetica,arial,sans-serif;
+}
+
+.terms-definition-node .definition-details-control .glyphicon,
+.terms-dictionaries-other-node .definition-details-control .glyphicon{
+    -webkit-transform: scale(1.175);
+    transform: scale(1.1);
+    filter: alpha(opacity=80);
+    opacity: .8;
+}
+
+.terms-definition-node .definition-details-control:hover .glyphicon,
+.terms-dictionaries-other-node .definition-details-control:hover .glyphicon{
+  -webkit-transform: scale(1.175);
+  transform: scale(1.175);
+  filter: alpha(opacity=100);
+  opacity: 1;
+}
+.terms-definition-node .definition-details-control:active .glyphicon,
+.terms-dictionaries-other-node .definition-details-control:active .glyphicon{
+  -webkit-transform: scale(1.1);
+  transform: scale(1.1);
+  filter: alpha(opacity=80);
+  opacity: .8;
+}
+
+.definition-details-control.expanded > span.glyphicon:before{
+  content: "\e082";
+}
+.definition-details-control.collapsed > span.glyphicon:before{
+  content: "\e081";
+}
+.definition-details-control > span.glyphicon:before{
+  margin-right:0.5rem;
+  color: #a57546;
+}
+.definition-details-control,.definition-details-control:active,.definition-details-control:focus {
+  color: #222;
+}
+.definition-details-control:hover{
+  border:none;
+}
+
+/* -- search -- */
+.fancytree-node{
+    padding-left: .8rem;
+}
+.fancytree-title{
+    line-height: 1.5em;
+    font-family: 'Helvetica Neue',helvetica,arial,sans-serif;
 }
