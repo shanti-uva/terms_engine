@@ -7,7 +7,6 @@ module TermsEngine
       require 'terms_engine/extension/illustration_model'
       require 'terms_engine/extension/citations_controller'
       require 'terms_engine/has_model_sentences'
-      require 'terms_engine/has_passages'
 
       Feature.send :include, TermsEngine::Extension::FeatureModel
       FeaturesController.send :include, TermsEngine::Extension::FeatureController
