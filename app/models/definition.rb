@@ -22,8 +22,8 @@ class Definition < ApplicationRecord
   
   include KmapsEngine::IsCitable
   include KmapsEngine::IsNotable
+  include KmapsEngine::HasPassages
   include TermsEngine::HasModelSentences
-  include TermsEngine::HasPassages
   
   belongs_to :feature
   belongs_to :language
