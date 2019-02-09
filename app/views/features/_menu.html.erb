@@ -137,6 +137,8 @@
     language: $('#menu_js_data').data('language'),
     featuresPath: $('#menu_js_data').data('featuresPath'),
     sortBy: 'position_i+ASC',
+    extraFields: ['associated_subject_ids'],
+    nodeMarkerPredicates: [{field: 'associated_subject_ids', value: 9315, operation: '!includes', mark: 'nonInteractiveNode'}], //A predicate is: {field:, value:, operation: 'eq', mark: 'nonInteractive'}
   });
 
   var session_search = Cookies.getJSON('search_<%= Feature.uid_prefix %>');
