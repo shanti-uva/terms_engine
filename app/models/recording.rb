@@ -10,13 +10,14 @@
 #
 
 class Recording < ApplicationRecord
-  belongs_to :feature
-  has_one_attached :audio_file
-
   validates :feature, presence: true
   validate :audio_validation
   validates :dialect_id, presence: true
-
+  
+  belongs_to :feature
+  has_one_attached :audio_file
+  has_many :imports, :as => 'item', :dependent => :destroy
+  
   def dialect
     SubjectsIntegration::Feature.flare_search(self.dialect_id)
   end

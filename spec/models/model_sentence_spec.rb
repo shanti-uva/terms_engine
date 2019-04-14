@@ -11,6 +11,7 @@
 #
 
 require 'rails_helper'
+require 'rake'
 
     # a model sentence should have a Model_sentence
     # language
@@ -29,6 +30,10 @@ require 'rails_helper'
     # literary_form_type_id
     # 
 RSpec.describe ModelSentence, type: :model do
+  before(:all) do
+    Rake::Task['kmaps_engine:db:seed'].invoke
+  end
+  
   context "when valid" do
     it "adds model sentences to definition" do
 

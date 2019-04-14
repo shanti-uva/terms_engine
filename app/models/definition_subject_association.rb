@@ -11,11 +11,12 @@
 #
 
 class DefinitionSubjectAssociation < ApplicationRecord
-  belongs_to :definition
-  
   validates_presence_of :definition_id
   validates_presence_of :subject_id
   validates_presence_of :branch_id
+  
+  belongs_to :definition
+  has_many :imports, :as => 'item', :dependent => :destroy
   
   def subject
     SubjectsIntegration::Feature.flare_search(self.subject_id)

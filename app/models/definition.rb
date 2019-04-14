@@ -25,14 +25,15 @@ class Definition < ApplicationRecord
   include KmapsEngine::HasPassages
   include TermsEngine::HasModelSentences
   
+  validates_presence_of :feature_id, :content, :language_id
+  
   belongs_to :feature
   belongs_to :language
   belongs_to :author, :class_name => 'AuthenticatedSystem::Person', optional: true
   has_many :definition_subject_associations, dependent: :destroy
   has_many :association_notes, as: :notable, dependent: :destroy
   has_many :legacy_citations, -> { where(info_source_type: InfoSource.model_name.name) }, as: :citable, class_name: 'Citation'
-  
-  validates_presence_of :feature_id, :content, :language_id
+  has_many :imports, :as => 'item', :dependent => :destroy
   
   def recursive_roots_with_path(path_prefix = [])
     path = path_prefix + [self.id]

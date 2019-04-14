@@ -12,4 +12,6 @@
 
 class DefinitionRelation < ApplicationRecord
   acts_as_family_tree :tree, nil, node_class: 'Definition'
+  
+  has_many :imports, :as => 'item', :dependent => :destroy
 end
