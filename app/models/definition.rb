@@ -43,6 +43,10 @@ class Definition < ApplicationRecord
     res
   end
   
+  def self.search(filter_value)
+    self.where(build_like_conditions(%W(definitions.content definitions.etymology), filter_value))
+  end
+  
   def self.uid_prefix
     'definitions'
   end

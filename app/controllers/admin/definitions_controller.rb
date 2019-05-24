@@ -1,58 +1,62 @@
 class Admin::DefinitionsController < AclController
-  before_action :set_definition, only: [:show, :edit, :update, :destroy]
+  include KmapsEngine::ResourceObjectAuthentication
+  resource_controller
 
-  # GET /definitions
-  def index
-    @definitions = Definition.all
+  belongs_to :feature
+  before_action :collection, :only=>:locate_for_relation
+
+  new_action.before do
+    @languages = Language.order('name')
+    @authors = AuthenticatedSystem::Person.order('fullname')
   end
 
-  # GET /definitions/1
-  def show
+  edit.before do
+    @languages = Language.order('name')
+    @authors = AuthenticatedSystem::Person.order('fullname')
+  end
+  
+  create.before do
+    @languages = Language.order('name')
+    @authors = AuthenticatedSystem::Person.order('fullname')
+  end
+  
+  update.before do
+    @languages = Language.order('name')
+    @authors = AuthenticatedSystem::Person.order('fullname')
   end
 
-  # GET /definitions/new
-  def new
-    @definition = Definition.new
+  def locate_for_relation
+    @locating_relation=true # flag used in template
+    # Remove the Feature that is currently looking for a relation
+    # (shouldn't relate to itself)
+    @collection = @collection.where(['id <> ?', object.id])
+    render :action => 'index'
   end
 
-  # GET /definitions/1/edit
-  def edit
-  end
+  protected
 
-  # POST /definitions
-  def create
-    @definition = Definition.new(definition_params)
-
-    if @definition.save
-      redirect_to @definition, notice: 'Definition was successfully created.'
+  #
+  # Override ResourceController collection method
+  #
+  def collection
+    feature_id = nil
+    if params[:feature_id]
+      feature_id = params[:feature_id]
+    elsif params[:id]
+      feature_id = object.feature_id
+    end
+    if params[:filter].blank? && !feature_id.blank?
+      search_results = parent_object.definitions
+    elsif !params[:filter].blank?
+      search_results = Definition.search(params[:filter])
+      search_results = search_results.where(:feature_id => feature_id) if feature_id
     else
-      render :new
+      search_results = []
     end
+    @collection = search_results.empty? ? search_results : search_results.page(params[:page])
   end
-
-  # PATCH/PUT /definitions/1
-  def update
-    if @definition.update(definition_params)
-      redirect_to @definition, notice: 'Definition was successfully updated.'
-    else
-      render :edit
-    end
+  # Only allow a trusted parameter "white list" through.
+  def definition_params
+    params.require(:definition).permit(:feature_id, :is_public, :is_primary, :ancestor_ids, :position, :content, :author_id, :language_id, :numerology, :tense)
   end
-
-  # DELETE /definitions/1
-  def destroy
-    @definition.destroy
-    redirect_to definitions_url, notice: 'Definition was successfully destroyed.'
-  end
-
-  private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_definition
-      @definition = Definition.find(params[:id])
-    end
-
-    # Only allow a trusted parameter "white list" through.
-    def definition_params
-      params.require(:definition).permit(:feature_id, :is_public, :is_primary, :ancestor_ids, :position, :content, :author_id, :numerology, :tense)
-    end
 end

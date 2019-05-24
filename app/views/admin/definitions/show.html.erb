@@ -1,49 +1,84 @@
-<p id="notice"><%= notice %></p>
+<% add_breadcrumb_item feature_link(object.feature)
+   add_breadcrumb_item link_to 'definitions', admin_feature_definitions_path
+   add_breadcrumb_item object.id %>
+ <section class="panel panel-content">
+   <div class="panel-heading">
+     <h6><%= Definition.model_name.human.titleize.s %></h6>
+   </div>
+   <div class="panel-body">
+     <div>
+       <h1><%= Definition.model_name.human.titleize.s %>:</h1>
+       <p>
+       <%= @definition.content.s %>
+       </p>
+     </div>
+     <br class="clear"/>
+     <div id="accordion" class="panel-group">
+       <section class="panel panel-default">
+         <div class="panel-heading">
+           <h6><a href="#collapseOne" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle"><span class="glyphicon glyphicon-plus"></span><%= ts 'information.general' %> <%= edit_item_link object %></a></h6>
+         </div>
+         <div id="collapseOne" class="panel-collapse collapse in">
+           <div class="panel-body">
+             <fieldset>
+               <legend><%= ts 'information.general' %> <%= edit_item_link object %></legend>
+               <div class="row">
+                 <label><%= FeatureName.model_name.human.titleize.s %>:</label> <span><%= object.feature.name %></span>
+               </div>
+               <div class="row">
+                 <label><%= Definition.human_attribute_name(:is_public).s %>:</label> <span><%= @definition.is_public %></span>
+               </div>
+               <div class="row">
+                 <label><%= Definition.human_attribute_name(:is_primary).s %>:</label> <span><%= @definition.is_primary %></span>
+               </div>
+               <div class="row">
+                 <label><%= Definition.human_attribute_name(:author)%>:</label> <span><%= def_if_blank object, :author, :fullname %></span>
+               </div>
+               <div class="row">
+                 <label><%= Definition.human_attribute_name(:numerology)%>:</label> <span><%= @definition.numerology%></span>
+               </div>
+               <div class="row">
+                 <label><%= Definition.human_attribute_name(:tense)%>:</label> <span><%= @definition.tense%></span>
+               </div>
+               <div class="row">
+                 <label><%= ts 'creat.e.d' %>:</label> <span><%= object.created_at.to_formatted_s(:us_datetime) %></span>
+               </div>
+               <div class="row">
+                 <label><%= ts 'update.d.this' %>:</label> <span><%= object.updated_at.to_formatted_s(:us_datetime) %></span>
+               </div>
+             </fieldset>
+<fieldset>
+  <legend><%= DefinitionRelation.model_name.human(:count => :many).titleize.s %> <%#= link_to 'View', admin_feature_name_feature_name_relations_path(object) %></legend>
+  <div class="left highlight">
+    <%= link_to ts('select.relation', :what => Definition.model_name.human, :whom => highlight(object.content)), locate_for_relation_admin_feature_definition_path(parent_object, object) %>.
+  </div>
+  <br class="clear"/>
+<% if object.parents.empty? && object.children.empty? %>
+<%=  empty_collection_message(ts('snippet.feature.name.not_related')) %>
+<% end
+   unless object.parents.empty? %>
+<%=  content_tag(:h3, ts('parent.this', :count => :many)) %>
+     <div class="row">
+<%=    render :partial => 'admin/definition_relations/list', :locals => { list: object.parent_relations, options: {:hide_child => true} } %>
+     </div>
+<% end
+   unless object.children.empty? %>
+<%=  content_tag(:h3, ts(:child, count: :many)) %>
+       <div class="row">
+<%=     render :partial => 'admin/definition_relations/list', :locals => { list: object.child_relations, options: { hide_related_to: true } } %>
+       </div>
+<% end %>
+</fieldset>
+           </div> <!-- END panel-body -->
+         </div> <!-- END collapseOne -->
+       </section> <!-- END panel -->
+     </div> <!-- END accordion -->
 
-<p>
-  <strong>Feature:</strong>
-  <%= @definition.feature_id %>
-</p>
-
-<p>
-  <strong>Is public:</strong>
-  <%= @definition.is_public %>
-</p>
-
-<p>
-  <strong>Is primary:</strong>
-  <%= @definition.is_primary %>
-</p>
-
-<p>
-  <strong>Ancestor ids:</strong>
-  <%= @definition.ancestor_ids %>
-</p>
-
-<p>
-  <strong>Position:</strong>
-  <%= @definition.position %>
-</p>
-
-<p>
-  <strong>Content:</strong>
-  <%= @definition.content %>
-</p>
-
-<p>
-  <strong>Author:</strong>
-  <%= @definition.author_id %>
-</p>
-
-<p>
-  <strong>Numerology:</strong>
-  <%= @definition.numerology %>
-</p>
-
-<p>
-  <strong>Tense:</strong>
-  <%= @definition.tense %>
-</p>
-
-<%= link_to 'Edit', edit_definition_path(@definition) %> |
-<%= link_to 'Back', definitions_path %>
+     <%= link_to ts('Edit'), edit_admin_feature_definition_path(parent_object,@definition), class: 'btn btn-primary form-submit' %> |
+     <% if !defined?(parent_object) %>
+       <%= link_to 'Back', admin_definitions_path %>
+     <% else %>
+       <%=  link_to ts('cancel.this'), admin_feature_path(parent_object.fid), class: 'btn btn-primary form-submit', id: 'edit-cancel' %>
+     <% end %>
+   </div> <!-- END panel-body -->
+ </section> <!-- END panel -->

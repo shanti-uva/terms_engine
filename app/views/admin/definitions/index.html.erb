@@ -1,43 +1,9 @@
-<p id="notice"><%= notice %></p>
-
-<h1>Definitions</h1>
-
-<table>
-  <thead>
-    <tr>
-      <th>Feature</th>
-      <th>Is public</th>
-      <th>Is primary</th>
-      <th>Ancestor ids</th>
-      <th>Position</th>
-      <th>Content</th>
-      <th>Author</th>
-      <th>Numerology</th>
-      <th>Tense</th>
-      <th colspan="3"></th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% @definitions.each do |definition| %>
-      <tr>
-        <td><%= definition.feature_id %></td>
-        <td><%= definition.is_public %></td>
-        <td><%= definition.is_primary %></td>
-        <td><%= definition.ancestor_ids %></td>
-        <td><%= definition.position %></td>
-        <td><%= definition.content %></td>
-        <td><%= definition.author_id %></td>
-        <td><%= definition.numerology %></td>
-        <td><%= definition.tense %></td>
-        <td><%= link_to 'Show', definition %></td>
-        <td><%= link_to 'Edit', edit_definition_path(definition) %></td>
-        <td><%= link_to 'Destroy', definition, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-
-<br>
-
-<%= link_to 'New Definition', new_definition_path %>
+<% add_breadcrumb_item feature_link(parent_object) %>
+<section class="panel panel-content">
+  <div class="panel-heading">
+    <h6><%= Definition.model_name.human.pluralize.titleize.s %></h6>
+  </div>
+  <div class="panel-body">
+<%=       render :partial => 'admin/definitions/list', :locals => { :list => parent_object.definitions.order('position DESC') } %>
+  </div> <!-- END panel-body -->
+</section> <!-- END panel -->

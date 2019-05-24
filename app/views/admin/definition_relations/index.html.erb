@@ -1,31 +1,14 @@
-<p id="notice"><%= notice %></p>
-
-<h1>Definition Relations</h1>
-
-<table>
-  <thead>
-    <tr>
-      <th>Child node</th>
-      <th>Parent node</th>
-      <th>Ancestor ids</th>
-      <th colspan="3"></th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% @definition_relations.each do |definition_relation| %>
-      <tr>
-        <td><%= definition_relation.child_node_id %></td>
-        <td><%= definition_relation.parent_node_id %></td>
-        <td><%= definition_relation.ancestor_ids %></td>
-        <td><%= link_to 'Show', definition_relation %></td>
-        <td><%= link_to 'Edit', edit_definition_relation_path(definition_relation) %></td>
-        <td><%= link_to 'Destroy', definition_relation, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-
-<br>
-
-<%= link_to 'New Definition Relation', new_definition_relation_path %>
+<% if parent?
+     add_breadcrumb_item feature_link(parent_object.feature)
+     add_breadcrumb_item link_to(Definition.model_name.human(:count => :many).s, admin_feature_definitions_path(parent_object.feature))
+     add_breadcrumb_item link_to(parent_object.id, admin_feature_definition_path(parent_object.feature,parent_object))
+   end
+   add_breadcrumb_item DefinitionRelation.model_name.human.pluralize.s %>
+<section class="panel panel-content">
+  <div class="panel-heading">
+    <h6><%= DefinitionRelation.model_name.human.pluralize.s %></h6>
+  </div>
+  <div class="panel-body">
+    <%= render :partial => 'admin/definition_relations/list', :locals => { list: parent_object.relations } %>
+  </div> <!-- END panel-body -->
+</section> <!-- END panel -->

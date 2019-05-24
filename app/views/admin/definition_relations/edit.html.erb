@@ -1,6 +1,24 @@
+<% if parent?
+     add_breadcrumb_item feature_link(object.child_node.feature)
+     add_breadcrumb_item link_to 'definitions', admin_feature_definitions_path(object.child_node.feature)
+     add_breadcrumb_item ts('new.this')
+   end %>
+<section class="panel panel-content">
+  <div class="panel-heading">
+    <h6><%= Definition.model_name.human.titleize.s %></h6>
+  </div>
+  <div class="panel-body">
 <h1>Editing Definition Relation</h1>
 
-<%= render 'form', definition_relation: @definition_relation %>
-
-<%= link_to 'Show', @definition_relation %> |
-<%= link_to 'Back', definition_relations_path %>
+<%#= form_with(url: admin_definition_definition_relations_path(object.child_node), model: @definition_relation, local: true) do |form| %>
+<%= form_with(model: [:admin, parent_object, object], local: true) do |form| %>
+  <%=   render partial: 'form_fields', locals: {form: form} %>
+  <%= globalized_submit_tag 'update.this', class: 'btn btn-primary form-submit' %> |
+  <% if !defined?(parent_object) %>
+       <%= link_to 'Back', admin_path  %>
+     <% else %>
+       <%=  link_to ts('cancel.this'), admin_definition_definition_relations_path(parent_object), class: 'btn btn-primary form-submit', id: 'edit-cancel' %>
+     <% end %>
+<%  end %>
+  </div> <!-- END panel-body -->
+ </section> <!-- END panel -->

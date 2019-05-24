@@ -1,6 +1,16 @@
-<h1>Editing Definition</h1>
-
-<%= render 'form', definition: @definition %>
-
-<%= link_to 'Show', @definition %> |
-<%= link_to 'Back', definitions_path %>
+<% add_breadcrumb_item feature_link(object.feature)
+   add_breadcrumb_item link_to 'definitions', admin_feature_definitions_path(object.feature)
+   add_breadcrumb_item object.id %>
+<section class="panel panel-content">
+  <div class="panel-heading">
+    <h6>Editing <%= Definition.model_name.human.titleize.s %></h6>
+  </div>
+  <div class="panel-body">
+    <%= form_with(model: [:admin, object.feature, object], local: true) do |form| %>
+      <%=  render partial: 'form_fields', locals: {form: form} %>
+      <div class="actions">
+        <%=  link_to ts('cancel.this'), admin_feature_definition_path(object.feature,object), class: 'btn btn-primary form-submit', id: 'edit-cancel' %> | <%= globalized_submit_tag 'update.this', class: 'btn btn-primary form-submit' %>
+      </div>
+    <% end %>
+  </div> <!-- END panel-body -->
+</section> <!-- END panel -->

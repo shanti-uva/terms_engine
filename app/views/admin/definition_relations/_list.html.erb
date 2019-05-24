@@ -1,0 +1,44 @@
+<% if list.empty? %>
+<%=  empty_collection_message %>
+<% else
+     options ||= {} %>
+     <table class="listGrid">
+<%=    pagination_row(colspan: 7) unless @collection.nil? %>
+       <tr>
+         <th class="listActionsCol"> </th>
+<%=     "<th>#{ts(:child, count: 1)}</th>".html_safe unless options[:hide_child] %>
+<%=     "<th>#{ts 'relat.ed.to'}</th>".html_safe unless options[:hide_related_to] %>
+         <th><%= Definition.human_attribute_name(:content).s %></th>
+         <th><%= Definition.human_attribute_name(:author).s %></th>
+         <th><%= Definition.human_attribute_name(:numerology).s %></th>
+         <th><%= Definition.human_attribute_name(:tense).s %></th>
+         <th><%= Note.model_name.human(:count => :many).titleize.s %></th>
+         <th><%= ts 'add.record', :what => Note.model_name.human.titleize %></th>
+       </tr>
+<%     list.each do |item| %>
+       <tr>
+         <td class="listActionsCol">
+<%=        list_actions_for_item(item, :delete_path => admin_definition_definition_relation_path(item.child_node, item),
+           :edit_path   => edit_admin_definition_definition_relation_path(item.child_node, item),
+           :view_path   => admin_definition_definition_relation_path(item.child_node, item)) %>
+         </td>
+<%=     "<td>#{item.child_node.content rescue 'child_node Ka-Blam!'}</td>".html_safe unless options[:hide_child] %>
+<%=     "<td>#{item.parent_node.content rescue 'parent_node Ka-Blam!'}</td>".html_safe unless options[:hide_related_to] %>
+         <td>
+           <%= item.child_node.content.s %>
+         </td>
+         <td>
+           <%= def_if_blank item, :author, :fullname %>
+         </td>
+         <td>
+<%=        def_if_blank(item, :numerology) { '' } %>
+         </td>
+         <td>
+<%=        def_if_blank(item, :tense) { '' } %>
+         </td>
+         <td><%= note_link_list_for item %></td>
+         <td><%= new_note_link_for item %></td>
+       </tr>
+<%     end %>
+     </table>
+<% end %>
