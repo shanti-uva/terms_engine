@@ -34,6 +34,7 @@ class Definition < ApplicationRecord
   has_many :association_notes, as: :notable, dependent: :destroy
   has_many :legacy_citations, -> { where(info_source_type: InfoSource.model_name.name) }, as: :citable, class_name: 'Citation'
   has_many :imports, :as => 'item', :dependent => :destroy
+  has_many :etymologies, as: :context, dependent: :destroy
   
   def recursive_roots_with_path(path_prefix = [])
     path = path_prefix + [self.id]

@@ -11,6 +11,8 @@
 #
 
 class Etymology < ApplicationRecord
+  include KmapsEngine::IsNotable
+  
   belongs_to :context, polymorphic: true
 
   has_many :etymology_subject_associations, dependent: :destroy
