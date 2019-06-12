@@ -17,6 +17,4 @@ class Etymology < ApplicationRecord
 
   has_many :etymology_subject_associations, dependent: :destroy
   has_one :etymology_type_association
-
-  validates_presence_of :content
 end
