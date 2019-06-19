@@ -1,0 +1,9 @@
+<% add_breadcrumb_item feature_link(parent_object) %>
+<section class="panel panel-content">
+  <div class="panel-heading">
+    <h6><%= Recording.model_name.human.pluralize.titleize.s %></h6>
+  </div>
+  <div class="panel-body">
+<%=       render :partial => 'admin/recordings/list', :locals => { :list => parent_object.recordings } %>
+  </div> <!-- END panel-body -->
+</section> <!-- END panel -->

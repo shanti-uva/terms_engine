@@ -93,3 +93,15 @@ audio{
 .terms-audio-pronunciation-container .btn-group.bootstrap-select{
   margin-left: 1.5rem;
 }
+
+/* Admin - Editorial interface */
+.recordings-form-fields input#dialect_name {
+    padding-left: 0;
+}
+.recordings-form-fields .row, #audio_file, .twitter-typeahead {
+ margin: 0 0 0.2rem 1rem;
+}
+.recordings-form-fields .row {
+  padding-top: 10px;
+}
+/* END - Admin - Editorial interface */

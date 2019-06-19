@@ -1,0 +1,55 @@
+<div class="recordings-form-fields">
+<% if object.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(object.errors.count, "error") %> prohibited this recording from being saved:</h2>
+
+      <ul>
+        <% object.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+<% end %>
+<fieldset>
+  <legend><%= ts(:for, what: t('information.general'), whom: Recording.model_name.human.titleize) %></legend>
+  <div class="row">
+    <%= form.label :dialect_name, ts(:dialect, count: 1).titleize %>
+    <br/>
+    <br/>
+    <%= form.hidden_field :dialect_id, id: :dialect_id %>
+    <p>Search by name</p>
+    <%= text_field_tag :dialect_name, :post, { placeholder: 'Search by dialect name', value: object.dialect.blank? ? '' : object.dialect['header'] } %>
+    <a href="#" id="js-expand-dialect-tree">Or click here to view dialect hierarchy</a>
+    <div id="relation_tree_container"></div>
+  </div>
+  <div class="row">
+    <%= form.label(:audio_file).s %>
+    <% if object.audio_file.attached? %>
+      <button id="recording-play-button" class="recording-play-button fa fa-play"></button>
+      <audio id="current_recording" class="recording-play-button">
+        <source src="<%= url_for(object.audio_file)%>" type="audio/mp3">Your browser does not support the audio element.
+      </audio>
+      <br/>
+      <br/>
+    <% end %>
+    <%= form.file_field :audio_file, id: :audio_file %>
+  </div>
+</fieldset>
+<%= content_tag :div, "", id: 'subject_association_js_data', data: {
+ term_index: Feature.config.url,
+ domain: 'subjects',
+ additional_filters: ['ancestor_id_gen_path:*/638/*']
+} %>
+</div>  <!-- END - recordings-form-fields -->
+<%= content_tag :div, "", id: 'recording_dialect_js_data', data: {
+ term_index: Feature.config.url,
+ asset_index: Flare.config.asset_url,
+ feature_id: "subjects-638",
+ domain: "subjects",
+ perspective: "gen",
+ tree: "subjects",
+ features_path: "#{new_admin_feature_path}?parent_id=%%ID%%",
+ mandala_path: "https://mandala.shanti.virginia.edu/%%APP%%/%%ID%%/%%REL%%/nojs",
+} %>
+<%= javascript_include_tag 'kmaps_engine/kmaps_relations_tree' %>
+<%= javascript_include_tag 'terms_engine/recordings_admin' %>

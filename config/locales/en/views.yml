@@ -3,6 +3,9 @@ en:
     app:
         short: 'Terms'
         this: 'Knowledge Maps of Terms'
+    dialect:
+      one: 'dialect'
+      other: 'dialects'
     entry: 'Terms Entry'
     feature:
         detail:
