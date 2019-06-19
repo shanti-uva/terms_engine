@@ -1,51 +1,17 @@
 class Admin::DefinitionRelationsController < AclController
+  include KmapsEngine::ResourceObjectAuthentication
+  resource_controller
+
+  belongs_to :definition
   before_action :set_definition_relation, only: [:show, :edit, :update, :destroy]
 
-  # GET /definition_relations
-  def index
-    @definition_relations = DefinitionRelation.all
+
+  new_action.before do
+    object.parent_node_id = params[:target_id]
+    object.child_node_id = params[:definition_id]
   end
 
-  # GET /definition_relations/1
-  def show
-  end
-
-  # GET /definition_relations/new
-  def new
-    @definition_relation = DefinitionRelation.new
-  end
-
-  # GET /definition_relations/1/edit
-  def edit
-  end
-
-  # POST /definition_relations
-  def create
-    @definition_relation = DefinitionRelation.new(definition_relation_params)
-
-    if @definition_relation.save
-      redirect_to @definition_relation, notice: 'Definition relation was successfully created.'
-    else
-      render :new
-    end
-  end
-
-  # PATCH/PUT /definition_relations/1
-  def update
-    if @definition_relation.update(definition_relation_params)
-      redirect_to @definition_relation, notice: 'Definition relation was successfully updated.'
-    else
-      render :edit
-    end
-  end
-
-  # DELETE /definition_relations/1
-  def destroy
-    @definition_relation.destroy
-    redirect_to definition_relations_url, notice: 'Definition relation was successfully destroyed.'
-  end
-
-  private
+  protected
     # Use callbacks to share common setup or constraints between actions.
     def set_definition_relation
       @definition_relation = DefinitionRelation.find(params[:id])
@@ -55,4 +21,29 @@ class Admin::DefinitionRelationsController < AclController
     def definition_relation_params
       params.require(:definition_relation).permit(:child_node_id, :parent_node_id, :ancestor_ids)
     end
+
+  private
+  #
+  # Needed to view (example)
+  # /admin/definitions/1057/definition_relations/22
+  # This is called by ResourceController!
+  #
+  def parent_association
+    ## Gotta find (as in another SQL query) it seperately, will get a recursive stack error elsewise
+
+    # If we're viewing a DefinitionRelation:
+    return parent_object.parent_relations if params[:id].nil?
+
+    # Gotta find it seperately (new query), will get a recursive stack error elsewise, rats!
+    o = DefinitionRelation.find(params[:id])
+    parent_object.id == o.parent_node.id ? parent_object.child_relations : parent_object.parent_relations
+  end
+
+  def collection
+    definition_id = params[:definition_id]
+    search_results = DefinitionRelation.search(params[:filter])
+    search_results = search_results.where(['child_node_id = ?', definition_id]) if definition_id
+    @collection = search_results.page(params[:page])
+  end
+
 end

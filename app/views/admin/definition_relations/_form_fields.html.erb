@@ -1,0 +1,20 @@
+<% if object.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(object.errors.count, "error") %> prohibited this definition relation from being saved:</h2>
+      <ul>
+        <% object.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+<% end %>
+
+<div class="field">
+  <%= form.label :child_node_id %>
+  <%= form.number_field :child_node_id %>
+</div>
+
+<div class="field">
+  <%= form.label :parent_node_id %>
+  <%= form.number_field :parent_node_id %>
+</div>

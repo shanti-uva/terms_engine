@@ -1,19 +1,28 @@
-<p id="notice"><%= notice %></p>
+<% add_breadcrumb_item feature_link(object.parent_node.feature)
+   add_breadcrumb_item link_to 'definitions', admin_feature_definitions_path(object.parent_node.feature)
+%>
+<section class="panel panel-content">
+  <div class="panel-heading">
+     <h6><%= DefinitionRelation.model_name.human.titleize.s %></h6>
+  </div>
+  <div class="panel-body">
+    <p id="notice"><%= notice %></p>
 
-<p>
-  <strong>Child node:</strong>
-  <%= @definition_relation.child_node_id %>
-</p>
+    <p>
+    <strong>Child node:</strong>
+    <%= @definition_relation.child_node_id %>
+    </p>
 
-<p>
-  <strong>Parent node:</strong>
-  <%= @definition_relation.parent_node_id %>
-</p>
+    <p>
+    <strong>Parent node:</strong>
+    <%= @definition_relation.parent_node_id %>
+    </p>
 
-<p>
-  <strong>Ancestor ids:</strong>
-  <%= @definition_relation.ancestor_ids %>
-</p>
-
-<%= link_to 'Edit', edit_definition_relation_path(@definition_relation) %> |
-<%= link_to 'Back', definition_relations_path %>
+     <%= link_to ts('Edit'), edit_admin_definition_definition_relation_path(object.child_node,@definition_relation), class: 'btn btn-primary form-submit' %> |
+     <% if !defined?(parent_object) %>
+       <%= link_to 'Back', admin_path  %>
+     <% else %>
+       <%=  link_to ts('cancel.this'), admin_definition_definition_relations_path(parent_object), class: 'btn btn-primary form-submit', id: 'edit-cancel' %>
+     <% end %>
+  </div> <!-- END panel-body -->
+ </section> <!-- END panel -->

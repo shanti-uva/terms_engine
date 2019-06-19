@@ -1,0 +1,50 @@
+<%= tinymce_assets %>
+<%= tinymce %>
+<% if object.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(object.errors.count, "error") %> prohibited this definition from being saved:</h2>
+
+      <ul>
+        <% object.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+<% end %>
+<fieldset>
+  <legend><%= ts(:for, what: t('information.general'), whom: Definition.model_name.human.titleize) %></legend>
+  <div class="row">
+    <%= form.label(:is_public).s %>
+    <%= form.check_box :is_public %>
+  </div>
+
+  <div class="row">
+    <%= form.label(:is_primary).s %>
+    <%= form.check_box :is_primary %>
+  </div>
+
+  <div class="row">
+    <%= form.label(:content).s %>
+  </div>
+  <div class="row">
+    <%= form.text_area :content, rows: 4, class: 'tinymce' %>
+  </div>
+
+  <div class="row">
+    <%= form.label(:numerology).s %>
+    <%= form.number_field :numerology %>
+  </div>
+
+  <div class="row">
+    <%= form.label(:tense).s %>
+    <%= form.text_field :tense %>
+  </div>
+<p><b><%= form.label :language_id, Language.model_name.human.titleize.s %></b><br/>
+  <div class="row">
+  <%= form.collection_select :language_id, @languages, :id, :to_s, {include_blank: false}, class: 'form-control form-select ss-select selectpicker' %>
+  </div>
+<p><b><%= form.label :author_id, ts(:author, count: 1).titleize %></b><br/>
+  <div class="row">
+  <%= form.collection_select :author_id, @authors, :id, :fullname, {include_blank: false} , class: 'form-control form-select ss-select selectpicker' %>
+  </div>
+</fieldset>

@@ -3,6 +3,9 @@ en:
     activerecord:
         # Model names will be kept in lower case. Invoke .capitalize or .titleize if you need them in uppercase.
         models:
+            definition:
+                one: 'definition'
+                other: 'definitions'
             definition_subject_association:
                 one: 'resource'
                 other: 'resources'
