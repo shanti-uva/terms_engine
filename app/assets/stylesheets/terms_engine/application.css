@@ -11,6 +11,7 @@
  *= require_self
  *= require mandala_terms/shanti-main-terms
  *= require terms_engine/recordings
+ *= require terms_engine/subject_term_associations
  */
 
 body.page-terms .content-section {

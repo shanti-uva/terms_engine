@@ -3,6 +3,9 @@ en:
     app:
         short: 'Terms'
         this: 'Knowledge Maps of Terms'
+    branch:
+      one: 'Branch'
+      other: 'Branches'
     dialect:
       one: 'dialect'
       other: 'dialects'
