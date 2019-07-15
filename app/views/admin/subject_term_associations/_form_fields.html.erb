@@ -1,0 +1,47 @@
+<div class="subject-term-associations-form-fields">
+<% if object.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(object.errors.count, "error") %> prohibited this subject term association from being saved:</h2>
+
+      <ul>
+        <% object.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+<% end %>
+<fieldset>
+  <legend><%= ts(:for, what: t('information.general'), whom: SubjectTermAssociation.model_name.human.titleize) %></legend>
+  <div class="row">
+    <%= form.label :branch_name, ts(:branch, count: 1).titleize %>
+    <br/>
+    <br/>
+    <%= form.hidden_field :branch_id, id: :branch_id %>
+    <p>Search by name</p>
+    <%= text_field_tag :branch_name, :post, { placeholder: 'Search by branch name', value: object.branch.blank? ? '' : object.branch['header'] } %>
+    <a href="#" id="js-expand-branch-tree">Or click here to view branch hierarchy</a>
+     <div id="branch_tree_container"></div>
+  </div>
+  <div class="row" id="subject_container">
+    <%= form.label :subject_name, SubjectsIntegration::Feature.human_name(count: 1).titleize %>
+    <br/>
+    <br/>
+    <%= form.hidden_field :subject_id, id: :subject_id %>
+    <p>Search by name</p>
+    <%= text_field_tag :subject_name, :post, { placeholder: 'Search by subject name', value: object.subject.blank? ? '' : object.subject['header'] } %>
+    <a href="#" id="js-expand-subject-tree">Or click here to view subject hierarchy</a>
+     <div id="subject_tree_container"></div>
+  </div>
+</fieldset>
+</div> <!-- END - subject-term-associations-form-fields -->
+<%= content_tag :div, "", id: 'subject_term_association_js_data', data: {
+ term_index: Feature.config.url,
+ asset_index: Flare.config.asset_url,
+ feature_id: "",
+ domain: "subjects",
+ perspective: "gen",
+ tree: "subjects",
+ features_path: "#{new_admin_feature_path}?parent_id=%%ID%%",
+ mandala_path: "https://mandala.shanti.virginia.edu/%%APP%%/%%ID%%/%%REL%%/nojs",
+} %>
+<%= javascript_include_tag 'terms_engine/subject_term_associations_admin' %>

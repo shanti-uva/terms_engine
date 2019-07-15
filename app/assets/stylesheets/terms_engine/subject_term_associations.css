@@ -1,0 +1,9 @@
+.subject-term-associations-form-fields input#branch_name, input#subject_name {
+    padding-left: 0;
+}
+.subject-term-associations-form-fields .row, .twitter-typeahead {
+ margin: 0 0 0.2rem 1rem;
+}
+.subject-term-associations-form-fields .row {
+  padding-top: 10px;
+}

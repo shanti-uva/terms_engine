@@ -1,0 +1,22 @@
+<% if list.empty? %>
+<%=  empty_collection_message %>
+<% else %>
+   <table class="listGrid">
+     <tr>
+       <th class="listActionsCol"></th>
+       <th><%= ts('branch', count: 1) %></th>
+       <th><%= ts('subject', count: 1) %></th>
+     </tr>
+<%   list.each do |item| %>
+     <tr>
+       <td class="centerText">
+<%=      list_actions_for_item(item, :delete_path => admin_feature_subject_term_association_path(item.feature, item),
+         :edit_path => edit_admin_feature_subject_term_association_path(item.feature, item),
+         :view_path => admin_feature_subject_term_association_path(item.feature, item)) %>
+       </td>
+       <td><%= item.branch['header'].s %></td>
+       <td><%= item.subject['header'].s %></td>
+     </tr>
+<%   end %>
+   </table>
+<% end %>

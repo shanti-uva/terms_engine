@@ -14,6 +14,7 @@ Rails.application.routes.draw do
       resources :definitions do #, only: [:index, :show]
         get :locate_for_relation, on: :member
       end
+      resources :subject_term_associations
     end
   end
   resources :passages, only: [:show] do

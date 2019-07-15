@@ -1,0 +1,27 @@
+<% add_breadcrumb_item feature_link(object.feature)
+   add_breadcrumb_item link_to 'subject term associations', admin_feature_subject_term_associations_path
+   add_breadcrumb_item object.id %>
+ <section class="panel panel-content">
+   <div class="panel-heading">
+     <h6><%= SubjectTermAssociation.model_name.human.titleize.s %></h6>
+   </div>
+     <div class="panel-body">
+    <p id="notice"><%= notice %></p>
+
+    <p>
+    <strong><%= ts('branch', count: 1)%>:</strong>
+    <%= object.branch['header'] %>
+    </p>
+    <p>
+    <strong><%= ts('subject', count: 1)%>:</strong>
+    <%= object.subject['header'] %>
+    </p>
+
+     <%= link_to ts('Edit'), edit_admin_feature_subject_term_association_path(object.feature, object), class: 'btn btn-primary form-submit' %> |
+     <% if !defined?(parent_object) %>
+       <%= link_to 'Back', admin_path  %>
+     <% else %>
+       <%=  link_to ts('cancel.this'), admin_feature_path(object.feature), class: 'btn btn-primary form-submit', id: 'edit-cancel' %>
+     <% end %>
+  </div> <!-- END panel-body -->
+ </section> <!-- END panel -->
