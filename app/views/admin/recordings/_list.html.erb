@@ -1,0 +1,34 @@
+<% if list.empty? %>
+<%=  empty_collection_message %>
+<% else %>
+   <table class="listGrid">
+     <tr>
+       <th class="listActionsCol"></th>
+       <th><%= ts('dialect', count: :many) %></th>
+       <th><%= Recording.model_name.human.titleize.s %></th>
+     </tr>
+<%   list.each do |item| %>
+     <tr>
+       <td class="centerText">
+<%=      list_actions_for_item(item, :delete_path => admin_feature_recording_path(item.feature, item),
+         :edit_path => edit_admin_feature_recording_path(item.feature, item),
+         :view_path => admin_feature_recording_path(item.feature, item)) %>
+       </td>
+       <td><%= item.dialect['header'] %></td>
+       <td>
+         <button id="recording-play-button" class="recording-play-button fa fa-play">
+         <audio>
+           <source class="recording-mp3_src" src="<%= url_for(item.audio_file)%>" type="audio/mp3">Your browser does not support the audio element.
+         </audio>
+         </button>
+       </td>
+     </tr>
+   <%   end %>
+   </table>
+ <% end %>
+<%= javascript_on_load do %>
+  $(".recording-play-button").click(function(e){
+   e.preventDefault();
+   $(e.target).children()[0].play()
+  });
+<% end %>

@@ -30,6 +30,9 @@ en:
             passage:
                 one: 'passage'
                 other: 'passages'
+            recording:
+                one: 'recording'
+                other: 'recordings'
             view:
                 one: 'term language'
                 other: 'term languages'

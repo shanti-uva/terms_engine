@@ -153,16 +153,28 @@
     </div> <!-- END panel-body -->
   </div> <!-- END collapseNine -->
 </section>
-    <section class="panel panel-default">
-      <div class="panel-heading">
-        <h6><a href="#collapseTen" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= Definition.model_name.human(:count => :many).titleize.s %></a></h6>
-      </div>
-      <div id="collapseTen" class="panel-collapse collapse">
-        <div class="panel-body">
-<%=       highlighted_new_item_link [object, :definition] %>
-          <br class="clear"/>
-<%=       render :partial => 'admin/definitions/list', :locals => { :list => object.definitions.order('position DESC') } %>
-<%=       association_note_list_fieldset(Description.name) %>
+<section class="panel panel-default">
+  <div class="panel-heading">
+    <h6><a href="#collapseTen" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= Definition.model_name.human(:count => :many).titleize.s %></a></h6>
+  </div>
+  <div id="collapseTen" class="panel-collapse collapse">
+    <div class="panel-body">
+      <%=       highlighted_new_item_link [object, :definition] %>
+      <br class="clear"/>
+      <%=       render :partial => 'admin/definitions/list', :locals => { :list => object.definitions.order('position DESC') } %>
+      <%=       association_note_list_fieldset(Description.name) %>
+    </div> <!-- END panel-body -->
+  </div> <!-- END collapseTen -->
+</section>
+<section class="panel panel-default">
+  <div class="panel-heading">
+    <h6><a href="#collapseEleven" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= Recording.model_name.human(count: :many).titleize.s %></a></h6>
+  </div>
+  <div id="collapseEleven" class="panel-collapse collapse">
+    <div class="panel-body">
+      <%=       highlighted_new_item_link [object, :recording] %>
+      <br class="clear"/>
+      <%=       render :partial => 'admin/recordings/list', :locals => { :list => object.recordings } %>
     </div> <!-- END panel-body -->
   </div> <!-- END collapseTen -->
 </section>

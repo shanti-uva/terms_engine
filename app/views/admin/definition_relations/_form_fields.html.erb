@@ -12,9 +12,21 @@
 <div class="field">
   <%= form.label :child_node_id %>
   <%= form.number_field :child_node_id %>
+  <div>
+    <h6><%= Definition.model_name.human.titleize.s %>:</h6>
+    <p>
+  <%= object.child_node.content %>
+    </p>
+  </div>
 </div>
 
 <div class="field">
   <%= form.label :parent_node_id %>
   <%= form.number_field :parent_node_id %>
+  <div>
+    <h6><%= Definition.model_name.human.titleize.s %>:</h6>
+    <p>
+  <%= object.parent_node.content %>
+    </p>
+  </div>
 </div>

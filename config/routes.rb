@@ -10,6 +10,7 @@ Rails.application.routes.draw do
     end
     resources :definition_relations
     resources :features do
+      resources :recordings
       resources :definitions do #, only: [:index, :show]
         get :locate_for_relation, on: :member
       end
