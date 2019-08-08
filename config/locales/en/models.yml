@@ -7,8 +7,8 @@ en:
                 one: 'definition'
                 other: 'definitions'
             definition_subject_association:
-                one: 'resource'
-                other: 'resources'
+                one: 'definition subject association'
+                other: 'definition subject associations'
             feature:
                 one: 'term'
                 other: 'terms'
@@ -33,11 +33,18 @@ en:
             recording:
                 one: 'recording'
                 other: 'recordings'
+            subject_term_association:
+                one: 'subject term association'
+                other: 'subject term associations'
             view:
                 one: 'term language'
                 other: 'term languages'
         # Attribute names will be titleized.
         attributes:
+            definition_subject_association:
+                branch:
+                    one: 'Branch'
+                    other: 'Branches'
             feature:
                 descendant:
                     one: 'Contained Term'
@@ -48,3 +55,11 @@ en:
                     other: 'Term Types'
                 old_pid: 'OLD TID'
                 pid: 'Term ID'
+            recording:
+                dialect:
+                    one: 'Dialect'
+                    other: 'Dialects'
+            subject_term_association:
+                branch:
+                    one: 'Branch'
+                    other: 'Branches'

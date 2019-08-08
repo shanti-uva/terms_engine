@@ -187,7 +187,7 @@
       <%=       highlighted_new_item_link [object, :subject_term_association] %>
       <br>
       <h6>Create Specific Association:</h6>
-      <%= new_subject_term_associations_links %>
+      <%= new_subject_term_associations_links object %>
       <br class="clear"/>
       <%=       render :partial => 'admin/subject_term_associations/list', :locals => { :list => object.subject_term_associations } %>
     </div> <!-- END panel-body -->

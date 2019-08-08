@@ -12,6 +12,7 @@
  *= require mandala_terms/shanti-main-terms
  *= require terms_engine/recordings
  *= require terms_engine/subject_term_associations
+ *= require terms_engine/definition_subject_associations
  */
 
 body.page-terms .content-section {

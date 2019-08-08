@@ -4,8 +4,8 @@ zh:
         # Model names will be kept in lower case. Invoke .capitalize or .titleize if you need them in uppercase.
         models:
             definition_subject_association:
-                one: 'resource'
-                other: 'resources'
+                one: 'definition subject association'
+                other: 'definition subject associations'
             feature:
                 one: 'term'
                 other: 'terms'
@@ -24,11 +24,21 @@ zh:
             geo_code_type:
                 one: 'term code type'
                 other: 'term code types'
+            recording:
+                one: 'recording'
+                other: 'recordings'
+            subject_term_association:
+                one: 'subject term association'
+                other: 'subject term associations'
             view:
                 one: 'term language'
                 other: 'term languages'
         # Attribute names will be titleized.
         attributes:
+            definition_subject_association:
+                branch:
+                    one: 'Branch'
+                    other: 'Branches'
             feature:
                 descendant:
                     one: 'Contained Term'
@@ -39,3 +49,11 @@ zh:
                     other: 'Term Types'
                 old_pid: 'OLD TID'
                 pid: 'Term ID'
+            recording:
+                dialect:
+                    one: 'Dialect'
+                    other: 'Dialects'
+            subject_term_association:
+                branch:
+                    one: 'Branch'
+                    other: 'Branches'

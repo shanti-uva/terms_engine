@@ -4,15 +4,15 @@
    <table class="listGrid">
      <tr>
        <th class="listActionsCol"></th>
-       <th><%= SubjectTermAssociation.human_attribute_name('branch').s %></th>
+       <th><%= DefinitionSubjectAssociation.human_attribute_name('branch').s %></th>
        <th><%= SubjectsIntegration::Feature.human_name.titleize.s %></th>
      </tr>
 <%   list.each do |item| %>
      <tr>
        <td class="centerText">
-<%=      list_actions_for_item(item, :delete_path => admin_feature_subject_term_association_path(item.feature, item),
-         :edit_path => edit_admin_feature_subject_term_association_path(item.feature, item),
-         :view_path => admin_feature_subject_term_association_path(item.feature, item)) %>
+<%=      list_actions_for_item(item, :delete_path => admin_definition_definition_subject_association_path(item.definition, item),
+         :edit_path => edit_admin_definition_definition_subject_association_path(item.definition, item),
+         :view_path => admin_definition_definition_subject_association_path(item.definition, item)) %>
        </td>
        <td><%= item.branch['header'].s %></td>
        <td><%= item.subject['header'].s %></td>

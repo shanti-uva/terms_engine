@@ -1,3 +1,4 @@
+<% subject_associations = other_dictionaries_definition.definition_subject_associations %>
 <p>
 <%= other_dictionaries_definition.content.s.html_safe %>
 </p>
@@ -8,4 +9,10 @@
   <dl>
     <dt><%= Language.model_name.human %>:</dt> <dd><%= other_dictionaries_definition.language.name %></dd>
   </dl>
+  <% if !subject_associations.empty? %>
+    <h4><%= DefinitionSubjectAssociation.model_name.human(count: subject_associations.count).titleize.s %></h4>
+    <dl>
+      <%=  render partial: 'subjects', locals: { associations: subject_associations } %>
+    </dl>
+  <% end %>
 </div>
