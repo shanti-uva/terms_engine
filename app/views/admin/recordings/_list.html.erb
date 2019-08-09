@@ -4,7 +4,7 @@
    <table class="listGrid">
      <tr>
        <th class="listActionsCol"></th>
-       <th><%= ts('dialect', count: :many) %></th>
+       <th><%= Recording.human_attribute_name('dialect')%></th>
        <th><%= Recording.model_name.human.titleize.s %></th>
      </tr>
 <%   list.each do |item| %>

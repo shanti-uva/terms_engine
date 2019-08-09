@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   namespace :admin do
     resources :definitions do
       resources :definition_relations
+      resources :definition_subject_associations
     end
     resources :definition_relations
     resources :features do

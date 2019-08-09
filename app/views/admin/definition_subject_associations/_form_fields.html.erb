@@ -1,7 +1,7 @@
-<div class="subject-term-associations-form-fields">
+<div class="definition-subject-associations-form-fields">
 <% if object.errors.any? %>
     <div id="error_explanation">
-      <h2><%= pluralize(object.errors.count, "error") %> prohibited this subject term association from being saved:</h2>
+      <h2><%= pluralize(object.errors.count, "error") %> prohibited this definition subject association from being saved:</h2>
 
       <ul>
         <% object.errors.full_messages.each do |message| %>
@@ -11,9 +11,9 @@
     </div>
 <% end %>
 <fieldset>
-  <legend><%= ts(:for, what: t('information.general'), whom: SubjectTermAssociation.model_name.human.titleize) %></legend>
+  <legend><%= ts(:for, what: t('information.general'), whom: DefinitionSubjectAssociation.model_name.human.titleize) %></legend>
   <div class="row">
-    <%= form.label :branch_name, SubjectTermAssociation.human_attribute_name('branch').s %>
+    <%= form.label :branch_name, DefinitionSubjectAssociation.human_attribute_name('branch').s %>
     <br/>
     <br/>
     <%= form.hidden_field :branch_id, id: :branch_id %>
@@ -34,7 +34,7 @@
   </div>
 </fieldset>
 </div> <!-- END - subject-term-associations-form-fields -->
-<%= content_tag :div, '', id: 'subject_term_association_js_data', data: {
+<%= content_tag :div, '', id: 'definition_subject_association_js_data', data: {
  term_index: Feature.config.url,
  asset_index: Flare.config.asset_url,
  feature_id: '',
@@ -44,4 +44,4 @@
  features_path: new_admin_feature_path(parent_id: '%%ID%%'),
  mandala_path: 'https://mandala.shanti.virginia.edu/%%APP%%/%%ID%%/%%REL%%/nojs',
 } %>
-<%= javascript_include_tag 'terms_engine/subject_term_associations_admin' %>
+<%= javascript_include_tag 'terms_engine/definition_subject_associations_admin' %>

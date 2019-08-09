@@ -72,11 +72,26 @@
            </div> <!-- END panel-body -->
          </div> <!-- END collapseOne -->
        </section> <!-- END panel -->
+       <section class="panel panel-default">
+         <div class="panel-heading">
+           <h6><a href="#collapseTwo" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= DefinitionSubjectAssociation.model_name.human(count: :many).titleize.s %></a></h6>
+         </div>
+         <div id="collapseTwo" class="panel-collapse collapse">
+           <div class="panel-body">
+             <%=       highlighted_new_item_link [object, :definition_subject_association] %>
+             <br>
+             <h6>Create Specific Association:</h6>
+             <%= new_definition_subject_associations_links object %>
+             <br class="clear"/>
+             <%=       render :partial => 'admin/definition_subject_associations/list', :locals => { :list => object.definition_subject_associations } %>
+           </div> <!-- END panel-body -->
+         </div> <!-- END collapseTen -->
+       </section>
      </div> <!-- END accordion -->
 
-     <%= link_to ts('Edit'), edit_admin_feature_definition_path(parent_object,@definition), class: 'btn btn-primary form-submit' %> |
+     <%= link_to ts('edit.this'), edit_admin_feature_definition_path(parent_object,@definition), class: 'btn btn-primary form-submit' %> |
      <% if !defined?(parent_object) %>
-       <%= link_to 'Back', admin_definitions_path %>
+       <%= link_to ts('back.this'), admin_definitions_path %>
      <% else %>
        <%=  link_to ts('cancel.this'), admin_feature_path(parent_object.fid), class: 'btn btn-primary form-submit', id: 'edit-cancel' %>
      <% end %>

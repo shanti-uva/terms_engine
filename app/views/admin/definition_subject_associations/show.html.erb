@@ -1,0 +1,27 @@
+<% add_breadcrumb_item feature_link(object.definition.feature)
+   add_breadcrumb_item link_to 'definition', admin_feature_definition_path(object.definition.feature,object.definition)
+   add_breadcrumb_item object.id %>
+ <section class="panel panel-content">
+   <div class="panel-heading">
+     <h6><%= DefinitionSubjectAssociation.model_name.human.titleize.s %></h6>
+   </div>
+     <div class="panel-body">
+    <p id="notice"><%= notice %></p>
+
+    <p>
+    <strong><%= DefinitionSubjectAssociation.human_attribute_name('branch').s %>:</strong>
+    <%= object.branch['header'] %>
+    </p>
+    <p>
+    <strong><%= SubjectsIntegration::Feature.human_name.titleize.s %>:</strong>
+    <%= object.subject['header'] %>
+    </p>
+
+     <%= link_to ts('edit.this'), edit_admin_definition_definition_subject_association_path(object.definition, object), class: 'btn btn-primary form-submit' %> |
+     <% if !defined?(parent_object) %>
+       <%= link_to ts('back.this'), admin_path  %>
+     <% else %>
+       <%=  link_to ts('cancel.this'), admin_feature_definition_path(object.definition.feature, object.definition), class: 'btn btn-primary form-submit', id: 'edit-cancel' %>
+     <% end %>
+  </div> <!-- END panel-body -->
+ </section> <!-- END panel -->
