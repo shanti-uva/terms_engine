@@ -4,11 +4,7 @@ class Admin::SubjectTermAssociationsController < AclController
 
   belongs_to :feature
 
-  new_action.wants.html do
-    if params[:branch_id]
-      object.branch_id = params[:branch_id]
-    end
-  end
+  new_action.before { object.branch_id = params[:branch_id] if params[:branch_id] }
 
   protected
 

@@ -1,0 +1,11 @@
+<%
+add_breadcrumb_item link_to parent_object.model_name.human.titleize.s, polymorphic_url([:admin, parent_object])
+%>
+<section class="panel panel-content">
+  <div class="panel-heading">
+    <h6><%= Etymology.model_name.human.pluralize.titleize.s %></h6>
+  </div>
+  <div class="panel-body">
+<%=       render :partial => 'admin/etymologies/list', :locals => { :list => parent_object.etymologies } %>
+  </div> <!-- END panel-body -->
+</section> <!-- END panel -->

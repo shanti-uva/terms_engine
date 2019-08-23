@@ -1,0 +1,22 @@
+<% if list.empty? %>
+<%=  empty_collection_message %>
+<% else %>
+   <table class="listGrid">
+     <tr>
+       <th class="listActionsCol"></th>
+       <th><%= EtymologySubjectAssociation.human_attribute_name('branch').s %></th>
+       <th><%= SubjectsIntegration::Feature.human_name.titleize.s %></th>
+     </tr>
+<%   list.each do |item| %>
+     <tr>
+       <td class="centerText">
+<%=      list_actions_for_item(item, :delete_path => admin_etymology_etymology_subject_association_path(item.etymology, item),
+         :edit_path => edit_admin_etymology_etymology_subject_association_path(item.etymology, item),
+         :view_path => admin_etymology_etymology_subject_association_path(item.etymology, item)) %>
+       </td>
+       <td><%= item.branch['header'].s %></td>
+       <td><%= item.subject['header'].s %></td>
+     </tr>
+<%   end %>
+   </table>
+<% end %>

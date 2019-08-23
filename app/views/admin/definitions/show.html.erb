@@ -87,6 +87,19 @@
            </div> <!-- END panel-body -->
          </div> <!-- END collapseTen -->
        </section>
+       <section class="panel panel-default">
+         <div class="panel-heading">
+           <h6><a href="#collapseThree" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= Etymology.model_name.human(count: :many).titleize.s %></a></h6>
+         </div>
+         <div id="collapseThree" class="panel-collapse collapse">
+           <div class="panel-body">
+             <%=       highlighted_new_item_link [object, :etymology] %>
+             <br>
+             <br class="clear"/>
+             <%=       render :partial => 'admin/etymologies/list', :locals => { :list => object.etymologies } %>
+           </div> <!-- END panel-body -->
+         </div> <!-- END collapseTen -->
+       </section>
      </div> <!-- END accordion -->
 
      <%= link_to ts('edit.this'), edit_admin_feature_definition_path(parent_object,@definition), class: 'btn btn-primary form-submit' %> |

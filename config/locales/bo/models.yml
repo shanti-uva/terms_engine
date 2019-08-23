@@ -3,9 +3,21 @@ bo:
     activerecord:
         # Model names will be kept in lower case. Invoke .capitalize or .titleize if you need them in uppercase.
         models:
+            definition:
+                one: 'definition'
+                other: 'definitions'
             definition_subject_association:
                 one: 'definition subject association'
                 other: 'definition subject associations'
+            etymology:
+                one: 'etymology'
+                other: 'etymologies'
+            etymology_type_association:
+                one: 'etymology type association'
+                other: 'etymology type associations'
+            etymology_subject_association:
+                one: 'etymology subject association'
+                other: 'etymology subject associations'
             feature:
                 one: 'term'
                 other: 'terms'
@@ -39,10 +51,21 @@ bo:
                 branch:
                     one: 'Branch'
                     other: 'Branches'
+            etymology:
+                content:
+                    one: 'Content'
+                    other: 'Contents'
+                etymology_type_association:
+                    one: 'Etymology Type'
+                    other: 'Etymology Types'
+            etymology_subject_association:
+                branch:
+                    one: 'Branch'
+                    other: 'Branches'
             feature:
                 descendant:
                     one: 'Contained Term'
-                    other: 'Contained Term'
+                    other: 'Contained Terms'
                 is_public: 'Public?'
                 object_type:
                     one: 'Term Type'
