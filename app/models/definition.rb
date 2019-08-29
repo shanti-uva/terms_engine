@@ -29,7 +29,10 @@ class Definition < ApplicationRecord
   
   belongs_to :feature
   belongs_to :language
-  belongs_to :author, :class_name => 'AuthenticatedSystem::Person', optional: true
+  #belongs_to :author, :class_name => 'AuthenticatedSystem::Person', optional: true
+
+  has_and_belongs_to_many :authors, class_name: 'AuthenticatedSystem::Person', join_table: 'authors_definitions', association_foreign_key: 'author_id'
+
   has_many :definition_subject_associations, dependent: :destroy
   has_many :association_notes, as: :notable, dependent: :destroy
   has_many :legacy_citations, -> { where(info_source_type: InfoSource.model_name.name) }, as: :citable, class_name: 'Citation'
