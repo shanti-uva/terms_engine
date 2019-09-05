@@ -3,11 +3,41 @@ audio{
 }
 
 .recording-play-button {
-  border: 2px solid #a57546;
+  width: 3rem;
+  height: 3rem;
+  background-color: #a2733f;
+  border: .3rem double #fff;
   border-radius: 50%;
-  width: 25px;
-  height: 25px;
-  color: #a57546;
+  color: white;
+  margin-right: 1.5rem;
+  cursor: pointer;
+  text-align: center;
+  margin-top: -.15rem;
+  opacity:.85;
+  -webkit-transform: scale(1.175);
+  transform: scale(1.175);
+  -webkit-transition: all .3s ease-in-out;
+  transition: all .15s ease-in-out;
+}
+.recording-play-button:hover {
+  opacity:1;
+  -webkit-transform: scale(1.1);
+  transform: scale(1.1)
+}
+.recording-play-button:focus,
+.recording-play-button:active {
+  -webkit-transform: scale(1.225);
+  transform: scale(1.225);
+}
+.recording-play-button .icon{
+    position: relative;
+    top: .15rem;
+    right: .05rem;
+}
+.recording-play-button .icon:before {
+  position: relative;
+  top: 0.1rem;
+  left: .025rem
 }
 
 .recording-controls, .recording-list {
@@ -32,36 +62,7 @@ audio{
   display: inline;
   width: 40px;
 }
-.recording-play-button{
-    background: white;
-    -webkit-transform: scale(1.175);
-    transform: scale(1.175);
-    filter: alpha(opacity=80);
-    opacity: .8;
-       -webkit-transition: all .3s ease-in-out;
-        transition: all .3s ease-in-out;
-}
 
-.recording-play-button:hover{
-    filter: alpha(opacity=100);
-    opacity: 1;
-    -webkit-transform: scale(1.2);
-            transform: scale(1.2);
-}
-
-.recording-play-button .fa-play:before{
-    position: relative;
-    top: 0.1rem;
-    left: .025rem;
-}
-
-.recording-play-button:focus,
-.recording-play-button:active{
-    -webkit-transform: scale(1);
-    transform: scale(1);
-    filter: alpha(opacity=100);
-    opacity: 1;
-}
 
 .bootstrap-select.btn-group .dropdown-menu li > a::before {
     content: '';
