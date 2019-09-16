@@ -6,15 +6,21 @@ Rails.application.routes.draw do
   resources :recordings, only: [:show]
   namespace :admin do
     resources :definitions do
+      resources :etymologies
       resources :definition_relations
       resources :definition_subject_associations
     end
+    resources :etymologies do
+      resources :etymology_type_associations
+      resources :etymology_subject_associations
+    end
     resources :definition_relations
     resources :features do
-      resources :recordings
+      resources :etymologies
       resources :definitions do #, only: [:index, :show]
         get :locate_for_relation, on: :member
       end
+      resources :recordings
       resources :subject_term_associations
     end
   end

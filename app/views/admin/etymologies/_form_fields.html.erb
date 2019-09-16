@@ -1,0 +1,60 @@
+<%= tinymce_assets %>
+<%= tinymce %>
+<% if object.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(object.errors.count, "error") %> prohibited this etymology from being saved:</h2>
+
+      <ul>
+        <% object.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+<% end %>
+<fieldset>
+  <legend><%= ts(:for, what: t('information.general'), whom: Etymology.model_name.human.titleize) %></legend>
+  <div class="row" id="subject_container">
+    <%= form.label :subject_name, Etymology.human_attribute_name('etymology_type_association').s %>
+    <br/>
+    <br/>
+    <%= form.hidden_field :context_id, value: object.context_id %>
+    <%= form.hidden_field :context_type, value: object.context_type %>
+    <%= form.fields_for :etymology_type_association do |type_form| %>
+      <%= type_form.hidden_field :subject_id, id: :subject_id %>
+      <% if !object.etymology_type_association.id.nil? %>
+        <%= type_form.hidden_field :id %>
+      <% end %>
+      <%= type_form.hidden_field :branch_id %>
+      <p>Search by name</p>
+      <% 
+          subject_name = ''
+      if !object.etymology_type_association.nil? && !object.etymology_type_association.subject.blank? 
+        subject_name = object.etymology_type_association.subject['header']
+      end
+    %>
+  <%= text_field_tag :subject_name, :post, { placeholder: 'Search by subject name', value: subject_name } %>
+  <a href="#" id="js-expand-subject-tree">Or click here to view subject hierarchy</a>
+  <div id="subject_tree_container"></div>
+<% end %>
+  </div>
+
+  <div class="row">
+    <%= form.label(:content).s %>
+  </div>
+  <div class="row">
+    <%= form.text_area :content, rows: 4, class: 'tinymce' %>
+  </div>
+
+</fieldset>
+<%= content_tag :div, '', id: 'etymology_type_associations_js_data', data: {
+ term_index: Feature.config.url,
+ asset_index: Flare.config.asset_url,
+ feature_id: '',
+ domain: 'subjects',
+ perspective: 'gen',
+ tree: 'subjects',
+ features_path: new_admin_feature_path(parent_id: '%%ID%%'),
+ mandala_path: 'https://mandala.shanti.virginia.edu/%%APP%%/%%ID%%/%%REL%%/nojs',
+ branch_id: "subjects-#{EtymologyTypeAssociation::BRANCH_ID}"
+} %>
+<%= javascript_include_tag 'terms_engine/etymology_type_associations_admin' %>

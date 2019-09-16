@@ -11,5 +11,9 @@
 #
 
 class EtymologyTypeAssociation < EtymologySubjectAssociation
-  default_scope { where(branch_id: 182) }
+
+  BRANCH_ID=182
+
+  default_scope { where(branch_id: BRANCH_ID) }
+
 end

@@ -1,0 +1,22 @@
+<%
+if object.etymology.context.instance_of? Feature
+  add_breadcrumb_item link_to object.etymology.context.model_name.human.titleize.s, polymorphic_url([:admin, object.etymology.context])
+else
+  add_breadcrumb_item link_to object.etymology.context.model_name.human.titleize.s, polymorphic_url([:admin, object.etymology.context.feature])
+  add_breadcrumb_item link_to object.etymology.context.model_name.human.titleize.s, polymorphic_url([:admin, object.etymology.context.feature, object.etymology.context])
+end
+add_breadcrumb_item link_to Etymology.model_name.human(count: :many).titleize.s , polymorphic_url([:admin, object.etymology.context, object.etymology])
+add_breadcrumb_item object.id
+%>
+<section class="panel panel-content">
+  <div class="panel-heading">
+     <h6><%= EtymologySubjectAssociation.model_name.human.titleize.s %></h6>
+  </div>
+  <div class="panel-body">
+<%= form_with(model: [:admin, object.etymology, object], local: true) do |form| %>
+      <%=  render partial: 'form_fields', locals: {form: form} %>
+      <%=  link_to ts('cancel.this'), polymorphic_url([:admin, object.etymology.context,object.etymology]) , class: 'btn btn-primary form-submit', id: 'edit-cancel' %> |
+      <%=  globalized_submit_tag 'update.this', class: 'btn btn-primary form-submit' %>
+<% end %>
+  </div> <!-- END panel-body -->
+ </section> <!-- END panel -->

@@ -1,0 +1,29 @@
+<%
+if object.context.instance_of? Feature
+  add_breadcrumb_item link_to object.context.model_name.human.titleize.s, polymorphic_url([:admin, object.context])
+else
+  add_breadcrumb_item link_to object.context.model_name.human.titleize.s, polymorphic_url([:admin, object.context.feature])
+  add_breadcrumb_item link_to object.context.model_name.human.titleize.s, polymorphic_url([:admin, object.context.feature, object.context])
+end
+add_breadcrumb_item link_to Etymology.model_name.human(count: :many).titleize.s , polymorphic_url([:admin, object.context, object])
+add_breadcrumb_item ts('new.this')
+%>
+<div>
+  <h1><%= ts :for, what: t('creat.ing', what: t('new.record', what: Etymology.model_name.human.titleize)), whom: "#{object.context.model_name.human.titleize} #{object.context}" %></h1>
+</div>
+<%= form_with(model: [:admin, object.context, object], local: true) do |form| %>
+<section class="panel panel-content">
+  <div class="panel-heading">
+     <h6><%= Etymology.model_name.human.titleize.s %></h6>
+  </div>
+  <div class="panel-body">
+      <%=  render partial: 'form_fields', locals: {form: form} %>
+      <% if object.context.instance_of? Feature %>
+        <%=  link_to ts('cancel.this'), polymorphic_url([:admin, object.context]) , class: 'btn btn-primary form-submit', id: 'edit-cancel' %> |
+      <% else %>
+        <%=  link_to ts('cancel.this'), polymorphic_url([:admin, object.context.feature, object.context]) , class: 'btn btn-primary form-submit', id: 'edit-cancel' %> |
+      <% end %>
+      <%=  globalized_submit_tag 'creat.e.this', class: 'submit btn btn-primary form-submit' %>
+  </div> <!-- END panel-body -->
+ </section> <!-- END panel -->
+<% end %>

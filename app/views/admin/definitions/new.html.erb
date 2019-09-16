@@ -1,6 +1,6 @@
 <% 
 add_breadcrumb_item feature_link(object.feature)
-add_breadcrumb_item link_to 'definitions', admin_feature_definitions_path(object.feature)
+add_breadcrumb_item link_to Definition.model_name.human(count: :many).titleize.s, admin_feature_definitions_path(object.feature)
 add_breadcrumb_item ts('new.this')
 %>
 <div><h1><%= ts :for, what: t('creat.ing', what: t('new.record', what: Definition.model_name.human.titleize)), whom: "#{Feature.model_name.human.titleize} #{parent_object}" %></h1></div>
