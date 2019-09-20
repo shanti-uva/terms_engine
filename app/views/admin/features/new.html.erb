@@ -1,0 +1,70 @@
+<%  add_breadcrumb_items ts('new.this') %>
+<section class="panel panel-content">
+  <div class="panel-heading">
+    <h6><%= "#{Feature.model_name.human.titleize.s}" %></h6>
+  </div>
+  <div class="panel-body">
+    <% url = admin_features_path
+    if current_perspective.code == "tib.alpha"
+      url = create_tibetan_term_admin_features_path
+    end %>
+    <%= form_with(model: object, url: url, local: true) do |form| %>
+      <div class="term-form-fields">
+        <% if object.errors.any? %>
+          <div id="error_explanation">
+            <h2><%= pluralize(object.errors.count, "error") %> prohibited this term from being saved:</h2>
+            <ul>
+              <% object.errors.full_messages.each do |message| %>
+                <% if message == t('feature.errors.term_exists') %>
+                  <li><%= message %> <%= highlighted_new_item_link [@current_term, :definition] %> for <%= @name %></li>
+                <% else %>
+                  <li><%= message %></li>
+                <% end %>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <% if current_perspective.code == "tib.alpha" %>
+          <fieldset>
+            <legend><%= ts(:for, what: t('information.general'), whom: Feature.model_name.human.titleize) %></legend>
+            <div class="row">
+              <%= form.label :term_name, Feature.model_name.human.titleize %>
+              <br/>
+              <br/>
+              <%= text_field_tag :term_name, :post, { placeholder: t('snippet.feature.name.unicode_insert_request'), value: @name, id: :term_name } %>
+              <%=  link_to ts('cancel.this'), admin_features_path(object) , class: 'btn btn-primary form-submit', id: 'edit-cancel' %> |
+              <%=  globalized_submit_tag 'creat.e.this', class: 'submit btn btn-primary form-submit' %>
+            </div>
+          </fieldset>
+        <% else %>
+          <%=   render partial: 'form_fields', locals: {f: form} %>
+          <%=   fields_for @name do |name_fields| %>
+            <%=     render partial: 'admin/feature_names/form_fields', locals: {f: name_fields} %>
+          <%    end %>
+          <%=   fields_for @relation do |relation_fields| %>
+            <fieldset>
+              <legend><%= ts(:for, what: t('relat.ion.this.one').titleize, whom: fname_labels(@parent)) %></legend>
+              <%=     relation_fields.hidden_field :parent_node_id %>
+              <div class="row">
+                <%=       relation_fields.label :feature_relation_type_id, FeatureRelationType.model_name.human.titleize.s %>
+                <%=       relation_fields.select :feature_relation_type_id, FeatureRelationType.order(:asymmetric_label).collect { |t| [ t.is_symmetric? ? t.label : t.asymmetric_label, t.id ] }, {}, class: 'form-control form-select ss-select selectpicker' %>
+                <%=       fname_labels(@parent) %>
+              </div>
+              <div class="row">
+                <%=       relation_fields.label :perspective_id, Perspective.model_name.human.titleize.s %>
+                <%=       relation_fields.collection_select :perspective_id, @perspectives, :id, :name, {}, class: 'form-control form-select ss-select selectpicker' %>
+              </div>
+            </fieldset>
+          <% end %> <!-- END fields_for @relation -->
+          <%=  link_to ts('cancel.this'), admin_features_path(object) , class: 'btn btn-primary form-submit', id: 'edit-cancel' %> |
+          <%=  globalized_submit_tag 'creat.e.this', class: 'submit btn btn-primary form-submit' %>
+        <%  end %> <!-- END if current_perspecrtive  -->
+      <%  end %> <!-- END form_with -->
+      </div> <!-- END panel-body -->
+</section> <!-- END panel -->
+<style>
+#term_name {
+  width: 60%;
+}
+</style>

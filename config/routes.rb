@@ -16,10 +16,11 @@ Rails.application.routes.draw do
     end
     resources :definition_relations
     resources :features do
-      resources :etymologies
+      post :create_tibetan_term, on: :collection
       resources :definitions do #, only: [:index, :show]
         get :locate_for_relation, on: :member
       end
+      resources :etymologies
       resources :recordings
       resources :subject_term_associations
     end

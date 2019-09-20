@@ -2,6 +2,7 @@ module TermsEngine
   class Engine < ::Rails::Engine
     # isolate_namespace TermsEngine
     initializer :loader do |config|
+      require 'terms_engine/extension/admin_features_controller'
       require 'terms_engine/extension/feature_model'
       require 'terms_engine/extension/feature_controller'
       require 'terms_engine/extension/illustration_model'
@@ -12,6 +13,7 @@ module TermsEngine
       FeaturesController.send :include, TermsEngine::Extension::FeatureController
       Illustration.send :include, TermsEngine::Extension::IllustrationModel
       CitationsController.send :include, TermsEngine::Extension::CitationsController
+      Admin::FeaturesController.send :include, TermsEngine::Extension::AdminFeaturesController
     end
 
     config.generators do |g|

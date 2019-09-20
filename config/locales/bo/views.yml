@@ -8,6 +8,8 @@ bo:
         detail:
             one: 'Term Detail'
             other: 'Term Details'
+        errors:
+            term_exists: 'Term is already on the dictionary, consider adding a new definition instead.'
         id_generator: 'Term ID Generator'
         numbers_to_generate: 'Number of terms to generate'
         range: 'Term Range'
@@ -25,6 +27,7 @@ bo:
             name:
                 drag_priority: 'Click a name and drag to a new location to indicate the priority between the different names. This priority sequencing of names will be used to decide which name to show on the navigational tree, and other contexts. Thus if there are two version of popular romanization of a name, for example, the prioritized one will be chosen; of if there are two alternative names, the prioritized one will be displayed; and so forth.'
                 not_related: 'Sorry, this term does not currently have any related terms.'
+                unicode_insert_request: 'Insert term in Tibetan Unicode'
             not:
                 contains: 'This term does not contain other terms.'
                 found: 'Sorry, this term couldn''t be found. Please use the menu on the right to search or browse for a term.'

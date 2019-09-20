@@ -52,6 +52,23 @@ class TermsService
     sorted = sorted_terms
     sorted.each_index { |i| sorted[i].update_attribute(:position, i+1) }
   end
+
+  def self.get_wylie(name)
+    response = Faraday.get "http://www.thlib.org/cgi-bin/thl/lbow/wylie.pl", { plain: :true, conversion: :uni2wy, input: name.tibetan_cleanup }
+    if response.body == "[#{name}]"
+      return nil
+    else
+      return response.body
+    end
+  end
+  def self.get_phonetic(name)
+    response = Faraday.get "http://www.thlib.org/cgi-bin/thl/lbow/phonetics.pl", { plain: :true, input: name.tibetan_cleanup }
+    if response.body.include? "\n---\n"
+      return nil
+    else
+      return response.body
+    end
+  end
   
   def self.add_term(level_subject_id, tibetan = nil, wylie = nil, phonetic = nil)
     f = Feature.search_by_phoneme(tibetan || wylie, level_subject_id)
