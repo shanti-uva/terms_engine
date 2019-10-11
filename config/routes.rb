@@ -10,11 +10,11 @@ Rails.application.routes.draw do
       resources :definition_relations
       resources :definition_subject_associations
     end
+    resources :definition_relations
     resources :etymologies do
       resources :etymology_type_associations
       resources :etymology_subject_associations
     end
-    resources :definition_relations
     resources :features do
       post :create_tibetan_term, on: :collection
       resources :definitions do #, only: [:index, :show]

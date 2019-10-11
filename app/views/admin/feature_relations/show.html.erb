@@ -1,0 +1,69 @@
+<% parent = parent_object
+   parent = object.parent_node if parent.nil?
+   add_breadcrumb_items( feature_link(parent), feature_relations_link(parent), object.id) %>
+<section class="panel panel-content">
+  <div class="panel-heading">
+    <h6><%= FeatureRelation.model_name.human.pluralize.s %></h6>
+  </div>
+  <div class="panel-body">
+  <div id="accordion" class="panel-group">
+<section class="panel panel-default">
+    <div class="panel-heading">
+      <h6><a href="#collapseOne" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle"><span class="glyphicon glyphicon-plus"></span><%= FeatureRelation.model_name.human.titleize.s %></a></h6>
+    </div>
+    <div id="collapseOne" class="panel-collapse collapse in">
+      <div class="panel-body">
+<fieldset>
+  <legend><%= FeatureRelation.model_name.human.titleize.s %> <%= edit_item_link object %></legend>
+  <div class="row">
+    <label><%= ts 'relat.ion.ship.this' %></label>:
+    <span><%= feature_relation_role_label parent, object, :link_relation=>false %></span>
+  </div>
+  <div class="row">
+    <label><%= Perspective.model_name.human.titleize.s %></label>:
+    <span><%= object.perspective.name %></span>
+  </div>
+  <% if !object.relation_subject_association.nil? %>
+    <div class="row">
+      <label><%= RelationSubjectAssociation.model_name.human.titleize.s %></label>:
+      <span><%= object.relation_subject_association.branch['header'] %></span>
+      <span><%= object.relation_subject_association.subject['header'] %></span>
+    </div>
+  <% end %>
+</fieldset>
+    </div> <!-- END panel-body -->
+  </div> <!-- END collapseOne -->
+</section> <!-- END panel -->
+<section class="panel panel-default">
+    <div class="panel-heading">
+      <h6><a href="#collapseTwo" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= ts 'Citations' %></a></h6>
+    </div>
+    <div id="collapseTwo" class="panel-collapse collapse">
+      <div class="panel-body">
+<%= citation_list_fieldset %>
+    </div> <!-- END panel-body -->
+  </div> <!-- END collapseTwo -->
+</section> <!-- END panel -->
+<section class="panel panel-default">
+    <div class="panel-heading">
+      <h6><a href="#collapseThree" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= ts 'Notes' %></a></h6>
+    </div>
+    <div id="collapseThree" class="panel-collapse collapse">
+      <div class="panel-body">
+<%= note_list_fieldset %>
+    </div> <!-- END panel-body -->
+  </div> <!-- END collapseThree -->
+</section> <!-- END panel -->
+<section class="panel panel-default">
+    <div class="panel-heading">
+      <h6><a href="#collapseFour" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= ts 'Dates' %></a></h6>
+    </div>
+    <div id="collapseFour" class="panel-collapse collapse">
+      <div class="panel-body">
+<%= time_unit_list_fieldset %>
+    </div> <!-- END panel-body -->
+  </div> <!-- END collapseFour -->
+</section> <!-- END panel -->
+  </div> <!-- END accordion -->
+  </div> <!-- END panel-body -->
+</section> <!-- END panel -->

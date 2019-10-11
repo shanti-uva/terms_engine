@@ -39,6 +39,9 @@ dz:
             recording:
                 one: 'recording'
                 other: 'recordings'
+            relation_subject_association:
+                one: 'relation subject association'
+                other: 'relation subject associations'
             subject_term_association:
                 one: 'subject term association'
                 other: 'subject term associations'

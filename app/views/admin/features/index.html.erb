@@ -1,0 +1,53 @@
+<% if @locating_relation
+     add_breadcrumb_items(feature_link(object), feature_relations_link(object), ts('select.record', :what => t('relat.ion.this', :count => 1)))
+end %>
+<div id="featureContextTreeAndList">
+  <div id="featureContextList">
+    <div>
+      <div class="left">
+<%=   resource_search_form(:context_id=>params[:context_id]) %>
+      </div>
+      <div class="right highlight">
+<%    if @locating_relation %>
+<%=     t(:for, :what => t('relat.ion.location'), :whom => feature_link(object)).html_safe %>
+<%    else %>
+<%=     new_item_link [:feature] %>
+<%    end %>
+      </div>
+      <%#= context_search_message(@context_feature) %>
+    </div>
+    <br class="clear"/>
+<section class="panel panel-content">
+  <div class="panel-heading">
+    <h6><%= FeatureName.model_name.human.pluralize.s %></h6>
+  </div>
+  <div class="panel-body">
+    <table class="listGrid">
+<%= pagination_row :colspan=>3 %>
+      <tr>
+        <th class="listActionsCol"></th>
+        <th class="leftText"><%= FeatureName.model_name.human(:count => :many).titleize.s %></th>
+      </tr>
+<%    @collection.each do |item| %>
+      <tr class="<%= @context_feature==item ? 'selected' : '' %>">
+        <td class="listActionsCol">
+<%      if @locating_relation %>
+<%=       form_tag new_admin_feature_feature_relation_path(object), {:method=>:get} %>
+<%=         hidden_field_tag :target_id, item.id %>
+<%=         globalized_submit_tag 'select.this' %>
+          </form>
+<%      else %>
+<%=       list_actions_for_item(item.fid, :hide_edit => true) %>
+<%      end %>
+        </td>
+        <td style="width:60%;">
+<%=     f_label(item) %>
+        </td>
+      </tr>
+<%    end %>
+    </table>
+  </div> <!-- END panel-body -->
+</section> <!-- END panel -->
+  </div>
+  <br class="clear"/>
+</div>
