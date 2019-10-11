@@ -23,10 +23,9 @@ class Admin::EtymologiesController < AclController
     end
   end
   
-  create.wants.html do
-    if object.id?
-      redirect_to(polymorphic_url([:admin, object.context, object]))
-    else
+  create do
+    wants.html { redirect_to(polymorphic_url([:admin, object.context, object])) }
+    failure.wants.html do
       flash[:notice] = 'Etymology type associations failed to save.'
       render :new
     end

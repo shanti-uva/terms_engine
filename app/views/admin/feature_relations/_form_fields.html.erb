@@ -1,0 +1,61 @@
+<% if object.errors.any? %>
+  <div id="error_explanation">
+    <h2><%= pluralize(object.errors.count, "error") %> prohibited this relation from being saved:</h2>
+    <ul>
+    <% object.errors.full_messages.each do |msg| %>
+      <li><%= msg %></li>
+    <% end %>
+    </ul>
+  </div>
+<% end %>
+<fieldset>
+  <legend><%= ts(:for, what: t('relat.ion.this.one').titleize, whom: fname_labels(parent_object)) %></legend>
+<%= f.hidden_field :parent_node_id %>
+<%= f.hidden_field :child_node_id %>
+  <div class="row">
+<%= f.label :feature_relation_type_id, FeatureRelationType.model_name.human.titleize.s %>
+<%= fname_labels(parent_object) %>
+<%= f.select :feature_relation_type_id, FeatureRelationType.marked_options(parent_object.id == object.parent_node_id), {}, class: 'form-control form-select ss-select selectpicker' %>
+<%= fname_labels(object.other_node(parent_object)) %>
+  </div>
+  <div class="row">
+<%= f.label :perspective_id, Perspective.model_name.human.titleize.s %>
+<%= f.collection_select :perspective_id, @perspectives, :id, :name, {}, class: 'form-control form-select ss-select selectpicker' %>
+  </div>
+  <div class="row" id="subject_container">
+    <%= f.label :subject_name, SubjectsIntegration::Feature.human_name.titleize.s %>
+    <br/>
+    <br/>
+    <%= f.fields_for :relation_subject_association do |relation_subject_association_form| %>
+      <%= relation_subject_association_form.hidden_field :subject_id, id: :subject_id %>
+      <% if !object.relation_subject_association.id.nil? %>
+        <%= relation_subject_association_form.hidden_field :id %>
+      <% end %>
+      <%= relation_subject_association_form.hidden_field :branch_id, id: :branch_id %>
+      <%= relation_subject_association_form.hidden_field :_destroy %>
+      <p>Search by name</p>
+      <% 
+          subject_name = ''
+      if !object.relation_subject_association.nil? && !object.relation_subject_association.subject.blank? 
+        subject_name = object.relation_subject_association.subject['header']
+      end
+    %>
+  <%= text_field_tag :subject_name, :post, { placeholder: 'Search by subject name', value: subject_name } %>
+  <a href="#" id="js-expand-subject-tree">Or click here to view subject hierarchy</a>
+  <div id="subject_tree_container"></div>
+<% end %>
+  </div>
+</fieldset>
+<%= content_tag :div, '', id: 'relation_subject_associations_js_data', data: {
+ term_index: Feature.config.url,
+ asset_index: Flare.config.asset_url,
+ feature_id: '',
+ domain: 'subjects',
+ perspective: 'gen',
+ tree: 'subjects',
+ features_path: new_admin_feature_path(parent_id: '%%ID%%'),
+ mandala_path: 'https://mandala.shanti.virginia.edu/%%APP%%/%%ID%%/%%REL%%/nojs',
+ relation_types: FeatureRelationType.all.to_json
+} %>
+
+<%= javascript_include_tag 'terms_engine/relation_subject_associations_admin' %>
