@@ -22,7 +22,8 @@ gem 'complex_scripts',            '3.0.9',        github: 'thl/complex_scripts',
 gem 'flare',                      '1.2.3',        github: 'shanti-uva/flare',                tag: 'v1.2.3' #path: '../flare'
 gem 'ffi-icu',                    '0.2.0',        github: 'shanti-uva/ffi-icu',              tag: 'v0.2.0' #path: '../engines/ffi-icu'
 gem 'interface_utils',            '2.3.7',        github: 'thl/interface_utils',             tag: 'v2.3.7' #path: '../../thl/engines/interface_utils'
-gem 'kmaps_engine',               '5.7.7',        github: 'shanti-uva/kmaps_engine',         tag: 'v5.7.7' #path: '../kmaps_engine'
+gem 'kmaps_engine',               '5.7.8',        github: 'shanti-uva/kmaps_engine',         tag: 'v5.7.8' #path: '../kmaps_engine'
+gem 'shanti_integration',         '3.4.6',        github: 'shanti-uva/shanti_integration',   tag: 'v3.4.6' #path: '../engines/shanti_integration'
 gem 'resource_controller',        '0.9.2',        github: 'shanti-uva/resource_controller',  tag: 'v0.9.2' #path: '../resource_controller'
 gem 'dictionary_to_terms',        '0.3.4',        github: 'shanti-uva/dictionary_to_terms',  tag: 'v0.3.4' #path: '../dictionary_to_terms'
 

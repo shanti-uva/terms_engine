@@ -36,7 +36,7 @@ module TermsEngine
         query_array = []
         query_array << "level_tib.alpha_i:#{level}" if !level.blank?
         query_array << "ancestor_ids_tib.alpha:#{letter}" if !letter.blank?
-        query_array << "associated_subject_#{Feature::PHONEME_SUBJECT_ID}_ls:#{phoneme}" if !phoneme.blank?
+        query_array << "associated_subject_#{Feature::BOD_PHONEME_SUBJECT_ID}_ls:#{phoneme}" if !phoneme.blank?
         query = query_array.join(' AND ')
         num_found = Feature.search_by(query)['numFound']
         resp = Feature.search_by(query, fl: 'uid', rows: num_found)['docs']

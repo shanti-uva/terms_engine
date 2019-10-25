@@ -1,7 +1,7 @@
-class TermsService
+class TibetanTermsService
   def initialize(arg = nil)
     if arg.nil?
-      @terms = Feature.roots.order(:position)
+      @terms = Feature.current_roots_by_perspective(Perspective.get_by_code('tib.alpha'))
     elsif arg.instance_of? Array
       @terms = arg
     elsif arg.instance_of? Feature
@@ -42,10 +42,10 @@ class TermsService
   end
   
   def self.recursive_trunk_for(name)
-    letters = TermsService.new
+    letters = TibetanTermsService.new
     letter = letters.trunk_for(name)
     return nil if letter.nil?
-    TermsService.new(letter).trunk_for(name)
+    TibetanTermsService.new(letter).trunk_for(name)
   end
   
   def reposition
@@ -96,9 +96,7 @@ class TermsService
         relation = FeatureNameRelation.create!(skip_update: true, parent_node: tibetan_name || wylie_name, child_node: phonetic_name, is_phonetic: 1, is_orthographic: 0, is_translation: 0, is_alt_spelling: 0, phonetic_system: @@thl_phonetic)
       end
     end
-    if f.subject_term_associations.empty?
-      a = f.subject_term_associations.create(subject_id: level_subject_id, branch_id: Feature::PHONEME_SUBJECT_ID)
-    end
+    a = f.subject_term_associations.create(subject_id: level_subject_id, branch_id: Feature::BOD_PHONEME_SUBJECT_ID)
     return f
   end
 end

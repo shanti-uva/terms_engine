@@ -17,6 +17,7 @@ Rails.application.routes.draw do
     end
     resources :features do
       post :create_tibetan_term, on: :collection
+      post :create_english_term, on: :collection
       resources :definitions do #, only: [:index, :show]
         get :locate_for_relation, on: :member
       end

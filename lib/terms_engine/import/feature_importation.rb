@@ -132,17 +132,17 @@ module TermsEngine
           phonetic_str = name_str if phonetic_str.blank?
         end
       end
-      self.feature = Feature.search_expression(tibetan_str)
+      self.feature = Feature.search_bod_expression(tibetan_str)
       if self.feature.nil?
         self.log.debug "Adding new term #{tibetan_str}"
-        parent = TermsService.recursive_trunk_for(tibetan_str)
+        parent = TibetanTermsService.recursive_trunk_for(tibetan_str)
         if parent.ancestors_by_perspective(@tib_alpha).count != 2
           self.say "There is a problem for term: #{current_entry} with calculated parent: #{parent.pid} in herarchy. Skipping term creation."
           return nil
         end
-        self.feature = TermsService.add_term(Feature::EXPRESSION_SUBJECT_ID, tibetan_str, wylie_str, phonetic_str)
+        self.feature = TibetanTermsService.add_term(Feature::BOD_EXPRESSION_SUBJECT_ID, tibetan_str, wylie_str, phonetic_str)
         FeatureRelation.create!(child_node: self.feature, parent_node: parent, perspective: @tib_alpha, feature_relation_type: @relation_type)
-        ts = TermsService.new(parent)
+        ts = TibetanTermsService.new(parent)
         ts.reposition
         self.feature.reload
         position = self.feature.position
