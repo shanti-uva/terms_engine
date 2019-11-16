@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_10_10_204258) do
+ActiveRecord::Schema.define(version: 2019_11_04_172012) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -44,11 +44,6 @@ ActiveRecord::Schema.define(version: 2019_10_10_204258) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.index ["collection_id", "feature_id", "perspective_id"], name: "affiliations_on_dependencies", unique: true
-  end
-
-  create_table "authors_definitions", id: false, force: :cascade do |t|
-    t.bigint "author_id", null: false
-    t.bigint "definition_id", null: false
   end
 
   create_table "authors_descriptions", id: false, force: :cascade do |t|
@@ -195,7 +190,8 @@ ActiveRecord::Schema.define(version: 2019_10_10_204258) do
   create_table "etymologies", force: :cascade do |t|
     t.integer "context_id", null: false
     t.string "context_type", null: false
-    t.text "content", null: false
+    t.text "content"
+    t.string "derivation"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
