@@ -1,4 +1,6 @@
 <% for branch_id in associations.select(:branch_id).distinct.collect(&:branch_id)
      branch = SubjectsIntegration::Feature.flare_search(branch_id) %>
-   <dt><%= branch['header'] %>:</dt><dd class="related_subject"> <%= associations.where(branch_id: branch_id).collect{ |a| "#{link_to a.subject['header'], SubjectsIntegration::Feature.get_url(a.subject_id)}#{feature_assets_popup("subjects-"+a.subject_id.to_s)}#{note_popup_link_for(a)}#{time_units_for(a)}" }.join(', ').html_safe %></dd>
+   <% if branch %>
+     <dt><%= branch['header'] %>:</dt><dd class="related_subject"> <%= associations.where(branch_id: branch_id).collect{ |a| "#{link_to a.subject['header'], SubjectsIntegration::Feature.get_url(a.subject_id)}#{feature_assets_popup("subjects-"+a.subject_id.to_s)}#{note_popup_link_for(a)}#{time_units_for(a)}" }.join(', ').html_safe %></dd>
+  <% end %>
  <% end %>

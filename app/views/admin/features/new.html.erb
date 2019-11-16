@@ -5,8 +5,10 @@
   </div>
   <div class="panel-body">
     <% url = admin_features_path
-    if current_perspective.code == "tib.alpha"
+    if current_perspective.code == 'tib.alpha'
       url = create_tibetan_term_admin_features_path
+    elsif current_perspective.code == 'eng.alpha'
+      url = create_english_term_admin_features_path
     end %>
     <%= form_with(model: object, url: url, local: true) do |form| %>
       <div class="term-form-fields">
@@ -25,18 +27,65 @@
           </div>
         <% end %>
 
-        <% if current_perspective.code == "tib.alpha" %>
+        <% if current_perspective.code == 'tib.alpha' %>
           <fieldset>
             <legend><%= ts(:for, what: t('information.general'), whom: Feature.model_name.human.titleize) %></legend>
             <div class="row">
               <%= form.label :term_name, Feature.model_name.human.titleize %>
               <br/>
               <br/>
-              <%= text_field_tag :term_name, :post, { placeholder: t('snippet.feature.name.unicode_insert_request'), value: @name, id: :term_name } %>
+              <%= text_field_tag :term_name, :post, { placeholder: t('snippet.feature.name.unicode_insert_bod_request'), value: @name, id: :term_name } %>
               <%=  link_to ts('cancel.this'), admin_features_path(object) , class: 'btn btn-primary form-submit', id: 'edit-cancel' %> |
               <%=  globalized_submit_tag 'creat.e.this', class: 'submit btn btn-primary form-submit' %>
             </div>
           </fieldset>
+        <% elsif current_perspective.code == 'eng.alpha' %>
+          <fieldset>
+            <legend><%= ts(:for, what: t('information.general'), whom: Feature.model_name.human.titleize) %></legend>
+            <div class="row">
+              <%= form.label :term_name, Feature.model_name.human.titleize %>
+              <%= text_field_tag :term_name, :post, { placeholder: t('snippet.feature.name.unicode_insert_eng_request'), value: @name, id: :term_name } %>
+            </div>
+            <div class="row" id="subject_container">
+              <%= form.label :subject_name, SubjectsIntegration::Feature.human_name.titleize.s %>
+              <br/>
+              <br/>
+              <%= form.fields_for :subject_term_associations do |subject_term_association_form| %>
+                <%= subject_term_association_form.hidden_field :subject_id, id: :subject_id %>
+                <% if !subject_term_association_form.object.nil? && !subject_term_association_form.object.id.nil? %>
+                  <%= subject_term_association_form.hidden_field :id %>
+                <% end %>
+                <%= subject_term_association_form.hidden_field :branch_id, id: :branch_id %>
+                <%= subject_term_association_form.hidden_field :_destroy %>
+                <p>Search by name</p>
+                <%
+                    subject_name = ''
+                if !subject_term_association_form.object.nil? && !subject_term_association_object.subject.blank?
+                  subject_name = subject_term_association_form.object.subject['header']
+                end
+              %>
+            <%= text_field_tag :subject_name, :post, { placeholder: 'Search by subject name', value: subject_name } %>
+            <a href="#" id="js-expand-subject-tree">Or click here to view subject hierarchy</a>
+            <div id="subject_tree_container"></div>
+            <% end %>
+            </div>
+            <div class="row">
+              <%=  link_to ts('cancel.this'), admin_features_path(object) , class: 'btn btn-primary form-submit', id: 'edit-cancel' %> |
+              <%=  globalized_submit_tag 'creat.e.this', class: 'submit btn btn-primary form-submit' %>
+            </div>
+          </fieldset>
+          <%= content_tag :div, '', id: 'feature_subject_associations_js_data', data: {
+           term_index: Feature.config.url,
+           asset_index: Flare.config.asset_url,
+           feature_id: '',
+           domain: 'subjects',
+           perspective: 'gen',
+           tree: 'subjects',
+           features_path: new_admin_feature_path(parent_id: '%%ID%%'),
+           mandala_path: 'https://mandala.shanti.virginia.edu/%%APP%%/%%ID%%/%%REL%%/nojs',
+           branch_id: "subjects-#{Feature::ENG_PHONEME_SUBJECT_ID}",
+          } %>
+          <%= javascript_include_tag 'terms_engine/feature_subject_associations_admin' %>
         <% else %>
           <%=   render partial: 'form_fields', locals: {f: form} %>
           <%=   fields_for @name do |name_fields| %>

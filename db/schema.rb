@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_09_18_074518) do
+ActiveRecord::Schema.define(version: 2019_10_10_204258) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -44,6 +44,11 @@ ActiveRecord::Schema.define(version: 2018_09_18_074518) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.index ["collection_id", "feature_id", "perspective_id"], name: "affiliations_on_dependencies", unique: true
+  end
+
+  create_table "authors_definitions", id: false, force: :cascade do |t|
+    t.bigint "author_id", null: false
+    t.bigint "definition_id", null: false
   end
 
   create_table "authors_descriptions", id: false, force: :cascade do |t|
@@ -188,9 +193,9 @@ ActiveRecord::Schema.define(version: 2018_09_18_074518) do
   end
 
   create_table "etymologies", force: :cascade do |t|
-    t.integer "context_id"
-    t.string "context_type"
-    t.text "content"
+    t.integer "context_id", null: false
+    t.string "context_type", null: false
+    t.text "content", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -202,15 +207,6 @@ ActiveRecord::Schema.define(version: 2018_09_18_074518) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["etymology_id"], name: "index_etymology_subject_associations_on_etymology_id"
-  end
-
-  create_table "etymology_type_associations", force: :cascade do |t|
-    t.bigint "etymology_id", null: false
-    t.integer "subject_id"
-    t.integer "branch_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["etymology_id"], name: "index_etymology_type_associations_on_etymology_id"
   end
 
   create_table "external_pictures", force: :cascade do |t|
@@ -274,6 +270,7 @@ ActiveRecord::Schema.define(version: 2018_09_18_074518) do
     t.string "code", null: false
     t.boolean "is_hierarchical", default: false, null: false
     t.string "asymmetric_code"
+    t.integer "branch_id"
   end
 
   create_table "feature_relations", force: :cascade do |t|
@@ -350,9 +347,9 @@ ActiveRecord::Schema.define(version: 2018_09_18_074518) do
   end
 
   create_table "model_sentences", force: :cascade do |t|
-    t.integer "context_id"
-    t.string "context_type"
-    t.text "content"
+    t.integer "context_id", null: false
+    t.string "context_type", null: false
+    t.text "content", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -387,9 +384,9 @@ ActiveRecord::Schema.define(version: 2018_09_18_074518) do
   end
 
   create_table "passages", force: :cascade do |t|
-    t.integer "context_id"
-    t.string "context_type"
-    t.text "content"
+    t.integer "context_id", null: false
+    t.string "context_type", null: false
+    t.text "content", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -427,6 +424,15 @@ ActiveRecord::Schema.define(version: 2018_09_18_074518) do
     t.datetime "updated_at", null: false
     t.integer "dialect_id"
     t.index ["feature_id"], name: "index_recordings_on_feature_id"
+  end
+
+  create_table "relation_subject_associations", force: :cascade do |t|
+    t.bigint "feature_relation_id", null: false
+    t.integer "subject_id", null: false
+    t.integer "branch_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["feature_relation_id"], name: "index_relation_subject_associations_on_feature_relation_id"
   end
 
   create_table "roles", force: :cascade do |t|
@@ -530,6 +536,6 @@ ActiveRecord::Schema.define(version: 2018_09_18_074518) do
 
   add_foreign_key "definition_subject_associations", "definitions"
   add_foreign_key "etymology_subject_associations", "etymologies"
-  add_foreign_key "etymology_type_associations", "etymologies"
   add_foreign_key "recordings", "features"
+  add_foreign_key "relation_subject_associations", "feature_relations"
 end

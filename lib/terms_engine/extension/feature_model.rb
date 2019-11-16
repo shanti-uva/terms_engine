@@ -4,11 +4,16 @@ module TermsEngine
       extend ActiveSupport::Concern
 
       included do
-        PHONEME_SUBJECT_ID = 9310
-        LETTER_SUBJECT_ID = 9311
-        NAME_SUBJECT_ID = 9312
-        PHRASE_SUBJECT_ID = 9314
-        EXPRESSION_SUBJECT_ID = 9315
+        BOD_PHONEME_SUBJECT_ID = 9310
+        BOD_LETTER_SUBJECT_ID = 9311
+        BOD_NAME_SUBJECT_ID = 9312
+        BOD_PHRASE_SUBJECT_ID = 9314
+        BOD_EXPRESSION_SUBJECT_ID = 9315
+
+        ENG_PHONEME_SUBJECT_ID = 9637
+        ENG_LETTER_SUBJECT_ID = 9639
+        ENG_WORD_SUBJECT_ID = 9638
+        ENG_PHRASE_SUBJECT_ID = 9640
         
         has_many :subject_term_associations, dependent: :destroy
         has_many :phoneme_term_associations
@@ -72,9 +77,17 @@ module TermsEngine
       def phonemes
         self.phoneme_term_associations.collect(&:subject)
       end
+
+      def perspective_by_name
+          Perspective.get_by_language_code(self.names.first.language.code)
+      end
       
       def document_for_rsolr
-        per = Perspective.get_by_code(KmapsEngine::ApplicationSettings.default_perspective_code)
+        name = self.name.first
+        if !name.nil?
+          per = self.perspective_by_name
+        end
+        per ||= Perspective.get_by_code(KmapsEngine::ApplicationSettings.default_perspective_code)
         v = View.get_by_code(KmapsEngine::ApplicationSettings.default_view_code)
         child_documents = self.parent_relations.collect do |pr|
           parent_node = pr.parent_node
@@ -200,15 +213,47 @@ module TermsEngine
       
       module ClassMethods
         
+        def current_roots_by_perspective(current_perspective)
+          feature_ids = Rails.cache.fetch("features/current_roots/#{current_perspective.id}", expires_in: 1.day) do
+            self.where('features.is_blank' => false).scoping do
+              self.roots.order(:position).select do |r|
+                # if ANY of the child relations are current, return true to nab this Feature
+                relations = r.child_relations
+                (relations.empty? && (r.perspective_by_name == current_perspective)) || relations.any? {|cr| cr.perspective == current_perspective }
+              end
+            end.collect(&:id)
+          end
+          feature_ids.collect{ |fid| Feature.find(fid) }
+        end
+
         def search_by_phoneme(name, phoneme_id)
           names = FeatureName.where(name: name).includes(feature: :subject_term_associations)
           name_position = names.find_index{ |n| n.feature.subject_term_associations.collect(&:subject_id).include? phoneme_id }
           name_position.nil? ? nil : names[name_position].feature
         end
-        
-        def search_expression(name)
-          Feature.search_by_phoneme(name, EXPRESSION_SUBJECT_ID)
+
+        def search_by_eng_phoneme(name, phoneme_id)
+          names = FeatureName.where('lower(name) = ?', name.downcase).includes(feature: :subject_term_associations)
+          name_position = names.find_index{ |n| n.feature.subject_term_associations.collect(&:subject_id).include? phoneme_id }
+          name_position.nil? ? nil : names[name_position].feature
         end
+
+        def search_by_excluding_phoneme(name, branch_id, phoneme_id)
+          names = FeatureName.where('lower(name) = ?', name.downcase).includes(feature: :subject_term_associations)
+          name_position = names.find_index do |n|
+            !(n.feature.subject_term_associations.find_index { |a| a.branch_id == branch_id && a.subject_id != phoneme_id }).nil?
+          end
+          name_position.nil? ? nil : names[name_position].feature
+        end
+
+        def search_english_term(name)
+          Feature.search_by_excluding_phoneme(name, ENG_PHONEME_SUBJECT_ID, ENG_LETTER_SUBJECT_ID)
+        end
+
+        def search_bod_expression(name)
+          Feature.search_by_phoneme(name, BOD_EXPRESSION_SUBJECT_ID)
+        end
+
       end
     end
   end
