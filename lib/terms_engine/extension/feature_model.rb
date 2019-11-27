@@ -10,10 +10,10 @@ module TermsEngine
         BOD_PHRASE_SUBJECT_ID = 9314
         BOD_EXPRESSION_SUBJECT_ID = 9315
 
-        ENG_PHONEME_SUBJECT_ID = 9637
-        ENG_LETTER_SUBJECT_ID = 9639
-        ENG_WORD_SUBJECT_ID = 9638
-        ENG_PHRASE_SUBJECT_ID = 9640
+        ENG_PHONEME_SUBJECT_ID = 9666
+        ENG_LETTER_SUBJECT_ID = 9667
+        ENG_WORD_SUBJECT_ID = 9668
+        ENG_PHRASE_SUBJECT_ID = 9669
         
         has_many :subject_term_associations, dependent: :destroy
         has_many :phoneme_term_associations

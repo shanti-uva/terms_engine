@@ -16,7 +16,7 @@ class EnglishTermsService
   
   def sorted_terms
     if @sorted_terms.nil?
-      @view ||= View.get_by_code('roman.popular')
+      @view ||= View.get_by_code('roman.scholar')
       terms_with_name = terms.collect{|t| [t, t.prioritized_name(@view).name] }
       sorted_terms_with_name = terms_with_name.sort{ |a,b| a[1].downcase <=> b[1].downcase }
       @sorted_terms = sorted_terms_with_name.collect(&:first)
@@ -26,7 +26,7 @@ class EnglishTermsService
   
   def names
     if @names.nil?
-      @view ||= View.get_by_code('roman.popular')
+      @view ||= View.get_by_code('roman.scholar')
       @names = terms.collect{|t| t.prioritized_name(@view).name}
     end
     @names

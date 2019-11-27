@@ -43,7 +43,7 @@ RSpec.describe EnglishTermsService do
 
       it "Identifies root letter" do
         es = EnglishTermsService.new
-        v = View.get_by_code('roman.popular')
+        v = View.get_by_code('roman.scholar')
         expect(es.trunk_for('Generosity').prioritized_name(v).name).to eq('G')
         expect(es.trunk_for('Ethics').prioritized_name(v).name).to eq('E')
         expect(es.trunk_for('Patience').prioritized_name(v).name).to eq('P')
@@ -59,7 +59,7 @@ RSpec.describe EnglishTermsService do
         a = Feature.current_roots_by_perspective(eng_alpha).first
         es = EnglishTermsService.new(a)
         expected = ['Absent minded', 'Abstract thought', 'Acquired taste', 'Analytic mind', 'Animal insticts', 'Anomaly']
-        v = View.get_by_code('roman.popular')
+        v = View.get_by_code('roman.scholar')
         sorted = es.sorted_terms.collect{|f| f.prioritized_name(v).name }
         expect(sorted).to eq(expected)
       end
@@ -70,7 +70,7 @@ RSpec.describe EnglishTermsService do
         es = EnglishTermsService.new(a)
         es.reposition
         expected = ['Absent minded', 'Abstract thought', 'Acquired taste', 'Analytic mind', 'Animal insticts', 'Anomaly']
-        v = View.get_by_code('roman.popular')
+        v = View.get_by_code('roman.scholar')
         sorted = a.children.order('position').collect{|f| f.prioritized_name(v).name }
         expect(sorted).to eq(expected)
       end
