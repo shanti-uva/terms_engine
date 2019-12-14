@@ -1,12 +1,11 @@
 <div class="field field-name-body field-type-text-with-summary field-label-hidden">
-  <div class="field-items"><div class="field-item even" property="content:encoded">
+  <div class="field-items">
+		<div class="field-item even" property="content:encoded">
       <div class="terms-node-wrapper">
         <div class="terms-introduction-tabs">
           <ul id="terms-intro-tabs" class="nav nav-tabs nav-justified terms-intro-tabs" role="tablist">
             <li class="active">
-              <a href="#terms-intro" role="tab" data-toggle="tab">
-                Term Definition
-              </a>
+              <a href="#terms-intro" role="tab" data-toggle="tab">Term Definition</a>
             </li>
             <li>
               <a href="#terms-intro-details" role="tab" data-toggle="tab">Term details</a>
@@ -14,8 +13,8 @@
           </ul>
           <div class="tab-content">
             <div role="tabpanel" class="tab-pane terms-intro active" id="terms-intro">
-              <%=  "#{edit_item_link(admin_feature_path(feature.fid)) if logged_in? && object_authorized?(feature)}".html_safe %>
-              <!-- INTRO TAB 1 --><div class="row">
+<%=           edit_item_link(admin_feature_path(feature.fid)) if logged_in? && object_authorized?(feature) %>
+              <div class="row"><!-- INTRO TAB 1 -->
                 <div class="col-xs-12">
                   <dl>
                     <div class="term-definition-title">
@@ -23,76 +22,73 @@
                       <dfn><%= feature_name_header(feature) %></dfn>
                       </dt>
                     </div>
-                      <div class="terms-kmaps-id">
-                        <dt>ID:</dt><dd><%= feature.pid %></dd>
-                      </div>
-                      <%=     feature_name_ul(feature,false) %>
-                      <%      feature.names.roots.order('position').each do |name| %>
-                        <%=       "<dt><strong>#{ts(:for, what: FeatureName.human_attribute_name(:etymology), whom: name.name.to_s)}:</dt></strong><dd>#{name.etymology.to_s.s}</dd>".html_safe unless name.etymology.blank? %>
-                      <%      end %>
-                      <%=     note_popup_link_list_for(feature, {association_type: FeatureName.name}) %>
-                      <%= render partial: 'recordings/list', locals: { recordings: feature.recordings } %>
-                  </dl><!-- BEGIN terms-definitions -->
-            <!-- BEGIN terms-definitions -->
-            <div class="terms-definition-list-wrapper">
-              <%=  render partial: 'definitions', locals: { definitions: feature.definitions.in_house_definitions, is_child: false, prefix: '', def_level: 0 } %>
-            </div> <!-- END terms-definition-list-wrapper -->
-            <div class="terms-dictionaries-other row">
-              <div class="col-xs-12">
-              <%=  render partial: 'other_dictionaries_definitions', locals: { grouped_definitions: feature.definitions.legacy_definitions_by_info_source } %>
-              </div>
-            </div><!-- END terms-dictionaries-other -->
+                    <div class="terms-kmaps-id">
+                      <dt>ID:</dt><dd><%= feature.pid %></dd>
+                    </div>
+<%=                 feature_name_ul(feature, false) %>
+<%=                 note_popup_link_list_for(feature, {association_type: FeatureName.name}) %>
+<%=                 render partial: 'recordings/list', locals: { recordings: feature.recordings } %>
+                  </dl>
+<%=               render(partial: 'etymologies', locals: { etymologies: feature.etymologies }) %>
+                  <div class="terms-definition-list-wrapper"><!-- BEGIN terms-definitions -->
+<%=                 render partial: 'definitions', locals: { definitions: feature.definitions.in_house_definitions, is_child: false, prefix: '', def_level: 0 } %>
+                  </div> <!-- END terms-definition-list-wrapper -->
+                  <div class="terms-dictionaries-other row">
+                    <div class="col-xs-12">
+<%=                   render partial: 'other_dictionaries_definitions', locals: { grouped_definitions: feature.definitions.legacy_definitions_by_info_source } %>
+                    </div>
+                  </div><!-- END terms-dictionaries-other -->
                 </div>
-              </div>
+						  </div>
             </div>
-            <div role="tabpanel" class="tab-pane terms-intro-details" id="terms-intro-details">
-              <!-- INTRO TAB 2 --><div class="row">
+						<div role="tabpanel" class="tab-pane terms-intro-details" id="terms-intro-details">
+              <div class="row"><!-- INTRO TAB 2 -->
                 <div class="col-xs-12">
-                  <% subject_term_associations = feature.subject_term_associations
+<%                subject_term_associations = feature.subject_term_associations
                   if !subject_term_associations.empty? %>
-                <dl>
-                <%=       render partial: 'subjects', locals: { associations: subject_term_associations } %>
-                <%=       note_popup_link_list_for(feature, {:association_type => SubjectTermAssociation.name}) %>
-                </dl>
-              <% end %>
+                    <dl>
+<%=                   render partial: 'subjects', locals: { associations: subject_term_associations } %>
+<%=                   note_popup_link_list_for(feature, {:association_type => SubjectTermAssociation.name}) %>
+                    </dl>
+<%                end %>
                 </div>
-                <!-- END tab panels --></div>
-              <!-- END tab-content --></div>
-            <!-- END terms-introduction-tabs -->
+						  </div>
+            </div><!-- END tab panels -->
           </div> <!-- END tab-content -->
         </div> <!-- END terms-introduction-tabs -->
       </div> <!-- END terms-node-wrapper -->
     </div> <!-- END field-item -->
   </div> <!-- END field-items -->
- <%= content_tag :div, "", id: 'related_subjects_js_data', data: {
- term_index: Feature.config.url,
- asset_index: Flare.config.asset_url,
- feature_id: "#{Feature.uid_prefix}-#{@feature.fid}",
- domain: 'subjects',
- perspective: 'gen',
- tree: Feature.uid_prefix,
- feature_label: "",
- feature_path: SubjectsIntegration::Feature.get_url('%%ID%%'),
- mandala_path: 'https://mandala.shanti.virginia.edu/%%APP%%/%%ID%%/%%REL%%/nojs',
- feature_fid: @feature.fid
-} %>
+</div>
+<%= content_tag :div, "", id: 'related_subjects_js_data', data: {
+      term_index: Feature.config.url,
+      asset_index: Flare.config.asset_url,
+      feature_id: "#{Feature.uid_prefix}-#{@feature.fid}",
+      domain: 'subjects',
+      perspective: 'gen',
+      tree: Feature.uid_prefix,
+      feature_label: "",
+      feature_path: SubjectsIntegration::Feature.get_url('%%ID%%'),
+      mandala_path: 'https://mandala.shanti.virginia.edu/%%APP%%/%%ID%%/%%REL%%/nojs',
+      feature_fid: @feature.fid
+    } %>
 <%= javascript_on_load do %>
-  var relatedSubjectsSolrUtils = kmapsSolrUtils.init({
-    termIndex: $('#related_subjects_js_data').data('termIndex'),
-    assetIndex: $('#related_subjects_js_data').data('assetIndex'),
-    featureId:  $('#related_subjects_js_data').data('featureId'),
-    domain: $('#related_subjects_js_data').data('domain'),
-    perspective: $('#related_subjects_js_data').data('perspective'),
-    tree: $('#related_subjects_js_data').data('tree'), //subjects
-  });
-  jQuery('.terms-node-wrapper .related_subject .popover-kmaps').kmapsPopup({
-    featuresPath: $('#related_subjects_js_data').data('featurePath'),
-    domain: 'subjects',
-    featureId:  "",
-    mandalaURL: $('#related_subjects_js_data').data('mandalaPath'),
-    solrUtils: relatedSubjectsSolrUtils
-  });
-<% end %>
+      var relatedSubjectsSolrUtils = kmapsSolrUtils.init({
+        termIndex: $('#related_subjects_js_data').data('termIndex'),
+        assetIndex: $('#related_subjects_js_data').data('assetIndex'),
+        featureId:  $('#related_subjects_js_data').data('featureId'),
+        domain: $('#related_subjects_js_data').data('domain'),
+        perspective: $('#related_subjects_js_data').data('perspective'),
+        tree: $('#related_subjects_js_data').data('tree'), //subjects
+      });
+      jQuery('.terms-node-wrapper .related_subject .popover-kmaps').kmapsPopup({
+        featuresPath: $('#related_subjects_js_data').data('featurePath'),
+        domain: 'subjects',
+        featureId:  "",
+        mandalaURL: $('#related_subjects_js_data').data('mandalaPath'),
+        solrUtils: relatedSubjectsSolrUtils
+      });
+<%  end %>
 <%= javascript_on_load do %>
       jQuery('[data-js-kmaps-popup]').kmapsPopup({
         type: POPUP_TYPE_INFO,

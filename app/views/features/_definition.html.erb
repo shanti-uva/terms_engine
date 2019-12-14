@@ -13,6 +13,7 @@ subject_associations = definition.definition_subject_associations %>
   <div class="tab-content">
     <div role="tabpanel" class="tab-pane active" id="terms-def-<%= full_index_id %>">
       <p><%= definition.content.s.html_safe %></p>
+<%=   render(partial: 'etymologies', locals: { etymologies: definition.etymologies }) %>
       <p><a data-toggle="collapse" href="#definition-details-<%= full_index_id %>" role="button" aria-expanded="false" aria-controls="definition-details" class="definition-details-control collapsed">
     <span class="glyphicon"></span>Further Details
       </a></p>

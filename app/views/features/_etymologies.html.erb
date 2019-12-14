@@ -1,0 +1,21 @@
+<% if !etymologies.empty? %>
+<dl>
+  <h4><%= Etymology.model_name.human(count: etymologies.size).titleize.s %></h4>
+<% etymologies.each do |etymology|
+     eta = etymology.etymology_type_association
+     if !eta.nil?
+       type = eta.subject
+       if !type.nil? %>
+         <dt><%= type['header'] %>:</dt>
+<%     end
+     end 
+     sa = etymology.generic_etymology_subject_associations %>
+     <dd>
+<%=    etymology.content.html_safe %>
+<%     if !sa.empty? %>
+         (<%= sa.collect{ |sa| "#{sa.branch['header']}: #{sa.subject['header']}" }.join('; ') %>)
+<%     end %>
+     </dd>
+<% end %>
+</dl>
+<% end %>

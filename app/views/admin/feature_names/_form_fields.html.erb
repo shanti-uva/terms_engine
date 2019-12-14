@@ -1,0 +1,36 @@
+<%= tinymce_assets %>
+<%= tinymce %>
+<% if object.errors.any? %>
+  <div id="error_explanation">
+    <h2><%= pluralize(object.errors.count, "error") %> prohibited this name from being saved:</h2>
+    <ul>
+    <% object.errors.full_messages.each do |msg| %>
+      <li><%= msg %></li>
+    <% end %>
+    </ul>
+  </div>
+<% end %>
+<fieldset>
+  <legend><%= ts(:for, what: t('information.general'), whom: FeatureName.model_name.human.titleize) %></legend>
+  <div class="row">
+<%= f.label :name, Feature.model_name.human.titleize.s %>
+<%= f.text_field :name, class: [:text, 'text-full form-control form-text'] %>
+  </div>
+  <div class="row">
+<%= f.label :feature_name_type_id, FeatureNameType.model_name.human.titleize.s %>
+<%= f.collection_select :feature_name_type_id, FeatureNameType.all, :id, :to_s, {include_blank: true}, class: 'form-control form-select ss-select selectpicker' %>
+  </div>
+  <div class="row">
+<%= f.label :language_id, Language.model_name.human.titleize.s %>
+<%= f.collection_select :language_id, Language.all.sort_by{ |l| l.to_s }, :id, :to_s, {}, class: 'form-control form-select ss-select selectpicker' %>
+  </div>
+  <div class="row">
+<%= f.label :writing_system_id, WritingSystem.model_name.human.titleize.s %>
+<%= f.collection_select :writing_system_id, WritingSystem.all.sort_by{ |w| w.to_s }, :id, :to_s, {include_blank: true}, class: 'form-control form-select ss-select selectpicker' %>
+  </div>
+  <div class="row">
+<%= f.label(:is_primary_for_romanization).s %>
+<%= radio_button(:feature_name, :is_primary_for_romanization, :true ) %><b><%= ts(:affirmation) %></b>&nbsp;&nbsp;
+<%= radio_button(:feature_name, :is_primary_for_romanization, :false ) %><b><%= ts(:negation) %></b>
+  </div>
+</fieldset>
