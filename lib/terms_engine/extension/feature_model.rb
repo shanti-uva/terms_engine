@@ -172,6 +172,7 @@ module TermsEngine
             "related_#{Definition.uid_prefix}_level_i" => path.size,
             "related_#{Definition.uid_prefix}_language_s" => d.language.name,
             "related_#{Definition.uid_prefix}_language_code_s" => d.language.code,
+            "related_#{Definition.uid_prefix}_etymologies_ss" => d.etymologies.collect(&:content),
             block_type: ['child']
           }
           author = d.author
@@ -201,6 +202,7 @@ module TermsEngine
         doc = { tree: Feature.uid_prefix,
                 associated_subjects: subject_associations.collect{ |a| a.subject['header'] },
                 associated_subject_ids: subject_associations.collect(&:subject_id),
+                etymologies_ss: self.etymologies.collect(&:content),
                 block_type: ['parent'],
                 '_childDocuments_'  => child_documents }
         for branch_id in subject_associations.select(:branch_id).distinct.collect(&:branch_id)
