@@ -15,8 +15,12 @@ class Admin::EtymologiesController < AclController
   end
 
   create.after do
-    object.create_etymology_type_association(etymology_type_association_params[:etymology_type_association_attributes])
-    if !object.valid?
+    association_params = etymology_type_association_params[:etymology_type_association_attributes]
+    originally_valid = object.valid?
+    if !association_params['subject_id'].blank?
+      object.create_etymology_type_association(association_params)
+    end
+    if originally_valid && !object.valid?
       object.destroy!
       @object = Etymology.new(etymology_params)
       object.build_etymology_type_association(etymology_type_association_params[:etymology_type_association_attributes])
@@ -24,10 +28,13 @@ class Admin::EtymologiesController < AclController
   end
   
   create do
-    wants.html { redirect_to(polymorphic_url([:admin, object.context, object])) }
-    failure.wants.html do
-      flash[:notice] = 'Etymology type associations failed to save.'
-      render :new
+    wants.html do
+      if object.valid? #failure.wants.html does not seem to work
+        redirect_to(polymorphic_url([:admin, object.context, object]))
+      else
+        flash[:notice] = 'Etymology type associations failed to save.'
+        render :new
+      end
     end
   end
 
