@@ -26,7 +26,7 @@ subject_associations = definition.definition_subject_associations %>
         <% if !definition.numerology.nil? %>
           <dt><%= Definition.human_attribute_name(:numerology).s %>:</dt> <dd><%= definition.numerology %></dd>
         <% end %>
-        <% if !definition.author.nil? %>
+        <% if !definition.authors.blank? %>
           <dt><%= Definition.human_attribute_name(:author).s %>:</dt> <dd><%= definition.author.fullname %></dd>
         <% end %>
       </dl>

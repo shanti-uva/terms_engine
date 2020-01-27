@@ -25,6 +25,18 @@ class Admin::DefinitionsController < AclController
     @authors = AuthenticatedSystem::Person.order('fullname')
   end
 
+  def update
+    object.update(definition_params)
+    author_ids = definition_params[:author_ids].blank? ? [] : definition_params[:author_ids]
+    object.author_ids = author_ids
+    redirect_to admin_feature_definition_path(object.feature,object)
+  end
+
+  # renders add_author.js.erb
+  def add_author
+    @authors = AuthenticatedSystem::Person.order('fullname')
+  end
+
   def locate_for_relation
     @locating_relation=true # flag used in template
     # Remove the Feature that is currently looking for a relation
@@ -57,6 +69,6 @@ class Admin::DefinitionsController < AclController
   end
   # Only allow a trusted parameter "white list" through.
   def definition_params
-    params.require(:definition).permit(:feature_id, :is_public, :is_primary, :ancestor_ids, :position, :content, :author_id, :language_id, :numerology, :tense)
+    params.require(:definition).permit(:feature_id, :is_public, :is_primary, :ancestor_ids, :position, :content, :language_id, :numerology, :tense, author_ids: [])
   end
 end

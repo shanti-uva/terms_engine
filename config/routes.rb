@@ -5,6 +5,11 @@ Rails.application.routes.draw do
   end
   resources :recordings, only: [:show]
   namespace :admin do
+    concern :add_author do
+      get :add_author, on: :collection
+    end
+
+    resources :definitions, concerns: :add_author
     resources :definitions do
       resources :etymologies
       resources :definition_relations
