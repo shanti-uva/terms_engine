@@ -56,6 +56,7 @@ class EnglishTermsService
   end
 
   def self.add_term(subject_id, term_name)
+    subject_id = term_name.split(' ').size > 1 ? Feature::ENG_PHRASE_SUBJECT_ID : Feature::ENG_WORD_SUBJECT_ID if subject_id.blank?
     if subject_id == Feature::ENG_LETTER_SUBJECT_ID
       f = Feature.search_by_phoneme(term_name, Feature::ENG_LETTER_SUBJECT_ID)
     else
