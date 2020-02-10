@@ -76,7 +76,8 @@
     </div>
   </section>
 </section>
-<% feature = contextual_feature
+<% perspective_code = current_perspective.code
+   feature = contextual_feature
    fid = feature.nil? ? nil : feature.fid
    uid = !fid.nil? ? "#{Feature.uid_prefix}-#{fid}" : "";
 %>
@@ -85,7 +86,7 @@
  asset_index: Flare.config.asset_url,
  feature_id: uid,
  domain: Feature.uid_prefix,
- perspective: current_perspective.code,
+ perspective: perspective_code,
  tree: Feature.uid_prefix,
  features_path: "#{(defined?(admin) && admin) ? admin_features_path : features_path}/%%ID%%",
  mandala_path: "https://mandala.shanti.virginia.edu/%%APP%%/%%ID%%/%%REL%%/nojs",
@@ -139,7 +140,12 @@
     featuresPath: $('#menu_js_data').data('featuresPath'),
     sortBy: 'position_i+ASC',
     extraFields: ['associated_subject_ids'],
-    nodeMarkerPredicates: [{field: 'associated_subject_ids', value: 9315, operation: '!includes', mark: 'nonInteractiveNode'}], //A predicate is: {field:, value:, operation: 'eq', mark: 'nonInteractive'}
+<% case perspective_code # A predicate is: {field:, value:, operation: 'eq', mark: 'nonInteractive'}
+   when 'tib.alpha' %>
+     nodeMarkerPredicates: [{field: 'associated_subject_ids', value: <%= Feature::BOD_EXPRESSION_SUBJECT_ID %>, operation: '!includes', mark: 'nonInteractiveNode'}],
+<% when 'eng.alpha' %>
+     nodeMarkerPredicates: [{field: 'associated_subject_ids', value: <%= Feature::ENG_LETTER_SUBJECT_ID %>, operation: 'includes', mark: 'nonInteractiveNode'}],
+<% end %>
   });
 
   var session_search = Cookies.getJSON('search_<%= Feature.uid_prefix %>');
