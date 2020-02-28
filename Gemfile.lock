@@ -122,8 +122,6 @@ PATH
   remote: .
   specs:
     terms_engine (0.5.5)
-      jbuilder
-      rails (>= 5.2)
 
 GEM
   remote: https://rubygems.org/
@@ -254,7 +252,7 @@ GEM
     pry-rails (0.3.6)
       pry (>= 0.10.4)
     public_suffix (3.0.3)
-    puma (3.12.2)
+    puma (3.12.4)
     rack (2.0.7)
     rack-test (1.1.0)
       rack (>= 1.0, < 3)
@@ -353,7 +351,6 @@ DEPENDENCIES
   interface_utils (= 2.3.7)!
   kmaps_engine (= 5.7.8)!
   passiverecord (= 0.2)!
-  pg
   pry-byebug
   pry-rails
   rails-observers
