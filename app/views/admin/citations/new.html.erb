@@ -1,0 +1,81 @@
+<%= render partial: 'breadcrumbs' %>
+<%  add_breadcrumb_item ts('new.this') %>
+<%= form_for [:admin, object] do |f| %>
+<%=   f.hidden_field :citable_id %>
+<%=   hidden_field_tag 'citation[citable_type]', object.citable_type %>
+<section class="panel panel-content">
+  <div class="panel-heading">
+    <h6><%= ts(:for, what: Citation.model_name.human.titleize, whom: parent_object) %></h6>
+  </div>
+  <div class="panel-body">
+<% if object.errors.any? %>
+  <div id="error_explanation">
+    <h2><%= pluralize(object.errors.count, "error") %> prohibited this citation from being saved:</h2>
+    <ul>
+    <% object.errors.full_messages.each do |msg| %>
+      <li><%= msg %></li>
+    <% end %>
+    </ul>
+  </div>
+<% end %>
+<fieldset>
+  <div class="row">
+<%=   label :info_source_type, InfoSource.human_attribute_name(:info_source_type).s %>
+<%=   select_tag(:info_source_type, options_for_select([['Source from Terms Dictionary','InfoSource'], ['Source ID from Shanti Sources','ShantiIntegration::Source'], ['Document or Online Resource ID from MMS application','MmsIntegration::Medium']], 'ShantiIntegration::Source')) %>
+  </div>
+  <div class="row text">
+<%=   f.label(:info_source_id).s %>
+<%=   f.text_field :info_source_id, :class => [:text, 'form-text'], placeholder: 'Enter source id...' %>
+<i>Or <a id="source-search-toggler" href="#">click here to search from name</a></i>
+<div id="source-search-container">
+  <input type="text" id="kmaps-search-source" class="kmaps-search-term form-control form-text text-full" placeholder="Search source by text..." autocomplete="off">
+</div>
+<%= javascript_on_load do %>
+  $("#source-search-container").hide();
+  $("#source-search-toggler").on('click',function(e){
+    $("#source-search-container").toggle();
+  });
+  $("#kmaps-search-source").kmapsTypeahead({
+    term_index: "<%= Flare.config.asset_url %>",
+    domain: "sources",
+    filters_domain: "subjects",
+    root_kmap_path: null,
+    features_path: "<%= features_path %>",
+    autocomplete_field: "title",
+    filters: "asset_type:sources",
+    ignore_tree: true
+  });
+  $("#kmaps-search-source").bind('typeahead:select', function(ev, suggestion) {
+    $("#citation_info_source_id").val(suggestion.id);
+  });
+<% end %>
+  </div>
+  <div class="row collection">
+<%=   f.label(:info_source_id).s %>
+<%=   f.collection_select :info_source_id, InfoSource.all.order(:title), :id, :title, include_blank: false, prompt: "Select source..." %>
+  </div>
+<%=   render partial: 'form_fields', locals: {f: f, object: object} %>
+<%    feature = contextual_feature %>
+<%=   link_to ts('cancel.this'), feature.nil? ? collection_path : admin_feature_path(feature.fid), class: 'btn btn-primary form-submit', id: 'edit-cancel' %> | <%= globalized_submit_tag 'creat.e.this', class: 'btn btn-primary form-submit' %>
+<%  end %>
+</fieldset>
+<%= javascript_on_load do %>
+      $(".row .collection").hide();
+      $(".row .collection > select")[0].disabled = true;
+      $("#info_source_type").change(function() {
+        type = $("#info_source_type").val()
+        if (type=="MmsIntegration::Medium" || type=="ShantiIntegration::Source") {
+          $(".row .collection").hide();
+          $(".row .collection > select")[0].disabled = true;
+          $(".row .text > input")[0].disabled = false;
+          $(".row .text").show();
+        } else {
+          $(".row .text").hide();
+          $(".row .collection > select")[0].disabled = false;
+          $(".row .text > input")[0].disabled = true;
+          $(".row .collection").show();
+        }
+      });
+<%  end %>
+  </div> <!-- END panel-body -->
+</section> <!-- END panel -->

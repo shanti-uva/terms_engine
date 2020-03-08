@@ -1,0 +1,38 @@
+<% add_breadcrumb_item InfoSource.model_name.human(:count => :many).s %>
+<div>
+  <div class="left">
+<%= resource_search_form %>
+  </div>
+<%= highlighted_new_item_link [controller_name], nil, :align => 'right' %>
+</div>
+<br class="clear"/>
+<section class="panel panel-content">
+  <div class="panel-heading">
+    <h6><%= InfoSource.model_name.human.titleize.s %></h6>
+  </div>
+  <div class="panel-body">
+<% if @collection.empty? %>
+<%=  empty_collection_message %>
+<% else %>
+   <table class="listGrid">
+<%=  pagination_row :colspan=>3 %>
+     <tr>
+       <th class="listActionCol"></th>
+       <th><%= InfoSource.human_attribute_name(:code).s %></th>
+       <th><%= InfoSource.human_attribute_name(:title).s %></th>
+       <th><%= InfoSource.human_attribute_name(:agent).s %></th>
+       <th><%= InfoSource.human_attribute_name(:date_published).s %></th>
+     </tr>
+<%   @collection.each do |item| %>
+     <tr>
+       <td class="listActionsCol"><%= list_actions_for_item(item) %></td>
+       <td><%= item.code %></td>
+       <td><%= item.title %></td>
+       <td><%= item.agent %></td>
+       <td><%= item.date_published %></td>
+     </tr>
+<%   end %>
+   </table>
+<% end %>
+  </div> <!-- END panel-body -->
+</section> <!-- END panel -->

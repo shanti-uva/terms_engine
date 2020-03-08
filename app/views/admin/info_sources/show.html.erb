@@ -1,0 +1,27 @@
+<% add_breadcrumb_item link_to(InfoSource.model_name.human(:count => :many).s, collection_path)
+   add_breadcrumb_item object.id %>
+<section class="panel panel-content">
+  <div class="panel-heading">
+    <h6><%= InfoSource.model_name.human.titleize.s %><%= edit_item_link object %></h6>
+  </div>
+  <div class="panel-body">
+<fieldset>
+  <div class="row">
+    <label><%= InfoSource.human_attribute_name(:code).s %></label>
+    <span><%= def_if_blank object, :code %></span>
+  </div>
+  <div class="row">
+    <label><%= InfoSource.human_attribute_name(:title).s %></label>
+    <span><%= def_if_blank(object, :title) %></span>
+  </div>
+  <div class="row">
+    <label><%= InfoSource.human_attribute_name(:agent).s %></label>
+    <span><%= def_if_blank(object, :agent) %></span>
+  </div>
+  <div class="row">
+    <label><%= Perspective.human_attribute_name(:date_published).s %></label>
+    <span><%= def_if_blank(object, :date_published) %></span>
+  </div>
+</fieldset>
+  </div> <!-- END panel-body -->
+</section> <!-- END panel -->

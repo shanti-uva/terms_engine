@@ -1,0 +1,28 @@
+<% if object.errors.any? %>
+  <div id="error_explanation">
+    <h2><%= pluralize(object.errors.count, "error") %> prohibited this info source from being saved:</h2>
+    <ul>
+    <% object.errors.full_messages.each do |msg| %>
+      <li><%= msg %></li>
+    <% end %>
+    </ul>
+  </div>
+<% end %>
+<fieldset>
+  <div class="row">
+<%= f.label(:code).s %>
+<%= f.text_field :code, class: [:text, 'text-full form-control form-text'] %>
+  </div>
+  <div class="row">
+<%= f.label(:title).s %>
+<%= f.text_field :title, class: [:text, 'text-full form-control form-text'] %>
+  </div>
+	<div class="row">
+	<%= f.label(:agent).s %>
+	<%= f.text_field :agent, class: [:text, 'text-full form-control form-text'] %>
+	</div>
+  <div class="row">
+<%= f.label(:date_published).s %>
+<%= f.date_select :date_published, include_blank: true %>
+  </div>
+</fieldset>

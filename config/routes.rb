@@ -5,15 +5,12 @@ Rails.application.routes.draw do
   end
   resources :recordings, only: [:show]
   namespace :admin do
+    resources :definition_relations, :info_sources
     resources :definitions do
-      resources :etymologies
-      resources :definition_relations
-      resources :definition_subject_associations
+      resources :citations, :etymologies, :definition_relations, :definition_subject_associations
     end
-    resources :definition_relations
     resources :etymologies do
-      resources :etymology_type_associations
-      resources :etymology_subject_associations
+      resources :etymology_type_associations, :etymology_subject_associations
     end
     resources :features do
       post :create_tibetan_term, on: :collection
@@ -21,9 +18,7 @@ Rails.application.routes.draw do
       resources :definitions do #, only: [:index, :show]
         get :locate_for_relation, on: :member
       end
-      resources :etymologies
-      resources :recordings
-      resources :subject_term_associations
+      resources :etymologies, :recordings, :subject_term_associations
     end
   end
   resources :passages, only: [:show] do

@@ -47,30 +47,40 @@
                  <label><%= ts 'update.d.this' %>:</label> <span><%= object.updated_at.to_formatted_s(:us_datetime) %></span>
                </div>
              </fieldset>
-<fieldset>
-  <legend><%= DefinitionRelation.model_name.human(:count => :many).titleize.s %> <%#= link_to 'View', admin_feature_name_feature_name_relations_path(object) %></legend>
-  <div class="left highlight">
-    <%= link_to ts('select.relation', :what => Definition.model_name.human, :whom => highlight(object.content)), locate_for_relation_admin_feature_definition_path(parent_object, object) %>.
-  </div>
-  <br class="clear"/>
-<% if object.parents.empty? && object.children.empty? %>
-<%=  empty_collection_message(ts('snippet.feature.name.not_related')) %>
-<% end
-   unless object.parents.empty? %>
-<%=  content_tag(:h3, ts('parent.this', :count => :many)) %>
-     <div class="row">
-<%=    render :partial => 'admin/definition_relations/list', :locals => { list: object.parent_relations, options: {:hide_child => true} } %>
-     </div>
-<% end
-   unless object.children.empty? %>
-<%=  content_tag(:h3, ts(:child, count: :many)) %>
-       <div class="row">
-<%=     render :partial => 'admin/definition_relations/list', :locals => { list: object.child_relations, options: { hide_related_to: true } } %>
-       </div>
-<% end %>
-</fieldset>
+             <fieldset>
+               <legend><%= DefinitionRelation.model_name.human(:count => :many).titleize.s %> <%#= link_to 'View', admin_feature_name_feature_name_relations_path(object) %></legend>
+               <div class="left highlight">
+<%=              link_to ts('select.relation', :what => Definition.model_name.human, :whom => highlight(object.content)), locate_for_relation_admin_feature_definition_path(parent_object, object) %>.
+               </div>
+               <br class="clear"/>
+<%             if object.parents.empty? && object.children.empty? %>
+<%=              empty_collection_message(ts('snippet.feature.name.not_related')) %>
+<%             end
+               unless object.parents.empty? %>
+<%=              content_tag(:h3, ts('parent.this', :count => :many)) %>
+                 <div class="row">
+<%=                render :partial => 'admin/definition_relations/list', :locals => { list: object.parent_relations, options: {:hide_child => true} } %>
+                 </div>
+<%             end
+               unless object.children.empty? %>
+<%=              content_tag(:h3, ts(:child, count: :many)) %>
+                 <div class="row">
+<%=                render :partial => 'admin/definition_relations/list', :locals => { list: object.child_relations, options: { hide_related_to: true } } %>
+                 </div>
+<%             end %>
+             </fieldset>
            </div> <!-- END panel-body -->
          </div> <!-- END collapseOne -->
+       </section> <!-- END panel -->
+       <section class="panel panel-default">
+           <div class="panel-heading">
+             <h6><a href="#collapseTwo" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= ts 'Citations' %></a></h6>
+           </div>
+           <div id="collapseTwo" class="panel-collapse collapse">
+             <div class="panel-body">
+       <%= citation_list_fieldset %>
+           </div> <!-- END panel-body -->
+         </div> <!-- END collapseTwo -->
        </section> <!-- END panel -->
        <section class="panel panel-default">
          <div class="panel-heading">
