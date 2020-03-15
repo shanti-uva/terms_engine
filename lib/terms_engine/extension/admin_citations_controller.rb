@@ -1,6 +1,6 @@
 module TermsEngine
   module Extension
-    module CitationsController
+    module AdminCitationsController
       extend ActiveSupport::Concern
 
       included do
