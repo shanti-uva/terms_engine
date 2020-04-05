@@ -72,12 +72,13 @@ module TermsEngine
               self.process_feature
               if current_fids_to_reindex.nil?
                 self.process_names(44)
+                fids_in_spawn << self.feature.fid
               else
                 fids_in_spawn += current_fids_to_reindex
                 fids_in_spawn.uniq!
               end
               process_definitions(1)
-              self.feature.update_attributes({:is_blank => false, :is_public => true})
+              self.feature.update_attributes(is_blank: false, is_public: true, skip_update: true)
               self.progress_bar(num: i, total: total, current: self.feature.pid)
               if self.fields.empty?
                 self.log.debug { "#{Time.now}: #{self.feature.pid} processed." }
