@@ -71,8 +71,9 @@ module TermsEngine
               end
               self.process_feature
               if current_fids_to_reindex.nil?
-                self.process_names(44)
-                fids_in_spawn << self.feature.fid
+                if self.process_names(44)
+                  fids_in_spawn << self.feature.fid
+                end
               else
                 fids_in_spawn += current_fids_to_reindex
                 fids_in_spawn.uniq!
