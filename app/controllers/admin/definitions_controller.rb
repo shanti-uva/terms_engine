@@ -4,7 +4,7 @@ class Admin::DefinitionsController < AclController
 
   belongs_to :feature
   before_action :collection, :only=>:locate_for_relation
-
+  
   new_action.before do
     @languages = Language.order('name')
     @authors = AuthenticatedSystem::Person.order('fullname')
@@ -34,7 +34,7 @@ class Admin::DefinitionsController < AclController
   end
 
   protected
-
+  
   #
   # Override ResourceController collection method
   #
