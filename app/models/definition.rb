@@ -33,6 +33,7 @@ class Definition < ApplicationRecord
   has_many :definition_subject_associations, dependent: :destroy
   has_many :association_notes, as: :notable, dependent: :destroy
   has_many :legacy_citations, -> { where(info_source_type: InfoSource.model_name.name) }, as: :citable, class_name: 'Citation'
+  has_many :standard_citations, -> { where.not(info_source_type: InfoSource.model_name.name) }, as: :citable, class_name: 'Citation'
   has_many :imports, :as => 'item', :dependent => :destroy
   has_many :etymologies, as: :context, dependent: :destroy
   

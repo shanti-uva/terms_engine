@@ -84,16 +84,18 @@ module TermsEngine
       
       def document_for_rsolr
         name = self.name.first
-        if !name.nil?
+        if name.nil?
+          per = Perspective.get_by_code(KmapsEngine::ApplicationSettings.default_perspective_code)
+        else
           per = self.perspective_by_name
         end
-        per ||= Perspective.get_by_code(KmapsEngine::ApplicationSettings.default_perspective_code)
         v = View.get_by_code(KmapsEngine::ApplicationSettings.default_view_code)
-        child_documents = self.parent_relations.collect do |pr|
+        child_documents = self.all_parent_relations.collect do |pr|
           parent_node = pr.parent_node
           name = parent_node.prioritized_name(v)
           name_str = name.nil? ? nil : name.name
           parent = pr.parent_node
+          relation_type = pr.feature_relation_type
           cd =
           { id: "#{self.uid}_#{pr.feature_relation_type.code}_#{parent.fid}",
             related_uid_s: parent.uid,
@@ -102,11 +104,13 @@ module TermsEngine
             "related_#{Feature.uid_prefix}_id_s" => "#{Feature.uid_prefix}-#{parent.fid}",
             "related_#{Feature.uid_prefix}_header_s" => name_str,
             "related_#{Feature.uid_prefix}_path_s" => parent_node.closest_ancestors_by_perspective(per).collect(&:fid).join('/'),
-            "related_#{Feature.uid_prefix}_relation_label_s" => pr.feature_relation_type.asymmetric_label,
-            "related_#{Feature.uid_prefix}_relation_code_s" => pr.feature_relation_type.code,
+            "related_#{Feature.uid_prefix}_relation_label_s" => relation_type.is_symmetric ? relation_type.label : relation_type.asymmetric_label,
+            "related_#{Feature.uid_prefix}_relation_code_s" => relation_type.code,
             related_kmaps_node_type: 'parent',
             block_type: ['child']
           }
+          p_rel_citation_references = pr.citations.collect { |c| c.info_source.bibliographic_reference }
+          cd["related_#{Feature.uid_prefix}_relation_citation_references_ss"] = p_rel_citation_references if !p_rel_citation_references.blank?
           subject_associations = parent_node.subject_term_associations
           related_branches = subject_associations.select(:branch_id).distinct.collect(&:branch_id)
           related_branches.each do |branch_id|
@@ -124,11 +128,12 @@ module TermsEngine
           end
           cd
         end
-        child_documents = child_documents + self.child_relations.collect do |pr|
+        child_documents = child_documents + self.all_child_relations.collect do |pr|
           child_node = pr.child_node
           name = child_node.prioritized_name(v)
           name_str = name.nil? ? nil : name.name
           child = pr.child_node
+          relation_type = pr.feature_relation_type
           cd =
           { id: "#{self.uid}_#{pr.feature_relation_type.asymmetric_code}_#{child.fid}",
             related_uid_s: child.uid,
@@ -137,11 +142,13 @@ module TermsEngine
             "related_#{Feature.uid_prefix}_id_s" => "#{Feature.uid_prefix}-#{child.fid}",
             "related_#{Feature.uid_prefix}_header_s" => name_str,
             "related_#{Feature.uid_prefix}_path_s" => child_node.closest_ancestors_by_perspective(per).collect(&:fid).join('/'),
-            "related_#{Feature.uid_prefix}_relation_label_s" => pr.feature_relation_type.label,
-            "related_#{Feature.uid_prefix}_relation_code_s" => pr.feature_relation_type.asymmetric_code,
+            "related_#{Feature.uid_prefix}_relation_label_s" => relation_type.label,
+            "related_#{Feature.uid_prefix}_relation_code_s" => relation_type.is_symmetric ? relation_type.code : relation_type.asymmetric_code,
             related_kmaps_node_type: 'child',
             block_type: ['child']
           }
+          p_rel_citation_references = pr.citations.collect { |c| c.info_source.bibliographic_reference }
+          cd["related_#{Feature.uid_prefix}_relation_citation_references_ss"] = p_rel_citation_references if !p_rel_citation_references.blank?
           subject_associations = child_node.subject_term_associations
           related_branches = subject_associations.select(:branch_id).distinct.collect(&:branch_id)
           related_branches.each do |branch_id|
@@ -179,7 +186,9 @@ module TermsEngine
           cd["related_#{Definition.uid_prefix}_author_s"] = d.author.fullname if !author.nil?
           cd["related_#{Definition.uid_prefix}_numerology_i"] = d.numerology if !d.numerology.nil?
           cd["related_#{Definition.uid_prefix}_tense_s"] = d.tense if !d.tense.nil?
-          info_source = d.citations.where(info_source_type: InfoSource.model_name.name).collect(&:info_source).first
+          citation_references = d.standard_citations.collect { |c| c.info_source.bibliographic_reference }
+          cd["related_#{Definition.uid_prefix}_citation_references_ss"] = citation_references if !citation_references.blank?
+          info_source = d.legacy_citations.collect(&:info_source).first
           cd["related_#{Definition.uid_prefix}_source_s"] = info_source.title if !info_source.nil?
           subject_associations = d.definition_subject_associations
           related_branches = subject_associations.select(:branch_id).distinct.collect(&:branch_id)
@@ -198,6 +207,15 @@ module TermsEngine
           end
           cd
         end
+        child_documents = child_documents + self.recordings.collect do |recording|
+          {id: "#{self.uid}_recording_#{recording.id}",
+           block_child_type: ['terms_recording'],
+           block_type: ['child'],
+           recording_url: "#{TermsEngine::Configuration.server_url}#{Rails.application.routes.url_helpers.rails_blob_path(recording.audio_file, disposition: 'attachment', only_path: true)}",
+           recording_dialect_s: recording.dialect['header'],
+           recording_dialect_uid_s: recording.dialect['uid']
+          }
+        end
         subject_associations = self.subject_term_associations
         doc = { tree: Feature.uid_prefix,
                 associated_subjects: subject_associations.collect{ |a| a.subject['header'] },
@@ -205,6 +223,9 @@ module TermsEngine
                 etymologies_ss: self.etymologies.collect(&:content),
                 block_type: ['parent'],
                 '_childDocuments_'  => child_documents }
+        subject_associations.collect do |sa|
+          doc["related_#{Feature.uid_prefix}_branch_#{sa.branch_id}_#{SubjectsIntegration::Feature.uid_prefix}_#{sa.subject_id}_citation_references_ss"] = sa.citations.collect { |c| c.info_source.bibliographic_reference }
+        end
         for branch_id in subject_associations.select(:branch_id).distinct.collect(&:branch_id)
           associations = subject_associations.where(branch_id: branch_id)
           doc["associated_subject_#{branch_id}_ls"] = associations.collect(&:subject_id)
