@@ -182,6 +182,12 @@ module TermsEngine
             "related_#{Definition.uid_prefix}_etymologies_ss" => d.etymologies.collect(&:content),
             block_type: ['child']
           }
+          d.etymologies.each do |de|
+            cd["related_#{Definition.uid_prefix}_etymology_#{de.id}_content_ss"] = de.content
+            etymology_type = de.etymology_type_association
+            subject = etymology_type.nil? ? nil : etymology_type.subject
+            cd["related_#{Definition.uid_prefix}_etymology_#{de.id}_type_#{subject['uid']}_ss"] = subject['header'] if !subject.nil?
+          end
           author = d.author
           cd["related_#{Definition.uid_prefix}_author_s"] = d.author.fullname if !author.nil?
           cd["related_#{Definition.uid_prefix}_numerology_i"] = d.numerology if !d.numerology.nil?
@@ -225,6 +231,12 @@ module TermsEngine
                 '_childDocuments_'  => child_documents }
         subject_associations.collect do |sa|
           doc["related_#{Feature.uid_prefix}_branch_#{sa.branch_id}_#{SubjectsIntegration::Feature.uid_prefix}_#{sa.subject_id}_citation_references_ss"] = sa.citations.collect { |c| c.info_source.bibliographic_reference }
+        end
+        self.etymologies.each do |e|
+          doc["etymology_#{e.id}_content_ss"] = e.content
+          etymology_type = e.etymology_type_association
+          subject = etymology_type.nil? ? nil : etymology_type.subject
+          doc["etymology_#{e.id}_type_#{subject['uid']}_ss"] = subject['header'] if !subject.nil?
         end
         for branch_id in subject_associations.select(:branch_id).distinct.collect(&:branch_id)
           associations = subject_associations.where(branch_id: branch_id)
