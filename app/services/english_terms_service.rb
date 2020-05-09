@@ -50,9 +50,13 @@ class EnglishTermsService
     EnglishTermsService.new(letter).trunk_for(name)
   end
   
+  # Sorts and indexes terms but not the parent.
   def reposition
     sorted = self.sorted_terms
-    sorted.each_index { |i| sorted[i].update_attribute(:position, i+1) }
+    sorted.each_index do |i|
+      sorted[i].update(position: i+1, skip_update: true)
+      sorted[i].index
+    end
   end
 
   def self.add_term(subject_id, term_name)
@@ -63,13 +67,13 @@ class EnglishTermsService
       f = Feature.search_by_excluding_phoneme(term_name, Feature::ENG_PHONEME_SUBJECT_ID, Feature::ENG_LETTER_SUBJECT_ID)
     end
     return f if !f.nil?
-    f = Feature.create!(fid: Feature.generate_pid, is_public: 1)
+    f = Feature.create!(fid: Feature.generate_pid, is_public: 1, skip_update: true)
     @@english_language ||= Language.get_by_code('eng')
     @@latin_script ||= WritingSystem.get_by_code('latin')
     
     names = f.names
     # TODO: Validate that the name was created succesfully or notify the user
-    english_name = names.create!(skip_update: true, name: term_name, position: 0, writing_system: @@latin_script, language: @@english_language, is_primary_for_romanization: true)
+    english_name = names.create!(name: term_name, position: 0, writing_system: @@latin_script, language: @@english_language, is_primary_for_romanization: true, skip_update: true)
     # TODO: Validate that the subject_term_association was created succesfully or notify the user
     a = f.subject_term_associations.create(subject_id: subject_id, branch_id: Feature::ENG_PHONEME_SUBJECT_ID)
     return f

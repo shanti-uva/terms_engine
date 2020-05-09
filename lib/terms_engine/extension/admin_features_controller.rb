@@ -19,9 +19,10 @@ module TermsEngine
           subject_id = params[:feature][:subject_term_associations][:subject_id]
           @current_term = EnglishTermsService.add_term(subject_id, current_entry)
           @object = @current_term
-          FeatureRelation.create!(child_node: @current_term, parent_node: parent, perspective: eng_alpha, feature_relation_type: relation_type)
+          FeatureRelation.create!(child_node: @current_term, parent_node: parent, perspective: eng_alpha, feature_relation_type: relation_type, skip_update: true)
           ts = EnglishTermsService.new(parent)
           ts.reposition
+          parent.index!
           @name = nil
         else
           @object = Feature.new
@@ -49,9 +50,10 @@ module TermsEngine
             phonetic = TibetanTermsService.get_phonetic(current_entry)
             @current_term = TibetanTermsService.add_term(Feature::BOD_EXPRESSION_SUBJECT_ID, current_entry, wylie, phonetic)
             @object = @current_term
-            FeatureRelation.create!(child_node: @current_term, parent_node: parent, perspective: tib_alpha, feature_relation_type: relation_type)
+            FeatureRelation.create!(child_node: @current_term, parent_node: parent, perspective: tib_alpha, feature_relation_type: relation_type, skip_update: true)
             ts = TibetanTermsService.new(parent)
             ts.reposition
+            parent.index!
             @name = nil
           end
         else

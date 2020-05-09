@@ -50,7 +50,10 @@ class TibetanTermsService
   
   def reposition
     sorted = sorted_terms
-    sorted.each_index { |i| sorted[i].update_attribute(:position, i+1) }
+    sorted.each_index do |i|
+      sorted[i].update(position: i+1, skip_update: true)
+      sorted[i].index
+    end
   end
 
   def self.get_wylie(name)
@@ -73,7 +76,7 @@ class TibetanTermsService
   def self.add_term(level_subject_id, tibetan = nil, wylie = nil, phonetic = nil)
     f = Feature.search_by_phoneme(tibetan || wylie, level_subject_id)
     return f if !f.nil?
-    f = Feature.create!(fid: Feature.generate_pid, is_public: 1)
+    f = Feature.create!(fid: Feature.generate_pid, is_public: 1, skip_update: true)
     @@tibetan_script ||= WritingSystem.get_by_code('tibt')
     @@tibetan_language ||= Language.get_by_code('bod')
     @@latin_script ||= WritingSystem.get_by_code('latin')
