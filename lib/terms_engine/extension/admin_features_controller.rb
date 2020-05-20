@@ -22,7 +22,7 @@ module TermsEngine
           FeatureRelation.create!(child_node: @current_term, parent_node: parent, perspective: eng_alpha, feature_relation_type: relation_type, skip_update: true)
           ts = EnglishTermsService.new(parent)
           ts.reposition
-          parent.index!
+          parent.queued_index
           @name = nil
         else
           @object = Feature.new
@@ -53,7 +53,7 @@ module TermsEngine
             FeatureRelation.create!(child_node: @current_term, parent_node: parent, perspective: tib_alpha, feature_relation_type: relation_type, skip_update: true)
             ts = TibetanTermsService.new(parent)
             ts.reposition
-            parent.index!
+            parent.queued_index
             @name = nil
           end
         else
