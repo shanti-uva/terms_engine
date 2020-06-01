@@ -26,7 +26,7 @@
     $("#source-search-container").toggle();
   });
   $("#kmaps-search-source").kmapsTypeahead({
-    term_index: "<%= Flare.config.asset_url %>",
+    term_index: "<%= ShantiIntegration::Source.config.url %>",
     domain: "sources",
     filters_domain: "subjects",
     root_kmap_path: null,
