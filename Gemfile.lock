@@ -122,8 +122,6 @@ PATH
   remote: .
   specs:
     terms_engine (0.5.5)
-      jbuilder
-      rails (>= 5.2)
 
 GEM
   remote: https://rubygems.org/
@@ -328,7 +326,7 @@ GEM
       execjs (>= 0.3.0, < 3)
     websocket-driver (0.7.1)
       websocket-extensions (>= 0.1.0)
-    websocket-extensions (0.1.4)
+    websocket-extensions (0.1.5)
     will_paginate (3.2.1)
     xpath (3.1.0)
       nokogiri (~> 1.8)
@@ -353,7 +351,6 @@ DEPENDENCIES
   interface_utils (= 2.3.7)!
   kmaps_engine (= 5.7.8)!
   passiverecord (= 0.2)!
-  pg
   pry-byebug
   pry-rails
   rails-observers
