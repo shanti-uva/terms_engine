@@ -24,6 +24,7 @@ $(document).ready(function() {
     featureId: $('#recording_dialect_js_data').data('featureId'),
     domain: $('#recording_dialect_js_data').data('domain'),
     perspective: $('#recording_dialect_js_data').data('perspective'),
+    view: $('#recording_dialect_js_data').data('view'),
     tree: $('#recording_dialect_js_data').data('tree'), //places
     featuresPath: $('#recording_dialect_js_data').data('featuresPath'),
   });
@@ -33,6 +34,7 @@ $(document).ready(function() {
     termIndex: $('#recording_dialect_js_data').data('termIndex'),
     assetIndex: $('#recording_dialect_js_data').data('assetIndex'),
     perspective: $('#recording_dialect_js_data').data('perspective'),
+    view: $('#recording_dialect_js_data').data('view'),
     tree: $('#recording_dialect_js_data').data('tree'), //places
     domain: $('#recording_dialect_js_data').data('domain'), //places
     extraFields: ["header"],

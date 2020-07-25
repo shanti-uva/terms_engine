@@ -65,7 +65,8 @@
       asset_index: ShantiIntegration::Source.config.url,
       feature_id: "#{Feature.uid_prefix}-#{@feature.fid}",
       domain: 'subjects',
-      perspective: 'gen',
+		  perspective: current_perspective.code,
+		  view: current_view.code,
       tree: Feature.uid_prefix,
       feature_label: "",
       feature_path: SubjectsIntegration::Feature.get_url('%%ID%%'),
@@ -79,6 +80,7 @@
         featureId:  $('#related_subjects_js_data').data('featureId'),
         domain: $('#related_subjects_js_data').data('domain'),
         perspective: $('#related_subjects_js_data').data('perspective'),
+        view: $('#related_subjects_js_data').data('view'),
         tree: $('#related_subjects_js_data').data('tree'), //subjects
       });
       jQuery('.terms-node-wrapper .related_subject .popover-kmaps').kmapsPopup({

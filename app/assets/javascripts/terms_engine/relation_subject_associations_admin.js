@@ -18,6 +18,7 @@ $(document).ready(function() {
     featureId: $('#relation_subject_associations_js_data').data('featureId'),
     domain: $('#relation_subject_associations_js_data').data('domain'),
     perspective: $('#relation_subject_associations_js_data').data('perspective'),
+    view: $('#relation_subject_associations_js_data').data('view'),
     tree: $('#relation_subject_associations_js_data').data('tree'), //places
     featuresPath: $('#relation_subject_associations_js_data').data('featuresPath'),
   });

@@ -20,6 +20,7 @@ $(document).ready(function() {
     featureId: $('#etymology_type_associations_js_data').data('featureId'),
     domain: $('#etymology_type_associations_js_data').data('domain'),
     perspective: $('#etymology_type_associations_js_data').data('perspective'),
+    view: $('#etymology_type_associations_js_data').data('view'),
     tree: $('#etymology_type_associations_js_data').data('tree'), //places
     featuresPath: $('#etymology_type_associations_js_data').data('featuresPath'),
   });
@@ -31,6 +32,7 @@ $(document).ready(function() {
       termIndex: $('#etymology_type_associations_js_data').data('termIndex'),
       assetIndex: $('#etymology_type_associations_js_data').data('assetIndex'),
       perspective: $('#etymology_type_associations_js_data').data('perspective'),
+      view: $('#etymology_type_associations_js_data').data('view'),
       tree: $('#etymology_type_associations_js_data').data('tree'), //places
       domain: $('#etymology_type_associations_js_data').data('domain'), //places
       extraFields: ["header"],

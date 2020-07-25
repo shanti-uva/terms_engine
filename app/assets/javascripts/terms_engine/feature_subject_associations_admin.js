@@ -20,6 +20,7 @@ $(document).ready(function() {
     featureId: $('#feature_subject_associations_js_data').data('featureId'),
     domain: $('#feature_subject_associations_js_data').data('domain'),
     perspective: $('#feature_subject_associations_js_data').data('perspective'),
+    view: $('#feature_subject_associations_js_data').data('view'),
     tree: $('#feature_subject_associations_js_data').data('tree'), //places
     featuresPath: $('#feature_subject_associations_js_data').data('featuresPath'),
   });
@@ -31,6 +32,7 @@ $(document).ready(function() {
       termIndex: $('#feature_subject_associations_js_data').data('termIndex'),
       assetIndex: $('#feature_subject_associations_js_data').data('assetIndex'),
       perspective: $('#feature_subject_associations_js_data').data('perspective'),
+      view: $('#feature_subject_associations_js_data').data('view'),
       tree: $('#feature_subject_associations_js_data').data('tree'), //places
       domain: $('#feature_subject_associations_js_data').data('domain'), //places
       extraFields: ["header"],
