@@ -79,3 +79,10 @@ body.page-terms .main-col {
  /* box-shadow:none; */
 }
 /* END - fancytree */
+/* breadcrumbs style */
+
+/* We asume that the the phonetic representation will only appear on the second element of the breadcrumb */
+.breadcrumb li:nth-child(2) {
+  text-transform: none;
+}
+/* END - breadcrumbs style */
