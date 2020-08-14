@@ -13,7 +13,7 @@
 <fieldset>
   <legend><%= ts(:for, what: t('information.general'), whom: Recording.model_name.human.titleize) %></legend>
   <div class="row">
-    <%= form.label :dialect_name, ts(:dialect, count: 1).titleize %>
+    <%= form.label :dialect_name, ts(:dialect, count: 1).titleize.html_safe %>
     <br/>
     <br/>
     <%= form.hidden_field :dialect_id, id: :dialect_id %>
