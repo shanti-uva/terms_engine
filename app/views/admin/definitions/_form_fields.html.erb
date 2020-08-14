@@ -45,6 +45,6 @@
   </div>
   <p><b><%= form.label :author_id, ts(:author, count: 1).titleize %></b></p><br/>
   <div class="row">
-  <%= form.collection_select :author_id, @authors, :id, :fullname, {include_blank: false} , class: 'form-control form-select ss-select selectpicker' %>
+  <%= form.collection_select :author_id, @authors, :id, :fullname, {include_blank: true} , class: 'form-control form-select ss-select selectpicker' %>
   </div>
 </fieldset>
