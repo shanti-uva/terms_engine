@@ -2,19 +2,19 @@
 #
 # Table name: definitions
 #
-#  id           :bigint(8)        not null, primary key
-#  feature_id   :integer          not null
-#  language_id  :integer          not null
-#  is_public    :boolean          default(FALSE), not null
-#  is_primary   :boolean
+#  id           :bigint           not null, primary key
 #  ancestor_ids :string
-#  position     :integer          default(0)
 #  content      :text             not null
-#  author_id    :integer
+#  is_primary   :boolean
+#  is_public    :boolean          default(FALSE), not null
 #  numerology   :integer
+#  position     :integer          default(0)
 #  tense        :string
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
+#  author_id    :integer
+#  feature_id   :integer          not null
+#  language_id  :integer          not null
 #
 
 class Definition < ApplicationRecord

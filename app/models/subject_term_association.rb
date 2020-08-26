@@ -2,12 +2,12 @@
 #
 # Table name: subject_term_associations
 #
-#  id         :bigint(8)        not null, primary key
-#  feature_id :integer          not null
-#  subject_id :integer          not null
+#  id         :bigint           not null, primary key
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #  branch_id  :integer          not null
+#  feature_id :integer          not null
+#  subject_id :integer          not null
 #
 
 class SubjectTermAssociation < ApplicationRecord
