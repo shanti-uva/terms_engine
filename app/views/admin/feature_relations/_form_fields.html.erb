@@ -18,6 +18,14 @@
 <%= f.select :feature_relation_type_id, FeatureRelationType.marked_options(parent_object.id == object.parent_node_id), {}, class: 'form-control form-select ss-select selectpicker' %>
 <%= fname_labels(object.other_node(parent_object)) %>
   </div>
+  <div>
+    <div>
+      <%= radio_button_tag :relation_source, 'whole term' %>
+      <%= label_tag :relation_source_whole_term, 'whole term', value: 'term' %>
+      <%= radio_button_tag :relation_source, 'specific definition' %>
+      <%= label_tag :relation_source_specific_definition, 'specific definition', value: 'definition' %>
+    </div>
+  </div>
   <div class="row">
 <%= f.label :perspective_id, Perspective.model_name.human.titleize.s %>
 <%= f.collection_select :perspective_id, @perspectives, :id, :name, {}, class: 'form-control form-select ss-select selectpicker' %>
