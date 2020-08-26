@@ -2,12 +2,12 @@
 #
 # Table name: model_sentences
 #
-#  id           :bigint(8)        not null, primary key
-#  context_id   :integer          not null
-#  context_type :string           not null
+#  id           :bigint           not null, primary key
 #  content      :text             not null
+#  context_type :string           not null
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
+#  context_id   :integer          not null
 #
 
 require 'rails_helper'

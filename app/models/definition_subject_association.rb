@@ -2,12 +2,20 @@
 #
 # Table name: definition_subject_associations
 #
-#  id            :bigint(8)        not null, primary key
-#  definition_id :bigint(8)        not null
-#  subject_id    :integer          not null
-#  branch_id     :integer          not null
+#  id            :bigint           not null, primary key
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
+#  branch_id     :integer          not null
+#  definition_id :bigint           not null
+#  subject_id    :integer          not null
+#
+# Indexes
+#
+#  index_definition_subject_associations_on_definition_id  (definition_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (definition_id => definitions.id)
 #
 
 class DefinitionSubjectAssociation < ApplicationRecord
