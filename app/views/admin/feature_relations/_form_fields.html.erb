@@ -20,10 +20,30 @@
   </div>
   <div>
     <div>
-      <%= radio_button_tag :relation_source, 'whole term' %>
-      <%= label_tag :relation_source_whole_term, 'whole term', value: 'term' %>
-      <%= radio_button_tag :relation_source, 'specific definition' %>
-      <%= label_tag :relation_source_specific_definition, 'specific definition', value: 'definition' %>
+      <div>
+        <%= radio_button_tag :relation_source, 'term', true %>
+        <%= label_tag :relation_source_term, 'whole term' %>
+        <%= fname_labels(parent_object) %>
+      </div>
+      <div>
+        <%= radio_button_tag :relation_source, 'definition' %>
+        <%= label_tag :relation_source_definition, 'specific definition' %>
+        <% source_definitions = parent_object.definitions %>
+        <%= select_tag :source_definition_id, options_from_collection_for_select(source_definitions, 'id', 'snippet'), include_blank: true, class: 'form-control form-select ss-select selectpicker disabled' %>
+      </div>
+    </div>
+    <div>
+      <div>
+        <%= radio_button_tag :relation_dest, 'term', true %>
+        <%= label_tag :relation_dest_term, 'whole term' %>
+        <%= fname_labels(object.other_node(parent_object)) %>
+      </div>
+      <div>
+        <%= radio_button_tag :relation_dest, 'definition' %>
+        <%= label_tag :relation_dest_definition, 'specific definition' %>
+        <% dest_definitions = object.other_node(parent_object).definitions %>
+        <%= select_tag :dest_definition_id, options_from_collection_for_select(dest_definitions, 'id', 'snippet'), include_blank: true, class: 'form-control form-select ss-select selectpicker disabled' %>
+      </div>
     </div>
   </div>
   <div class="row">
@@ -67,3 +87,4 @@
 } %>
 
 <%= javascript_include_tag 'terms_engine/relation_subject_associations_admin' %>
+<%= javascript_include_tag 'terms_engine/feature_relation_admin' %>

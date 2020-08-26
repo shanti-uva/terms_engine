@@ -7,4 +7,5 @@ Rails.application.config.assets.precompile.concat(['terms_engine/recordings.js',
                                                    'terms_engine/feature_subject_associations_admin.js',
                                                    'terms_engine/etymology_subject_associations_admin.js',
                                                    'terms_engine/relation_subject_associations_admin.js',
+                                                   'terms_engine/feature_relation_admin.js',
                                                    ])
