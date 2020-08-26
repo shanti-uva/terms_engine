@@ -51,4 +51,8 @@ class Definition < ApplicationRecord
   def self.uid_prefix
     'definitions'
   end
+
+  def snippet(length = 20)
+    ActionController::Base.helpers.strip_tags(content).squish.truncate(length)
+  end
 end
