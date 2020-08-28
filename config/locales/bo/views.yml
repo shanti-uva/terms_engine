@@ -17,6 +17,8 @@ bo:
             one: '%{what} term'
             other: '%{what} terms'
         unused_ids: 'Unused Term IDs'
+    definition:
+        association_link: 'Associate to another term or defintion of another term.'
     priorit:
         ization_of:
             feature_types: 'Prioritization of Term Types'
