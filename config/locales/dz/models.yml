@@ -55,9 +55,7 @@ dz:
                     one: 'Branch'
                     other: 'Branches'
             etymology:
-                content:
-                    one: 'Content'
-                    other: 'Contents'
+                content: 'Content'
                 etymology_type_association:
                     one: 'Etymology Type'
                     other: 'Etymology Types'
@@ -75,6 +73,8 @@ dz:
                     other: 'Term Types'
                 old_pid: 'OLD TID'
                 pid: 'Term ID'
+            passage:
+                content: 'Content'
             recording:
                 dialect:
                     one: 'Dialect'

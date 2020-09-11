@@ -84,6 +84,18 @@
        </section> <!-- END panel -->
        <section class="panel panel-default">
          <div class="panel-heading">
+           <h6><a href="#collapsePassages" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= Passage.model_name.human(:count => :many).titleize.s %></a></h6>
+         </div>
+         <div id="collapsePassages" class="panel-collapse collapse">
+           <div class="panel-body">
+             <%=       highlighted_new_item_link [object, :passage] %>
+             <br class="clear"/>
+             <%=       render :partial => 'admin/passages/list', :locals => { :list => object.passages.order('id DESC') } %>
+           </div> <!-- END panel-body -->
+         </div> <!-- END collapseTen -->
+       </section>
+       <section class="panel panel-default">
+         <div class="panel-heading">
            <h6><a href="#collapseThree" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= DefinitionSubjectAssociation.model_name.human(count: :many).titleize.s %></a></h6>
          </div>
          <div id="collapseThree" class="panel-collapse collapse">
