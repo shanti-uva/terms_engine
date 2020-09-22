@@ -3,7 +3,7 @@ $(document).ready(function() {
   $(".selectpicker[data-id='dest_definition_id']").addClass("disabled");
   $("[name='relation_source']").change(function(e){
     var option = $(this).val();
-    if(option === "term"){
+    if(option === "<%= Feature.model_name.to_s %>"){
       $("#source_definition_id").attr('disabled', true);
       $(".selectpicker[data-id='source_definition_id']").addClass("disabled");
     } else {
@@ -13,7 +13,7 @@ $(document).ready(function() {
   });
   $("[name='relation_dest']").change(function(e){
     var option = $(this).val();
-    if(option === "term"){
+    if(option === "<%= Feature.model_name.to_s %>"){
       $("#dest_definition_id").attr('disabled', true);
       $(".selectpicker[data-id='dest_definition_id']").addClass("disabled");
     } else {
