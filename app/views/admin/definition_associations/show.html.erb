@@ -8,10 +8,9 @@
   </div>
   <div class="panel-body">
     <p id="notice"><%= notice %></p>
-
     <p>
-    <strong><%= Definition.model_name.human.titleize.s %> (<%= parent_object.feature.prioritized_name(current_view).name %>)</strong><br>
-    <%= parent_object.content.html_safe  %>
+      <strong><%= Definition.model_name.human.titleize.s %> (<%= parent_object.feature.prioritized_name(current_view).name %>)</strong><br>
+<%=   parent_object.content.html_safe  %>
     </p>
 <%  relation_type = object.feature_relation_type
     if !relation_type.nil? %>
@@ -26,12 +25,12 @@
 <%  associated = object.associated
     if associated.instance_of? Definition %>
       <strong><%= Definition.model_name.human.titleize.s %> (<%= associated.feature.prioritized_name(current_view).name %>)</strong><br>
-      <%= associated.content.html_safe %>
+<%=   associated.content.html_safe %>
 <%  else %>
       <strong><%= Feature.model_name.human.titleize.s %> <%= associated.prioritized_name(current_view).name %> (<%= associated.pid %>)</strong>
 <%  end %>
     </p>
-    <%= link_to ts('edit.this'), edit_admin_definition_definition_association_path(parent_object, object), class: 'btn btn-primary form-submit' %> |
-    <%= link_to ts('back.this'), admin_feature_definition_path(feature, parent_object)  %>
+<%= link_to ts('edit.this'), edit_admin_definition_definition_association_path(parent_object, object), class: 'btn btn-primary form-submit' %> |
+<%= link_to ts('back.this'), admin_feature_definition_path(feature, parent_object)  %>
   </div> <!-- END panel-body -->
  </section> <!-- END panel -->
