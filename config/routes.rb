@@ -8,6 +8,7 @@ Rails.application.routes.draw do
     resources :definition_relations, :info_sources
     resources :definitions do
       resources :citations, :etymologies, :definition_relations, :definition_subject_associations, :passages
+      resources :definition_associations, except: [:new, :index]
     end
     resources :etymologies do
       resources :etymology_type_associations, :etymology_subject_associations

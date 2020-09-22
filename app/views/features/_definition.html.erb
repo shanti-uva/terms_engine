@@ -1,55 +1,70 @@
 <% full_index_id = "#{prefix}#{index}"
-passages = definition.passages
-subject_associations = definition.definition_subject_associations %>
+   passages = definition.passages
+   subject_associations = definition.definition_subject_associations
+   parents = definition.parent_definition_associations
+   children = definition.definition_associations
+	 definition_association_count = parents.size + children.size %>
 <div class="<%= definition_node_classes(is_child,def_level) %>">
-  <ul id="terms-def-tabs-<%= full_index_id %>" class="nav nav-tabs terms-def-tabs-<%= full_index_id %>" role="tablist"><li class="active"><a href="#terms-def-<%= full_index_id %>" role="tab" data-toggle="tab"><%= index_to_text(full_index_id ) %> <%= Definition.model_name.human.s %></a></li>
-    <% if !passages.empty? %>
-      <li><a href="#terms-quotes-<%= full_index_id %>" role="tab" data-toggle="tab"><%= Passage.model_name.human(count: passages.count).titleize.s %><span> (<%= passages.count %>)</span></a></li>
-    <% end %>
-    <% if !subject_associations.empty? %>
-      <li><a href="#terms-resources-<%= full_index_id %>" role="tab" data-toggle="tab"><%= DefinitionSubjectAssociation.model_name.human(count: subject_associations.count).titleize.s %><span> (<%= subject_associations.count %>)</span></a></li>
-    <% end %>
+  <ul id="terms-def-tabs-<%= full_index_id %>" class="nav nav-tabs terms-def-tabs-<%= full_index_id %>" role="tablist">
+		<li class="active"><a href="#terms-def-<%= full_index_id %>" role="tab" data-toggle="tab"><%= index_to_text(full_index_id ) %> <%= Definition.model_name.human.s %></a></li>
+<% if !passages.empty? %>
+    <li><a href="#terms-quotes-<%= full_index_id %>" role="tab" data-toggle="tab"><%= Passage.model_name.human(count: passages.count).titleize.s %><span> (<%= passages.count %>)</span></a></li>
+<% end
+   if definition_association_count > 0 %>
+    <li><a href="#definition-associations-<%= full_index_id %>" role="tab" data-toggle="tab">Related Terms/Definitions (<%= definition_association_count %>)</a></li>
+<% end
+   if !subject_associations.empty? %>
+    <li><a href="#terms-resources-<%= full_index_id %>" role="tab" data-toggle="tab"><%= DefinitionSubjectAssociation.model_name.human(count: subject_associations.count).titleize.s %><span> (<%= subject_associations.count %>)</span></a></li>
+<% end %>
   </ul>
   <div class="tab-content">
     <div role="tabpanel" class="tab-pane active" id="terms-def-<%= full_index_id %>">
       <p><%= definition.content.s.html_safe %></p>
 <%=   render(partial: 'etymologies', locals: { etymologies: definition.etymologies }) %>
       <p><a data-toggle="collapse" href="#definition-details-<%= full_index_id %>" role="button" aria-expanded="false" aria-controls="definition-details" class="definition-details-control collapsed">
-    <span class="glyphicon"></span>Further Details
+        <span class="glyphicon"></span>Further Details
       </a></p>
       <div id="definition-details-<%= full_index_id %>" class="collapse definition-details-wrapper">
       <dl>
         <dt><%= Language.model_name.human %>:</dt> <dd><%= definition.language.name %></dd>
-        <% if !definition.tense.blank? %>
-          <dt><%= Definition.human_attribute_name(:tense).s %>:</dt> <dd><%= definition.tense %></dd>
-        <% end %>
-        <% if !definition.numerology.nil? %>
-          <dt><%= Definition.human_attribute_name(:numerology).s %>:</dt> <dd><%= definition.numerology %></dd>
-        <% end %>
-        <% if !definition.author.nil? %>
-          <dt><%= Definition.human_attribute_name(:author).s %>:</dt> <dd><%= definition.author.fullname %></dd>
-        <% end %>
+<%    if !definition.tense.blank? %>
+        <dt><%= Definition.human_attribute_name(:tense).s %>:</dt> <dd><%= definition.tense %></dd>
+<%    end
+      if !definition.numerology.nil? %>
+        <dt><%= Definition.human_attribute_name(:numerology).s %>:</dt> <dd><%= definition.numerology %></dd>
+<%    end
+      if !definition.author.nil? %>
+        <dt><%= Definition.human_attribute_name(:author).s %>:</dt> <dd><%= definition.author.fullname %></dd>
+<%    end %>
       </dl>
       </div>
     </div>
-    <% if !passages.empty? %>
+<%  if !passages.empty? %>
       <div role="tabpanel" class="tab-pane" id="terms-quotes-<%= full_index_id %>">
-        <% passages.each do |passage| %>
-          <%= passage.content %><%= citation_popup_link_for(passage) %>
-        <% end %>
+<%    passages.each do |passage| %>
+<%=     passage.content %><%= citation_popup_link_for(passage) %>
+<%    end %>
       </div>
-    <% end %>
-    <% if !subject_associations.empty? %>
+<%  end
+		if definition_association_count > 0 %>
+      <div role="tabpanel" class="tab-pane" id="definition-associations-<%= full_index_id %>">
+				<dl>
+        <dd><p><%= definition.content.s.html_safe %></p></dd>
+<%=     render partial: 'definition_associations', locals: { lists: [parents, children], related_methods: ['definition', 'associated'] } %>
+        </dl>
+      </div>
+<%  end %>
+<%  if !subject_associations.empty? %>
       <div role="tabpanel" class="tab-pane terms-resources-tab-content" id="terms-resources-<%= full_index_id %>">
         <h4><%= SubjectsIntegration::Feature.human_name(count: :many).titleize.s %></h4>
         <dl>
-          <%=  render partial: 'subjects', locals: { associations: subject_associations } %>
+<%=       render partial: 'subjects', locals: { associations: subject_associations } %>
         </dl>
       </div>
-    <% end %>
+<%  end %>
   </div> <!-- END tab-content -->
 </div> <!-- END terms-definition-node -->
-  <% definitions = definition.children
-  if !definitions.empty? %>
+<% definitions = definition.children
+   if !definitions.empty? %>
 <%=  render partial: 'definitions', locals: { definitions: definitions, is_child: true, prefix: "#{full_index_id}-", def_level: (def_level + 1)} %>
 <% end %>

@@ -1,0 +1,94 @@
+<%  add_breadcrumb_item feature_link(parent_object)
+    add_breadcrumb_item feature_relations_link(parent_object)
+    add_breadcrumb_item ts('new.record', what: t('relat.ion.ship.to', what: feature_label(object.parent_node))) %>
+<%= form_for object, url: admin_feature_relations_path do |f| %>
+<%    if object.errors.any? %>
+      <div id="error_explanation">
+        <h2><%= pluralize(object.errors.count, "error") %> prohibited this relation from being saved:</h2>
+        <ul>
+<%      object.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+<%      end %>
+        </ul>
+      </div>
+<%    end %>
+      <fieldset>
+        <legend><%= ts(:for, what: t('relat.ion.this.one').titleize, whom: fname_labels(parent_object)) %></legend>
+<%=     f.hidden_field :parent_node_id %>
+<%=     f.hidden_field :child_node_id %>
+        <div class="row">
+<%=       f.label :feature_relation_type_id, FeatureRelationType.model_name.human.titleize.s %>
+<%        term_str = Feature.model_name.to_s
+          definition_str = Definition.model_name.to_s %>
+        </div>
+        <div class="row">
+          <div>
+<%=         radio_button_tag :relation_source, term_str, true %>
+<%=         label_tag :relation_source_term, 'whole term' %>
+<%=         fname_labels(parent_object) %>
+          </div>
+          <div>
+<%=         radio_button_tag :relation_source, definition_str %>
+<%=         label_tag :relation_source_definition, 'specific definition' %>
+<%          source_definitions = parent_object.definitions.in_house_definitions %>
+<%=         select_tag :source_definition_id, options_from_collection_for_select(source_definitions, 'id', 'snippet'), include_blank: true, class: 'form-control form-select ss-select selectpicker disabled' %>
+          </div>
+        </div>
+        <div class="row">
+<%=       f.select :feature_relation_type_id, FeatureRelationType.marked_options(parent_object.id == object.parent_node_id), {}, class: 'form-control form-select ss-select selectpicker' %>
+        </div>
+        <div class="row">
+          <div>
+<%=         radio_button_tag :relation_dest, term_str, true %>
+<%=         label_tag :relation_dest_term, 'whole term' %>
+<%=         fname_labels(object.other_node(parent_object)) %>
+          </div>
+          <div>
+<%=         radio_button_tag :relation_dest, definition_str %>
+<%=         label_tag :relation_dest_definition, 'specific definition' %>
+<%          dest_definitions = object.other_node(parent_object).definitions.in_house_definitions %>
+<%=         select_tag :dest_definition_id, options_from_collection_for_select(dest_definitions, 'id', 'snippet'), include_blank: true, class: 'form-control form-select ss-select selectpicker disabled' %>
+          </div>
+        </div>
+        <div class="row">
+<%=       f.label :perspective_id, Perspective.model_name.human.titleize.s %>
+<%=       f.collection_select :perspective_id, @perspectives, :id, :name, {}, class: 'form-control form-select ss-select selectpicker' %>
+        </div>
+        <div class="row" id="subject_container">
+<%=       f.label :subject_name, SubjectsIntegration::Feature.human_name.titleize.s %>
+          <br/>
+          <br/>
+<%=       f.fields_for :relation_subject_association do |relation_subject_association_form| %>
+<%=         relation_subject_association_form.hidden_field :subject_id, id: :subject_id %>
+<%          if !object.relation_subject_association.id.nil? %>
+<%=           relation_subject_association_form.hidden_field :id %>
+<%          end %>
+<%=         relation_subject_association_form.hidden_field :branch_id, id: :branch_id %>
+<%=         relation_subject_association_form.hidden_field :_destroy %>
+            <p>Search by name</p>
+<%          subject_name = ''
+            if !object.relation_subject_association.nil? && !object.relation_subject_association.subject.blank?
+              subject_name = object.relation_subject_association.subject['header']
+            end %>
+<%=         text_field_tag :subject_name, :post, { placeholder: 'Search by subject name', value: subject_name } %>
+            <a href="#" id="js-expand-subject-tree">Or click here to view subject hierarchy</a>
+            <div id="subject_tree_container"></div>
+<%        end %>
+        </div>
+      </fieldset>
+<%=   link_to(ts('cancel.this'), parent_object.nil? ? admin_feature_relation_path(object) : admin_feature_feature_relations_path(parent_object), class: 'btn btn-primary form-submit', id: 'edit-cancel') %> |
+<%=   globalized_submit_tag 'creat.e.this', class: 'btn btn-primary form-submit' %>
+<%  end %>
+<%= content_tag :div, '', id: 'relation_subject_associations_js_data', data: {
+      term_index: Feature.config.url,
+      asset_index: ShantiIntegration::Source.config.url,
+      feature_id: '',
+      domain: 'subjects',
+      perspective: 'gen',
+      tree: 'subjects',
+      features_path: new_admin_feature_path(parent_id: '%%ID%%'),
+      mandala_path: 'https://mandala.shanti.virginia.edu/%%APP%%/%%ID%%/%%REL%%/nojs',
+      relation_types: FeatureRelationType.all.to_json
+    } %>
+<%= javascript_include_tag 'terms_engine/relation_subject_associations_admin' %>
+<%= javascript_include_tag 'terms_engine/feature_relation_admin' %>

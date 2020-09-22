@@ -6,6 +6,9 @@ bo:
             definition:
                 one: 'definition'
                 other: 'definitions'
+            definition_relation:
+                one: 'definition relation'
+                other: 'definition relations'
             definition_subject_association:
                 one: 'definition subject association'
                 other: 'definition subject associations'

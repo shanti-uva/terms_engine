@@ -1,6 +1,11 @@
 <% if list.empty? %>
 <%=  empty_collection_message %>
 <% else %>
+<%     if @locating_relation %>
+          <div class="left highlight">
+            <%= link_to ts('definition.association_link'), locate_for_relation_admin_feature_path(object.feature.fid) %>.
+          </div>
+<%     end %>
    <table class="listGrid">
      <tr>
        <th class="listActionsCol"></th>
@@ -22,7 +27,7 @@
 <%   end %>
        </td>
        <td><%= item.language.name %></td>
-       <td><%= item.content.html_safe %></td>
+       <td><%= item.snippet.s %></td>
      </tr>
 <%   end %>
    </table>

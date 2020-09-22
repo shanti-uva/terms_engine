@@ -2,19 +2,19 @@
 #
 # Table name: definitions
 #
-#  id           :bigint(8)        not null, primary key
-#  feature_id   :integer          not null
-#  language_id  :integer          not null
-#  is_public    :boolean          default(FALSE), not null
-#  is_primary   :boolean
+#  id           :bigint           not null, primary key
 #  ancestor_ids :string
-#  position     :integer          default(0)
 #  content      :text             not null
-#  author_id    :integer
+#  is_primary   :boolean
+#  is_public    :boolean          default(FALSE), not null
 #  numerology   :integer
+#  position     :integer          default(0)
 #  tense        :string
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
+#  author_id    :integer
+#  feature_id   :integer          not null
+#  language_id  :integer          not null
 #
 
 class Definition < ApplicationRecord
@@ -36,6 +36,8 @@ class Definition < ApplicationRecord
   has_many :standard_citations, -> { where.not(info_source_type: InfoSource.model_name.name) }, as: :citable, class_name: 'Citation'
   has_many :imports, :as => 'item', :dependent => :destroy
   has_many :etymologies, as: :context, dependent: :destroy
+  has_many :parent_definition_associations, class_name: 'DefinitionAssociation', as: :associated, dependent: :destroy
+  has_many :definition_associations, dependent: :destroy
   
   def recursive_roots_with_path(path_prefix = [])
     path = path_prefix + [self.id]
@@ -50,5 +52,9 @@ class Definition < ApplicationRecord
   
   def self.uid_prefix
     'definitions'
+  end
+
+  def snippet(length = 40)
+    ActionController::Base.helpers.strip_tags(content).squish.truncate(length)
   end
 end

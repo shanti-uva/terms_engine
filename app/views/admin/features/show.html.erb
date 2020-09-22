@@ -125,8 +125,14 @@
 <%=        new_item_link new_admin_feature_path(parent_id: object.fid), ts('new.record', :what => t(:child, count: 1)) %> |
 <%=        new_item_link locate_for_relation_admin_feature_path(object.fid), ts('new.record', :what => FeatureRelation.model_name.human) %>
          </div>
-         <br class="clear"/>
+         <legend>
+           <br class="clear"/>
+<%=        ts('relat.ion.ship.s_to', this: Feature.model_name.human.titleize, that: Feature.model_name.human.titleize) %>
+         </legend>
 <%=      render :partial => 'admin/feature_relations/list', :locals => { :list => object.all_relations, :object => object, :use_first => false, :use_names => true } %>
+         <legend>
+<%=        ts('relat.ion.ship.s_to', this: Feature.model_name.human.titleize, that: Definition.model_name.human.titleize) %>
+         </legend>
 <%=      association_note_list_fieldset(FeatureRelation.name) %>
     </div> <!-- END panel-body -->
   </div> <!-- END collapseEight -->
@@ -151,10 +157,14 @@
   </div>
   <div id="collapseTen" class="panel-collapse collapse">
     <div class="panel-body">
-      <%=       highlighted_new_item_link [object, :definition] %>
+<%=   highlighted_new_item_link [object, :definition] %>
       <br class="clear"/>
-      <%=       render :partial => 'admin/definitions/list', :locals => { :list => object.definitions.order('position DESC') } %>
-      <%=       association_note_list_fieldset(Description.name) %>
+<%=   render :partial => 'admin/definitions/list', :locals => { :list => object.definitions.in_house_definitions } %>
+      <legend>
+        <br class="clear"/>Other Dictionaries
+      </legend>
+<%=   render :partial => 'admin/definitions/list_legacy', :locals => { :list => object.definitions.legacy_definitions_by_info_source } %>
+<%=   association_note_list_fieldset(Description.name) %>
     </div> <!-- END panel-body -->
   </div> <!-- END collapseTen -->
 </section>

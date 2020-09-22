@@ -2,12 +2,12 @@
 #
 # Table name: definition_relations
 #
-#  id             :bigint(8)        not null, primary key
-#  child_node_id  :integer          not null
-#  parent_node_id :integer          not null
+#  id             :bigint           not null, primary key
 #  ancestor_ids   :string
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
+#  child_node_id  :integer          not null
+#  parent_node_id :integer          not null
 #
 
 class DefinitionRelation < ApplicationRecord

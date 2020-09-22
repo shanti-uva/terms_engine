@@ -2,11 +2,19 @@
 #
 # Table name: recordings
 #
-#  id         :bigint(8)        not null, primary key
-#  feature_id :bigint(8)        not null
+#  id         :bigint           not null, primary key
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #  dialect_id :integer
+#  feature_id :bigint
+#
+# Indexes
+#
+#  index_recordings_on_feature_id  (feature_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (feature_id => features.id)
 #
 
 class Recording < ApplicationRecord
