@@ -2,6 +2,7 @@ module TermsEngine
   module Extension
     module FeatureModel
       extend ActiveSupport::Concern
+      include KmapsEngine::HasPassages
 
       included do
         BOD_PHONEME_SUBJECT_ID = 9310

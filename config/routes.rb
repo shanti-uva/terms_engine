@@ -7,7 +7,7 @@ Rails.application.routes.draw do
   namespace :admin do
     resources :definition_relations, :info_sources
     resources :definitions do
-      resources :citations, :etymologies, :definition_relations, :definition_subject_associations
+      resources :citations, :etymologies, :definition_relations, :definition_subject_associations, :passages
     end
     resources :etymologies do
       resources :etymology_type_associations, :etymology_subject_associations
@@ -18,10 +18,10 @@ Rails.application.routes.draw do
       resources :definitions do #, only: [:index, :show]
         get :locate_for_relation, on: :member
       end
-      resources :etymologies, :recordings, :subject_term_associations
+      resources :etymologies, :passages, :recordings, :subject_term_associations
     end
-  end
-  resources :passages, only: [:show] do
-    resources :citations
+    resources :passages, only: [:show] do
+      resources :citations
+    end
   end
 end

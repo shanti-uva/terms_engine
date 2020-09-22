@@ -1,0 +1,20 @@
+<% if list.empty? %>
+<%=  empty_collection_message "No #{Passage.model_name.human.pluralize.titleize} found." %>
+<% else %>
+   <table class="listGrid">
+     <tr>
+       <th class="listActionsCol"></th>
+       <th><%= Passage.human_attribute_name('content').s %></th>
+     </tr>
+<%   list.each do |item| %>
+     <tr>
+       <td class="centerText">
+         <%=      list_actions_for_item(item, delete_path: polymorphic_path([:admin, item.context, item]),
+         :edit_path => polymorphic_path([:admin, item.context, item], {action: :edit}),
+         :view_path => polymorphic_path([:admin, item.context, item])) %>
+       </td>
+       <td><%= item.content.s %></td>
+     </tr>
+<%   end %>
+   </table>
+<% end %>
