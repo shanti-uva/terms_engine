@@ -10,9 +10,9 @@
      </tr>
 <%   list.each do |row|
        source = InfoSource.find(row.first)
-			 definitions = row.last
-			 size = definitions.size
-			 definitions.each do |item| %>
+       definitions = row.last
+       size = definitions.size
+       definitions.each do |item| %>
        <tr>
 <%       if !source.nil? %>
            <td rowspan="<%= size %>"><%= source.title %></td>
@@ -26,7 +26,7 @@
          <td><%= item.language.name %></td>
          <td><%= item.snippet.s %></td>
      </tr>
-<%		 end
+<%     end
      end %>
    </table>
 <% end %>

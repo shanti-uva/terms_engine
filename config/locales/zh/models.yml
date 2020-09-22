@@ -8,7 +8,7 @@ zh:
                 other: 'definitions'
             definition_relation:
                 one: 'definition relation'
-                other: 'definitions relations'
+                other: 'definition relations'
             definition_subject_association:
                 one: 'definition subject association'
                 other: 'definition subject associations'
