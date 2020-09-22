@@ -38,7 +38,7 @@ module TermsEngine
       
       # POST /feature_relations
       def create
-        term_str = Feature.model_name.to_s 
+        term_str = Feature.model_name.to_s
         definition_str = Definition.model_name.to_s
         relation_params = params.require(:feature_relation).permit(:perspective_id, :parent_node_id, :child_node_id, :feature_relation_type_id)
         relation_source = params['relation_source']

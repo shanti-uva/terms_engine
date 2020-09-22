@@ -1,7 +1,7 @@
 <% full_index_id = "#{prefix}#{index}"
    passages = definition.passages
    subject_associations = definition.definition_subject_associations
-   parents = definition.parent_definition_associations 
+   parents = definition.parent_definition_associations
    children = definition.definition_associations
 	 definition_association_count = parents.size + children.size %>
 <div class="<%= definition_node_classes(is_child,def_level) %>">

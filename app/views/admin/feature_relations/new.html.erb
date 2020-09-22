@@ -18,7 +18,7 @@
 <%=     f.hidden_field :child_node_id %>
         <div class="row">
 <%=       f.label :feature_relation_type_id, FeatureRelationType.model_name.human.titleize.s %>
-<%        term_str = Feature.model_name.to_s 
+<%        term_str = Feature.model_name.to_s
           definition_str = Definition.model_name.to_s %>
         </div>
         <div class="row">
@@ -67,7 +67,7 @@
 <%=         relation_subject_association_form.hidden_field :_destroy %>
             <p>Search by name</p>
 <%          subject_name = ''
-            if !object.relation_subject_association.nil? && !object.relation_subject_association.subject.blank? 
+            if !object.relation_subject_association.nil? && !object.relation_subject_association.subject.blank?
               subject_name = object.relation_subject_association.subject['header']
             end %>
 <%=         text_field_tag :subject_name, :post, { placeholder: 'Search by subject name', value: subject_name } %>

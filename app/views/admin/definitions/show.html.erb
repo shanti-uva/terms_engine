@@ -76,7 +76,7 @@
 <%=              link_to ts('select.relation', what: Definition.model_name.human, whom: highlight("\"#{object.snippet}\"")), locate_for_relation_admin_feature_path(parent_object.fid) %>
                </div>
 							 <br class="clear"/>
-<%             parents = object.parent_definition_associations 
+<%             parents = object.parent_definition_associations
                children = object.definition_associations
                if parents.empty? && children.empty? %>
 <%=              empty_collection_message(ts('snippet.definition.not_related')) %>

@@ -22,11 +22,4 @@ class Admin::DefinitionAssociationsController < AclController
   def definition_association_params
     params.require(:definition_association).permit(:definition_id, :feature_relation_type_id, :perspective_id, :associated_id, :associated_type)
   end
-  
-  private
-  
-  def get_perspectives
-    @perspectives = parent_object.affiliations_by_user(current_user, descendants: true).collect(&:perspective)
-    @perspectives = Perspective.order(:name) if current_user.admin? || @perspectives.include?(nil)
-  end
 end
