@@ -35,7 +35,40 @@ module TermsEngine
           end
         end
       end
-
+      
+      # POST /feature_relations
+      def create
+        term_str = Feature.model_name.to_s 
+        definition_str = Definition.model_name.to_s
+        relation_params = params.require(:feature_relation).permit(:perspective_id, :parent_node_id, :child_node_id, :feature_relation_type_id)
+        relation_source = params['relation_source']
+        relation_dest = params['relation_dest']
+        if relation_source==term_str && relation_dest==term_str
+          feature_relation = FeatureRelation.new(relation_params)
+          if feature_relation.save
+            redirect_to(admin_feature_feature_relation_url(feature_relation.child_node, feature_relation), notice: 'Feature relation was successfully created.')
+          else
+            redirect_to(new_admin_feature_feature_relation_url(feature_relation.child_node, target_id: feature_relation.parent_node))
+          end
+        else
+          definition_association = DefinitionAssociation.new(perspective_id: relation_params[:perspective_id], feature_relation_type_id: relation_params[:feature_relation_type_id])
+          if relation_source==term_str #relation_dest has to be definition, else it wouldn't have made it to the else
+            definition_association.definition_id = params['dest_definition_id']
+            definition_association.associated_type = relation_source
+            definition_association.associated_id = relation_params[:child_node_id]
+          else #relation_source is definition, relation_dest may be definition or term
+            definition_association.definition_id = params['source_definition_id']
+            definition_association.associated_type = relation_dest
+            definition_association.associated_id = relation_dest==term_str ? relation_params[:parent_node_id] : params['dest_definition_id']
+          end
+          if definition_association.save
+            redirect_to(admin_definition_definition_association_url(definition_association.definition, definition_association), notice: 'Feature relation was successfully created.')
+          else
+            redirect_to(admin_feature_definition_url(definition_association.definition.feature, definition_association.definition))
+          end
+        end
+      end
+      
       protected
 
       # Only allow a trusted parameter "white list" through.

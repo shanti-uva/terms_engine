@@ -5,9 +5,11 @@ Rails.application.routes.draw do
   end
   resources :recordings, only: [:show]
   namespace :admin do
+    resources :definition_associations, only: [:create]
     resources :definition_relations, :info_sources
     resources :definitions do
       resources :citations, :etymologies, :definition_relations, :definition_subject_associations, :passages
+      resources :definition_associations
     end
     resources :etymologies do
       resources :etymology_type_associations, :etymology_subject_associations

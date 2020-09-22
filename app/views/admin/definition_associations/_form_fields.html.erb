@@ -1,0 +1,46 @@
+<% term_str = Feature.model_name.to_s
+   definition_str = Definition.model_name.to_s
+   if object.errors.any? %>
+   <div id="error_explanation">
+     <h2><%= pluralize(object.errors.count, "error") %> prohibited this relation from being saved:</h2>
+     <ul>
+<%   object.errors.full_messages.each do |msg| %>
+       <li><%= msg %></li>
+<%   end %>
+     </ul>
+   </div>
+<% end
+   associated_feature = object.associated_type == term_str ? object.associated : object.associated.feature %>
+<fieldset>
+  <div class="row">
+<%= f.label :feature_relation_type_id, FeatureRelationType.model_name.human.titleize.s %>
+  </div>
+  <div class="row">
+    <div>
+<%    source_definitions = object.definition.feature.definitions.in_house_definitions %>
+<%=   f.label :definition_id, 'Definition' %>
+<%=   f.select :definition_id, source_definitions.collect{ |d| [d.snippet, d.id] }, {}, class: 'form-control form-select ss-select selectpicker' %>
+    </div>
+  </div>
+  <div class="row">
+<%= f.select :feature_relation_type_id, FeatureRelationType.all.collect{ |t| [t.label, t.id] }, {}, class: 'form-control form-select ss-select selectpicker' %>
+  </div>
+  <div class="row">
+    <div>
+<%=   hidden_field_tag 'definition_association[associated_id]', associated_feature.id %>
+<%=   f.radio_button :associated_type, term_str  %>
+<%=   f.label :associated_type, 'whole term' %>
+<%=   fname_labels(associated_feature) %>
+    </div>
+    <div>
+<%=   f.radio_button :associated_type, definition_str %>
+<%=   f.label :associated_id, 'specific definition' %>
+<%    dest_definitions = associated_feature.definitions.in_house_definitions %>
+<%=   f.select :associated_id, dest_definitions.collect{ |d| [d.snippet, d.id] }, { }, id: 'definition_association[associated_id]', class: 'form-control form-select ss-select selectpicker' %>
+    </div>
+  </div>
+  <div class="row">
+<%= f.label :perspective_id, Perspective.model_name.human.titleize.s %>
+<%= f.collection_select :perspective_id, @perspectives, :id, :name, {}, class: 'form-control form-select ss-select selectpicker' %>
+  </div>
+</fieldset>

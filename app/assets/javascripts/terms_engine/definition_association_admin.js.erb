@@ -1,0 +1,22 @@
+$(document).ready(function() {
+  if ($("input[name='definition_association[associated_type]']:checked").val() === "<%= Feature.model_name.to_s %>") {
+    $(".selectpicker[data-id='definition_association[associated_id]']").addClass("disabled");
+    $("select[name='definition_association[associated_id]']").attr('disabled', true);
+    $("input[name='definition_association[associated_id]']").attr('disabled', false);
+  } else {
+    $(".selectpicker[data-id='definition_association[associated_id]']").removeClass("disabled");
+    $("select[name='definition_association[associated_id]']").attr('disabled', false);
+    $("input[name='definition_association[associated_id]']").attr('disabled', true);
+  }
+  $("[name='definition_association[associated_type]']").change(function(e){
+    if ($(this).val() === "<%= Feature.model_name.to_s %>"){
+	    $(".selectpicker[data-id='definition_association[associated_id]']").addClass("disabled");
+	    $("select[name='definition_association[associated_id]']").attr('disabled', true);
+	    $("input[name='definition_association[associated_id]']").attr('disabled', false);
+	  } else {
+	    $(".selectpicker[data-id='definition_association[associated_id]']").removeClass("disabled");
+	    $("select[name='definition_association[associated_id]']").attr('disabled', false);
+	    $("input[name='definition_association[associated_id]']").attr('disabled', true);
+    }
+  });
+});

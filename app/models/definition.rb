@@ -36,6 +36,8 @@ class Definition < ApplicationRecord
   has_many :standard_citations, -> { where.not(info_source_type: InfoSource.model_name.name) }, as: :citable, class_name: 'Citation'
   has_many :imports, :as => 'item', :dependent => :destroy
   has_many :etymologies, as: :context, dependent: :destroy
+  has_many :parent_definition_associations, class_name: 'DefinitionAssociation', as: :associated, dependent: :destroy
+  has_many :definition_associations, dependent: :destroy
   
   def recursive_roots_with_path(path_prefix = [])
     path = path_prefix + [self.id]
@@ -52,7 +54,7 @@ class Definition < ApplicationRecord
     'definitions'
   end
 
-  def snippet(length = 20)
+  def snippet(length = 40)
     ActionController::Base.helpers.strip_tags(content).squish.truncate(length)
   end
 end

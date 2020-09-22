@@ -22,10 +22,10 @@
            :edit_path   => edit_admin_definition_definition_relation_path(item.child_node, item),
            :view_path   => admin_definition_definition_relation_path(item.child_node, item)) %>
          </td>
-<%=     "<td>#{item.child_node.content rescue 'child_node Ka-Blam!'}</td>".html_safe unless options[:hide_child] %>
-<%=     "<td>#{item.parent_node.content rescue 'parent_node Ka-Blam!'}</td>".html_safe unless options[:hide_related_to] %>
+<%=     "<td>#{item.child_node.snippet.s rescue 'child_node Ka-Blam!'}</td>".html_safe unless options[:hide_child] %>
+<%=     "<td>#{item.parent_node.snippet.s rescue 'parent_node Ka-Blam!'}</td>".html_safe unless options[:hide_related_to] %>
          <td>
-           <%= item.child_node.content.s %>
+           <%= item.child_node.snippet.s %>
          </td>
          <td>
            <%= def_if_blank item, :author, :fullname %>
