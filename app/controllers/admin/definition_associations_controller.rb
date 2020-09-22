@@ -18,6 +18,8 @@ class Admin::DefinitionAssociationsController < AclController
   
   destroy.wants.html { redirect_to admin_feature_definition_url(parent_object.feature, parent_object) }
   
+  protected
+  
   # Only allow a trusted parameter "white list" through.
   def definition_association_params
     params.require(:definition_association).permit(:definition_id, :feature_relation_type_id, :perspective_id, :associated_id, :associated_type)
