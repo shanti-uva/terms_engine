@@ -111,7 +111,7 @@ module TermsEngine
             related_kmaps_node_type: 'parent',
             block_type: ['child']
           }
-          p_rel_citation_references = pr.citations.collect { |c| c.info_source.bibliographic_reference }
+          p_rel_citation_references = pr.citations.collect { |c| c.bibliographic_reference }
           cd["related_#{Feature.uid_prefix}_relation_citation_references_ss"] = p_rel_citation_references if !p_rel_citation_references.blank?
           subject_associations = parent_node.subject_term_associations
           related_branches = subject_associations.select(:branch_id).distinct.collect(&:branch_id)
@@ -149,7 +149,7 @@ module TermsEngine
             related_kmaps_node_type: 'child',
             block_type: ['child']
           }
-          p_rel_citation_references = pr.citations.collect { |c| c.info_source.bibliographic_reference }
+          p_rel_citation_references = pr.citations.collect { |c| c.bibliographic_reference }
           cd["related_#{Feature.uid_prefix}_relation_citation_references_ss"] = p_rel_citation_references if !p_rel_citation_references.blank?
           subject_associations = child_node.subject_term_associations
           related_branches = subject_associations.select(:branch_id).distinct.collect(&:branch_id)
@@ -194,7 +194,7 @@ module TermsEngine
           cd["related_#{Definition.uid_prefix}_author_s"] = d.author.fullname if !author.nil?
           cd["related_#{Definition.uid_prefix}_numerology_i"] = d.numerology if !d.numerology.nil?
           cd["related_#{Definition.uid_prefix}_tense_s"] = d.tense if !d.tense.nil?
-          citation_references = d.standard_citations.collect { |c| c.info_source.bibliographic_reference }
+          citation_references = d.standard_citations.collect { |c| c.bibliographic_reference }
           cd["related_#{Definition.uid_prefix}_citation_references_ss"] = citation_references if !citation_references.blank?
           info_source = d.legacy_citations.collect(&:info_source).first
           cd["related_#{Definition.uid_prefix}_source_s"] = info_source.title if !info_source.nil?
@@ -232,7 +232,7 @@ module TermsEngine
                 block_type: ['parent'],
                 '_childDocuments_'  => child_documents }
         subject_associations.collect do |sa|
-          doc["related_#{Feature.uid_prefix}_branch_#{sa.branch_id}_#{SubjectsIntegration::Feature.uid_prefix}_#{sa.subject_id}_citation_references_ss"] = sa.citations.collect { |c| c.info_source.bibliographic_reference }
+          doc["related_#{Feature.uid_prefix}_branch_#{sa.branch_id}_#{SubjectsIntegration::Feature.uid_prefix}_#{sa.subject_id}_citation_references_ss"] = sa.citations.collect { |c| c.bibliographic_reference }
         end
         self.etymologies.each do |e|
           doc["etymology_#{e.id}_content_ss"] = e.content
