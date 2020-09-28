@@ -219,7 +219,7 @@ module TermsEngine
           {id: "#{self.uid}_recording_#{recording.id}",
            block_child_type: ['terms_recording'],
            block_type: ['child'],
-           recording_url: "#{TermsEngine::Configuration.server_url}#{helpers.rails_blob_path(recording.audio_file, disposition: 'attachment', only_path: true)}",
+           recording_url: "#{TermsEngine::Configuration.server_url}#{Rails.application.routes.url_helpers.rails_blob_path(recording.audio_file, disposition: 'attachment', only_path: true)}",
            recording_dialect_s: recording.dialect['header'],
            recording_dialect_uid_s: recording.dialect['uid']
           }
