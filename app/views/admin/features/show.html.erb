@@ -125,14 +125,22 @@
 <%=        new_item_link new_admin_feature_path(parent_id: object.fid), ts('new.record', :what => t(:child, count: 1)) %> |
 <%=        new_item_link locate_for_relation_admin_feature_path(object.fid), ts('new.record', :what => FeatureRelation.model_name.human) %>
          </div>
-         <legend>
-           <br class="clear"/>
-<%=        ts('relat.ion.ship.s_to', this: Feature.model_name.human.titleize, that: Feature.model_name.human.titleize) %>
-         </legend>
-<%=      render :partial => 'admin/feature_relations/list', :locals => { :list => object.all_relations, :object => object, :use_first => false, :use_names => true } %>
-         <legend>
-<%=        ts('relat.ion.ship.s_to', this: Feature.model_name.human.titleize, that: Definition.model_name.human.titleize) %>
-         </legend>
+<%       relations = object.all_relations
+         if !relations.blank? %>
+           <legend>
+             <br class="clear"/>
+<%=          ts('relat.ion.ship.s_to', this: Feature.model_name.human.titleize, that: Feature.model_name.human.titleize) %>
+           </legend>
+<%=        render :partial => 'admin/feature_relations/list', :locals => { :list => relations, :object => object, :use_first => false, :use_names => true } %>
+<%       end
+         associations = object.definition_associations
+         if !associations.blank? %>
+           <legend>
+             <br class="clear"/>
+<%=          ts('relat.ion.ship.s_to', this: Feature.model_name.human.titleize, that: Definition.model_name.human.titleize) %>
+           </legend>
+<%=        render partial: 'admin/definition_associations/list', locals: { lists: [associations], related_methods: ['definition'] } %>
+<%       end %>
 <%=      association_note_list_fieldset(FeatureRelation.name) %>
     </div> <!-- END panel-body -->
   </div> <!-- END collapseEight -->

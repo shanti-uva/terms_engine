@@ -1,0 +1,33 @@
+<% if parent?
+     add_breadcrumb_item(feature_link(parent_object)) if parent?
+   end
+   add_breadcrumb_item FeatureRelation.model_name.human(:count => :many).s %>
+<div>
+  <div class="left"><%= resource_search_form %></div>
+  <div class="right highlight">
+<% if parent_object
+   # Don't provide a way to create a new relation if there is no parent_object
+%><%= link_to ts('select.relation', :what => Feature.model_name.human, :whom => fname_labels(parent_object)), locate_for_relation_admin_feature_path(parent_object.fid) %>
+<% else %>
+<%=  ts 'creat.e.requirement', :what => FeatureRelation.model_name.human, :whom => Feature.model_name.human %>
+<% end %>
+  </div>
+</div>
+<br class="clear"/>
+<section class="panel panel-content">
+  <div class="panel-heading">
+    <h6><%= FeatureRelation.model_name.human.pluralize.s %></h6>
+  </div>
+<% if parent? %>
+  <h4><%= ts('relat.ion.ship.s_to', this: Feature.model_name.human.titleize, that: Feature.model_name.human.titleize) %></h4>
+<% end %>
+  <div class="panel-body">
+<%= render :partial => 'list', :locals => { :list => @collection } %>
+  </div> <!-- END panel-body -->
+<% if parent? %>
+     <h4><%= ts('relat.ion.ship.s_to', this: Feature.model_name.human.titleize, that: Definition.model_name.human.titleize) %></h4>
+     <div class="panel-body">
+<%=    render partial: 'admin/definition_associations/list', locals: { lists: [parent_object.definition_associations], related_methods: ['definition'] } %>
+     </div> <!-- END panel-body -->
+<% end %>
+</section> <!-- END panel -->
