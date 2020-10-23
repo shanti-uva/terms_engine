@@ -1,6 +1,6 @@
 <%= render partial: 'breadcrumbs' %>
 <%  add_breadcrumb_item ts('new.this') %>
-<%= form_for [:admin, object] do |f| %>
+<%= form_for [:admin, parent_object, object] do |f| %>
 <%=   f.hidden_field :citable_id %>
 <%=   hidden_field_tag 'citation[citable_type]', object.citable_type %>
 <section class="panel panel-content">

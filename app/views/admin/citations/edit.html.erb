@@ -6,7 +6,7 @@
     <h6><%= Citation.model_name.human.titleize.s %></h6>
   </div>
   <div class="panel-body">
-<%= form_for object, url: object_path, method: :put do |f| %>
+<%= form_for object, url: polymorphic_path([:admin, parent_object, object]), method: :put do |f| %>
 <%    if object.info_source_type.start_with? 'MmsIntegration' %>
     <div class="row">
 <%=     label :info_source_id, 'Document or Online Resource ID from MMS application' %>
