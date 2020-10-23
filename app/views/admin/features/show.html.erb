@@ -177,16 +177,6 @@
     </section>
     <section class="panel panel-default">
       <div class="panel-heading">
-        <h6><a href="#collapseCitations" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= ts 'Citations' %></a></h6>
-      </div>
-      <div id="collapseCitations" class="panel-collapse collapse">
-        <div class="panel-body">
-<%=       citation_list_fieldset %>
-        </div> <!-- END panel-body -->
-      </div> <!-- END collapseTwo -->
-    </section> <!-- END panel -->
-    <section class="panel panel-default">
-      <div class="panel-heading">
         <h6><a href="#collapsePassages" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= Passage.model_name.human(:count => :many).titleize.s %></a></h6>
       </div>
       <div id="collapsePassages" class="panel-collapse collapse">
