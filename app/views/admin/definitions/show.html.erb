@@ -21,7 +21,6 @@
          <div id="collapseOne" class="panel-collapse collapse in">
            <div class="panel-body">
              <fieldset>
-               <legend><%= ts 'information.general' %> <%= edit_item_link edit_polymorphic_path([:admin, parent_object, object]) %></legend>
                <div class="row">
                  <label><%= FeatureName.model_name.human.titleize.s %>:</label> <span><%= parent_object.name %></span>
                </div>
@@ -47,9 +46,17 @@
                  <label><%= ts 'update.d.this' %>:</label> <span><%= object.updated_at.to_formatted_s(:us_datetime) %></span>
                </div>
              </fieldset>
+           </div> <!-- END panel-body -->
+         </div> <!-- END collapseOne -->
+       </section> <!-- END panel -->
+       <section class="panel panel-default">
+         <div class="panel-heading">
+           <h6><a href="#collapseTwo" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle"><span class="glyphicon glyphicon-minus"></span><%= DefinitionRelation.model_name.human(count: :many).titleize.s %></a></h6>
+         </div>
+         <div id="collapseTwo" class="panel-collapse collapse">
+           <div class="panel-body">
              <fieldset>
-               <legend><%= DefinitionRelation.model_name.human(count: :many).titleize.s %> <%#= link_to 'View', admin_feature_name_feature_name_relations_path(object) %></legend>
-               <h3>Within same term</h3>
+               <legend>Within same term</legend>
                <div class="left highlight">
 <%=              link_to ts('select.relation', what: Definition.model_name.human, whom: highlight("\"#{object.snippet}\"")), locate_for_relation_admin_feature_definition_path(parent_object, object) %>
                </div>
@@ -71,7 +78,7 @@
 <%=                render partial: 'admin/definition_relations/list', locals: { list: object.child_relations, options: { hide_related_to: true } } %>
                  </div>
 <%             end %>
-               <h3>From other terms</h3>
+               <legend>From other terms</legend>
                <div class="left highlight">
 <%=              link_to ts('select.relation', what: Definition.model_name.human, whom: highlight("\"#{object.snippet}\"")), locate_for_relation_admin_feature_path(parent_object.fid) %>
                </div>
@@ -91,9 +98,9 @@
        </section> <!-- END panel -->
        <section class="panel panel-default">
            <div class="panel-heading">
-             <h6><a href="#collapseTwo" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= ts 'Citations' %></a></h6>
+             <h6><a href="#collapseThree" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= ts 'Citations' %></a></h6>
            </div>
-           <div id="collapseTwo" class="panel-collapse collapse">
+           <div id="collapseThree" class="panel-collapse collapse">
              <div class="panel-body">
 <%=          citation_list_fieldset %>
            </div> <!-- END panel-body -->
@@ -113,9 +120,9 @@
        </section>
        <section class="panel panel-default">
          <div class="panel-heading">
-           <h6><a href="#collapseThree" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= DefinitionSubjectAssociation.model_name.human(count: :many).titleize.s %></a></h6>
+           <h6><a href="#collapseFour" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= DefinitionSubjectAssociation.model_name.human(count: :many).titleize.s %></a></h6>
          </div>
-         <div id="collapseThree" class="panel-collapse collapse">
+         <div id="collapseFour" class="panel-collapse collapse">
            <div class="panel-body">
 <%=          highlighted_new_item_link [object, :definition_subject_association] %>
              <br>
@@ -128,9 +135,9 @@
        </section>
        <section class="panel panel-default">
          <div class="panel-heading">
-           <h6><a href="#collapseFour" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= Etymology.model_name.human(count: :many).titleize.s %></a></h6>
+           <h6><a href="#collapseFive" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= Etymology.model_name.human(count: :many).titleize.s %></a></h6>
          </div>
-         <div id="collapseFour" class="panel-collapse collapse">
+         <div id="collapseFive" class="panel-collapse collapse">
            <div class="panel-body">
 <%=          highlighted_new_item_link [object, :etymology] %>
              <br>
