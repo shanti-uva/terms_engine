@@ -92,32 +92,33 @@ module TermsEngine
           per = self.perspective_by_name
         end
         v = View.get_by_code(KmapsEngine::ApplicationSettings.default_view_code)
+        prefix = "related_#{Feature.uid_prefix}"
         child_documents = self.all_parent_relations.collect do |pr|
           parent_node = pr.parent_node
           name = parent_node.prioritized_name(v)
           name_str = name.nil? ? nil : name.name
           parent = pr.parent_node
           relation_type = pr.feature_relation_type
-          cd =
-          { id: "#{self.uid}_#{pr.feature_relation_type.code}_#{parent.fid}",
+          cd = { id: "#{self.uid}_#{pr.feature_relation_type.code}_#{parent.fid}",
             related_uid_s: parent.uid,
             origin_uid_s: self.uid,
-            block_child_type: ["related_#{Feature.uid_prefix}"],
-            "related_#{Feature.uid_prefix}_id_s" => "#{Feature.uid_prefix}-#{parent.fid}",
-            "related_#{Feature.uid_prefix}_header_s" => name_str,
-            "related_#{Feature.uid_prefix}_path_s" => parent_node.closest_ancestors_by_perspective(per).collect(&:fid).join('/'),
-            "related_#{Feature.uid_prefix}_relation_label_s" => relation_type.is_symmetric ? relation_type.label : relation_type.asymmetric_label,
-            "related_#{Feature.uid_prefix}_relation_code_s" => relation_type.code,
+            block_child_type: [prefix],
+            "#{prefix}_id_s" => "#{Feature.uid_prefix}-#{parent.fid}",
+            "#{prefix}_header_s" => name_str,
+            "#{prefix}_path_s" => parent_node.closest_ancestors_by_perspective(per).collect(&:fid).join('/'),
+            "#{prefix}_relation_label_s" => relation_type.is_symmetric ? relation_type.label : relation_type.asymmetric_label,
+            "#{prefix}_relation_code_s" => relation_type.code,
             related_kmaps_node_type: 'parent',
             block_type: ['child']
           }
           p_rel_citation_references = pr.citations.collect { |c| c.bibliographic_reference }
-          cd["related_#{Feature.uid_prefix}_relation_citation_references_ss"] = p_rel_citation_references if !p_rel_citation_references.blank?
+          cd["#{prefix}_relation_citation_references_ss"] = p_rel_citation_references if !p_rel_citation_references.blank?
+          pr.notes.each { |n| n.rsolr_document_tags(cd, prefix) }
           subject_associations = parent_node.subject_term_associations
           related_branches = subject_associations.select(:branch_id).distinct.collect(&:branch_id)
           related_branches.each do |branch_id|
             branch = SubjectsIntegration::Feature.find(branch_id)
-            cd["related_#{Feature.uid_prefix}_branch_#{branch.uid}_header_s"] = branch.header
+            cd["#{prefix}_branch_#{branch.uid}_header_s"] = branch.header
             headers = []
             uids = []
             subject_associations.where(branch_id: branch_id).each do |association|
@@ -125,8 +126,8 @@ module TermsEngine
               uids << subject.uid
               headers << subject.header
             end
-            cd["related_#{Feature.uid_prefix}_branch_#{branch.uid}_#{SubjectsIntegration::Feature.uid_prefix}_headers_t"] = headers
-            cd["related_#{Feature.uid_prefix}_branch_#{branch.uid}_#{SubjectsIntegration::Feature.uid_prefix}_uids_t"] = uids
+            cd["#{prefix}_branch_#{branch.uid}_#{SubjectsIntegration::Feature.uid_prefix}_headers_t"] = headers
+            cd["#{prefix}_branch_#{branch.uid}_#{SubjectsIntegration::Feature.uid_prefix}_uids_t"] = uids
           end
           cd
         end
@@ -140,22 +141,23 @@ module TermsEngine
           { id: "#{self.uid}_#{pr.feature_relation_type.asymmetric_code}_#{child.fid}",
             related_uid_s: child.uid,
             origin_uid_s: self.uid,
-            block_child_type: ["related_#{Feature.uid_prefix}"],
-            "related_#{Feature.uid_prefix}_id_s" => "#{Feature.uid_prefix}-#{child.fid}",
-            "related_#{Feature.uid_prefix}_header_s" => name_str,
-            "related_#{Feature.uid_prefix}_path_s" => child_node.closest_ancestors_by_perspective(per).collect(&:fid).join('/'),
-            "related_#{Feature.uid_prefix}_relation_label_s" => relation_type.label,
-            "related_#{Feature.uid_prefix}_relation_code_s" => relation_type.is_symmetric ? relation_type.code : relation_type.asymmetric_code,
+            block_child_type: [prefix],
+            "#{prefix}_id_s" => "#{Feature.uid_prefix}-#{child.fid}",
+            "#{prefix}_header_s" => name_str,
+            "#{prefix}_path_s" => child_node.closest_ancestors_by_perspective(per).collect(&:fid).join('/'),
+            "#{prefix}_relation_label_s" => relation_type.label,
+            "#{prefix}_relation_code_s" => relation_type.is_symmetric ? relation_type.code : relation_type.asymmetric_code,
             related_kmaps_node_type: 'child',
             block_type: ['child']
           }
           p_rel_citation_references = pr.citations.collect { |c| c.bibliographic_reference }
-          cd["related_#{Feature.uid_prefix}_relation_citation_references_ss"] = p_rel_citation_references if !p_rel_citation_references.blank?
+          cd["#{prefix}_relation_citation_references_ss"] = p_rel_citation_references if !p_rel_citation_references.blank?
+          pr.notes.each { |n| n.rsolr_document_tags(cd, prefix) }
           subject_associations = child_node.subject_term_associations
           related_branches = subject_associations.select(:branch_id).distinct.collect(&:branch_id)
           related_branches.each do |branch_id|
             branch = SubjectsIntegration::Feature.find(branch_id)
-            cd["related_#{Feature.uid_prefix}_branch_#{branch.uid}_header_s"] = branch.header
+            cd["#{prefix}_branch_#{branch.uid}_header_s"] = branch.header
             headers = []
             uids = []
             subject_associations.where(branch_id: branch_id).each do |association|
@@ -163,11 +165,12 @@ module TermsEngine
               uids << subject.uid
               headers << subject.header
             end
-            cd["related_#{Feature.uid_prefix}_branch_#{branch.uid}_#{SubjectsIntegration::Feature.uid_prefix}_headers_t"] = headers
-            cd["related_#{Feature.uid_prefix}_branch_#{branch.uid}_#{SubjectsIntegration::Feature.uid_prefix}_uids_t"] = uids
+            cd["#{prefix}_branch_#{branch.uid}_#{SubjectsIntegration::Feature.uid_prefix}_headers_t"] = headers
+            cd["#{prefix}_branch_#{branch.uid}_#{SubjectsIntegration::Feature.uid_prefix}_uids_t"] = uids
           end
           cd
         end
+        def_prefix = "related_#{Definition.uid_prefix}"
         child_documents = child_documents + self.definitions.recursive_roots_with_path.collect do |dp|
           d = dp.first
           path = dp.second
@@ -176,33 +179,36 @@ module TermsEngine
           { id: "#{self.uid}_#{uid}",
             origin_uid_s: self.uid,
             block_child_type: ["related_definitions"],
-            "related_#{Definition.uid_prefix}_content_s" => d.content,
-            "related_#{Definition.uid_prefix}_path_s" => path.join('/'),
-            "related_#{Definition.uid_prefix}_level_i" => path.size,
-            "related_#{Definition.uid_prefix}_language_s" => d.language.name,
-            "related_#{Definition.uid_prefix}_language_code_s" => d.language.code,
-            "related_#{Definition.uid_prefix}_etymologies_ss" => d.etymologies.collect(&:content),
+            "#{def_prefix}_content_s" => d.content,
+            "#{def_prefix}_path_s" => path.join('/'),
+            "#{def_prefix}_level_i" => path.size,
+            "#{def_prefix}_language_s" => d.language.name,
+            "#{def_prefix}_language_code_s" => d.language.code,
+            "#{def_prefix}_etymologies_ss" => d.etymologies.collect(&:content),
             block_type: ['child']
           }
           d.etymologies.each do |de|
-            cd["related_#{Definition.uid_prefix}_etymology_#{de.id}_content_ss"] = de.content
+            etymology_prefix = "#{def_prefix}_etymology_#{de.id}"
+            cd["#{etymology_prefix}_content_ss"] = de.content
             etymology_type = de.etymology_type_association
             subject = etymology_type.nil? ? nil : etymology_type.subject
-            cd["related_#{Definition.uid_prefix}_etymology_#{de.id}_type_#{subject['uid']}_ss"] = subject['header'] if !subject.nil?
+            cd["#{etymology_prefix}_type_#{subject['uid']}_ss"] = subject['header'] if !subject.nil?
+            de.notes.each { |n| n.rsolr_document_tags(cd, etymology_prefix) }
           end
           author = d.author
-          cd["related_#{Definition.uid_prefix}_author_s"] = d.author.fullname if !author.nil?
-          cd["related_#{Definition.uid_prefix}_numerology_i"] = d.numerology if !d.numerology.nil?
-          cd["related_#{Definition.uid_prefix}_tense_s"] = d.tense if !d.tense.nil?
+          cd["#{def_prefix}_author_s"] = d.author.fullname if !author.nil?
+          cd["#{def_prefix}_numerology_i"] = d.numerology if !d.numerology.nil?
+          cd["#{def_prefix}_tense_s"] = d.tense if !d.tense.nil?
           citation_references = d.standard_citations.collect { |c| c.bibliographic_reference }
-          cd["related_#{Definition.uid_prefix}_citation_references_ss"] = citation_references if !citation_references.blank?
+          cd["#{def_prefix}_citation_references_ss"] = citation_references if !citation_references.blank?
           info_source = d.legacy_citations.collect(&:info_source).first
-          cd["related_#{Definition.uid_prefix}_source_s"] = info_source.title if !info_source.nil?
+          cd["#{def_prefix}_source_s"] = info_source.title if !info_source.nil?
+          d.notes.each { |n| n.rsolr_document_tags(cd, def_prefix) }
           subject_associations = d.definition_subject_associations
           related_branches = subject_associations.select(:branch_id).distinct.collect(&:branch_id)
           related_branches.each do |branch_id|
             branch = SubjectsIntegration::Feature.find(branch_id)
-            cd["related_#{Definition.uid_prefix}_branch_#{branch.uid}_header_s"] = branch.header
+            cd["#{def_prefix}_branch_#{branch.uid}_header_s"] = branch.header
             headers = []
             uids = []
             subject_associations.where(branch_id: branch_id).each do |association|
@@ -210,8 +216,8 @@ module TermsEngine
               uids << subject.uid
               headers << subject.header
             end
-            cd["related_#{Definition.uid_prefix}_branch_#{branch.uid}_#{SubjectsIntegration::Feature.uid_prefix}_headers_t"] = headers
-            cd["related_#{Definition.uid_prefix}_branch_#{branch.uid}_#{SubjectsIntegration::Feature.uid_prefix}_uids_t"] = uids
+            cd["#{def_prefix}_branch_#{branch.uid}_#{SubjectsIntegration::Feature.uid_prefix}_headers_t"] = headers
+            cd["#{def_prefix}_branch_#{branch.uid}_#{SubjectsIntegration::Feature.uid_prefix}_uids_t"] = uids
           end
           cd
         end
@@ -231,14 +237,16 @@ module TermsEngine
                 etymologies_ss: self.etymologies.collect(&:content),
                 block_type: ['parent'],
                 '_childDocuments_'  => child_documents }
-        subject_associations.collect do |sa|
-          doc["related_#{Feature.uid_prefix}_branch_#{sa.branch_id}_#{SubjectsIntegration::Feature.uid_prefix}_#{sa.subject_id}_citation_references_ss"] = sa.citations.collect { |c| c.bibliographic_reference }
+        subject_associations.each do |sa|
+          doc["#{prefix}_branch_#{sa.branch_id}_#{SubjectsIntegration::Feature.uid_prefix}_#{sa.subject_id}_citation_references_ss"] = sa.citations.collect { |c| c.bibliographic_reference }
+          sa.notes.each { |n| n.rsolr_document_tags(doc, "#{prefix}_branch_#{sa.branch_id}") }
         end
         self.etymologies.each do |e|
           doc["etymology_#{e.id}_content_ss"] = e.content
           etymology_type = e.etymology_type_association
           subject = etymology_type.nil? ? nil : etymology_type.subject
           doc["etymology_#{e.id}_type_#{subject['uid']}_ss"] = subject['header'] if !subject.nil?
+          e.notes.each { |n| n.rsolr_document_tags(doc, 'etymology') }
         end
         for branch_id in subject_associations.select(:branch_id).distinct.collect(&:branch_id)
           associations = subject_associations.where(branch_id: branch_id)
