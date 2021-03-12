@@ -85,7 +85,7 @@ module TermsEngine
       end
       
       def document_for_rsolr
-        name = self.name.first
+        name = self.names.first
         if name.nil?
           per = Perspective.get_by_code(KmapsEngine::ApplicationSettings.default_perspective_code)
         else
@@ -113,6 +113,8 @@ module TermsEngine
           }
           p_rel_citation_references = pr.citations.collect { |c| c.bibliographic_reference }
           cd["#{prefix}_relation_citation_references_ss"] = p_rel_citation_references if !p_rel_citation_references.blank?
+          time_units = pr.time_units_ordered_by_date.collect { |t| t.to_s }
+          cd["#{prefix}_relation_time_units_ss"] = time_units if !time_units.blank?
           pr.notes.each { |n| n.rsolr_document_tags(cd, prefix) }
           subject_associations = parent_node.subject_term_associations
           related_branches = subject_associations.select(:branch_id).distinct.collect(&:branch_id)
@@ -152,6 +154,8 @@ module TermsEngine
           }
           p_rel_citation_references = pr.citations.collect { |c| c.bibliographic_reference }
           cd["#{prefix}_relation_citation_references_ss"] = p_rel_citation_references if !p_rel_citation_references.blank?
+          time_units = pr.time_units_ordered_by_date.collect { |t| t.to_s }
+          cd["#{prefix}_relation_time_units_ss"] = time_units if !time_units.blank?
           pr.notes.each { |n| n.rsolr_document_tags(cd, prefix) }
           subject_associations = child_node.subject_term_associations
           related_branches = subject_associations.select(:branch_id).distinct.collect(&:branch_id)
@@ -238,8 +242,12 @@ module TermsEngine
                 block_type: ['parent'],
                 '_childDocuments_'  => child_documents }
         subject_associations.each do |sa|
-          doc["#{prefix}_branch_#{sa.branch_id}_#{SubjectsIntegration::Feature.uid_prefix}_#{sa.subject_id}_citation_references_ss"] = sa.citations.collect { |c| c.bibliographic_reference }
-          sa.notes.each { |n| n.rsolr_document_tags(doc, "#{prefix}_branch_#{sa.branch_id}") }
+          branch_prefix = "#{prefix}_branch_#{sa.branch_id}"
+          citations = sa.citations.collect { |c| c.bibliographic_reference }
+          doc["#{branch_prefix}_#{SubjectsIntegration::Feature.uid_prefix}_#{sa.subject_id}_citation_references_ss"] = citations if !citations.blank?
+          time_units = sa.time_units_ordered_by_date.collect { |t| t.to_s }
+          doc["#{branch_prefix}_#{SubjectsIntegration::Feature.uid_prefix}_#{sa.subject_id}_time_units_ss"] = time_units if !time_units.blank?
+          sa.notes.each { |n| n.rsolr_document_tags(doc, branch_prefix) }
         end
         self.etymologies.each do |e|
           doc["etymology_#{e.id}_content_ss"] = e.content

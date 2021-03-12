@@ -1,6 +1,4 @@
-require 'kmaps_engine/progress_bar'
 require 'kmaps_engine/flare_utils'
-
 module TermsEngine
   class FlareUtils < KmapsEngine::FlareUtils
     include KmapsEngine::ProgressBar
