@@ -196,7 +196,7 @@ module TermsEngine
             cd["#{etymology_prefix}_content_ss"] = de.content
             etymology_type = de.etymology_type_association
             subject = etymology_type.nil? ? nil : etymology_type.subject
-            cd["#{etymology_prefix}_type_#{subject['uid']}_ss"] = subject['header'] if !subject.nil?
+            cd["#{etymology_prefix}_type_#{subject['uid']}_s"] = subject['header'] if !subject.nil?
             de.notes.each { |n| n.rsolr_document_tags(cd, etymology_prefix) }
           end
           author = d.author
@@ -250,11 +250,11 @@ module TermsEngine
           sa.notes.each { |n| n.rsolr_document_tags(doc, branch_prefix) }
         end
         self.etymologies.each do |e|
-          doc["etymology_#{e.id}_content_ss"] = e.content
+          doc["etymology_#{e.id}_content_s"] = e.content
           etymology_type = e.etymology_type_association
           subject = etymology_type.nil? ? nil : etymology_type.subject
-          doc["etymology_#{e.id}_type_#{subject['uid']}_ss"] = subject['header'] if !subject.nil?
-          e.notes.each { |n| n.rsolr_document_tags(doc, 'etymology') }
+          doc["etymology_#{e.id}_type_#{subject['uid']}_s"] = subject['header'] if !subject.nil?
+          e.notes.each { |n| n.rsolr_document_tags(doc, "etymology_#{e.id}") }
         end
         for branch_id in subject_associations.select(:branch_id).distinct.collect(&:branch_id)
           associations = subject_associations.where(branch_id: branch_id)
