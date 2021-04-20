@@ -28,7 +28,7 @@ module TermsEngine
         end
 
         update.after do
-          if object.feature_relation_type.branch_id.blank? && object.relation_subject_association.id?
+          if object.feature_relation_type.branch_id.blank? && !object.relation_subject_association.nil? && object.relation_subject_association.id?
             if !object.relation_subject_association.subject['ancestor_ids_gen'].include?(object.feature_relation_type.branch_id)
               object.relation_subject_association.destroy!
             end
