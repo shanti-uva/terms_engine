@@ -56,9 +56,9 @@
                 </div>
               </div>
               <div id="relation_details">
-<%            related_counts = feature.related_features_counts
-	            if related_counts[:related_features]!=1 || related_counts[:parents]!=1 || related_counts[:children]>0 %>
-<%=             render partial: 'relation_details', locals: { feature_label: feature_label, related_features_counts: related_counts } %>
+<%            related_count = feature.related_features_counts[:related_features] - 1
+              if related_count>0 %>
+<%=             render partial: 'relation_details', locals: { feature_label: feature_label, related_features_count: related_count } %>
 <%            end %>
               </div>
             </div><!-- END tab panels -->
