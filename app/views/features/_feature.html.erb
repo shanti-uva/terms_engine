@@ -1,3 +1,5 @@
+<%= stylesheet_link_tag('collapsible_list/kmaps_collapsible_list') %>
+<% feature_label = fname_labels(feature).s %>
 <div class="field field-name-body field-type-text-with-summary field-label-hidden">
   <div class="field-items">
 		<div class="field-item even" property="content:encoded">
@@ -8,7 +10,7 @@
               <a href="#terms-intro" role="tab" data-toggle="tab">Term Definition</a>
             </li>
             <li>
-              <a href="#terms-intro-details" role="tab" data-toggle="tab">Term details</a>
+              <a href="#terms-intro-details" id="details-tab-link" role="tab" data-toggle="tab">Term details</a>
             </li>
           </ul>
           <div class="tab-content">
@@ -52,7 +54,13 @@
                     </dl>
 <%                end %>
                 </div>
-						  </div>
+              </div>
+              <div id="relation_details">
+<%            related_counts = feature.related_features_counts
+	            if related_counts[:related_features]!=1 || related_counts[:parents]!=1 || related_counts[:children]>0 %>
+<%=             render partial: 'relation_details', locals: { feature_label: feature_label, related_features_counts: related_counts } %>
+<%            end %>
+              </div>
             </div><!-- END tab panels -->
           </div> <!-- END tab-content -->
         </div> <!-- END terms-introduction-tabs -->
@@ -63,14 +71,14 @@
 <%= content_tag :div, "", id: 'related_subjects_js_data', data: {
       term_index: Feature.config.url,
       asset_index: ShantiIntegration::Source.config.url,
-      feature_id: "#{Feature.uid_prefix}-#{@feature.fid}",
+      feature_id: "#{Feature.uid_prefix}-#{feature.fid}",
       domain: 'subjects',
       perspective: 'gen',
       tree: Feature.uid_prefix,
       feature_label: "",
       feature_path: SubjectsIntegration::Feature.get_url('%%ID%%'),
       mandala_path: 'https://mandala.shanti.virginia.edu/%%APP%%/%%ID%%/%%REL%%/nojs',
-      feature_fid: @feature.fid
+      feature_fid: feature.fid
     } %>
 <%= javascript_on_load do %>
       var relatedSubjectsSolrUtils = kmapsSolrUtils.init({
@@ -104,3 +112,19 @@
         $(event.target).prev().children("a").removeClass('expanded');
       });
 <%  end %>
+<%= content_tag :div, "", id: 'related_js_data', data: {
+ term_index: Feature.config.url,
+ asset_index: ShantiIntegration::Source.config.url,
+ feature_id: "#{Feature.uid_prefix}-#{feature.fid}",
+ domain: Feature.uid_prefix,
+ perspective: current_perspective.code,
+ view: current_view.code,
+ tree: Feature.uid_prefix,
+ feature_label: feature_label,
+ feature_path: "#{features_path}/%%ID%%",
+ mandala_path: "https://mandala.shanti.virginia.edu/%%APP%%/%%ID%%/%%REL%%/nojs",
+ feature_fid: feature.fid,
+ language: Language.current.code
+} %>
+<%= javascript_include_tag 'terms_engine/related-section-initializer' %>
+<%= javascript_include_tag('collapsible_list/jquery.kmapsCollapsibleList') %>
