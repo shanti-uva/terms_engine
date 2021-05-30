@@ -25,8 +25,12 @@
 #  fk_rails_...  (perspective_id => perspectives.id)
 #
 class DefinitionAssociation < ApplicationRecord
-  belongs_to :definition
-  belongs_to :associated, polymorphic: true
+  belongs_to :definition, touch: true
+  belongs_to :associated, polymorphic: true, touch: true
   belongs_to :perspective
   belongs_to :feature_relation_type
+  
+  def feature
+    self.definition.feature
+  end
 end

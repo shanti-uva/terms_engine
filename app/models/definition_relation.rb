@@ -19,4 +19,8 @@ class DefinitionRelation < ApplicationRecord
     self.where(build_like_conditions(%W(children.content parents.content), filter_value)
     ).joins('LEFT JOIN definitions parents ON parents.id=definition_relations.parent_node_id LEFT JOIN definitions children ON children.id=definition_relations.child_node_id')
   end
+  
+  def feature
+    self.parent_node.feature
+  end
 end

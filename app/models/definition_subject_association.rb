@@ -23,7 +23,7 @@ class DefinitionSubjectAssociation < ApplicationRecord
   validates_presence_of :subject_id
   validates_presence_of :branch_id
   
-  belongs_to :definition
+  belongs_to :definition, touch: true
   has_many :imports, :as => 'item', :dependent => :destroy
   
   def subject
@@ -32,5 +32,9 @@ class DefinitionSubjectAssociation < ApplicationRecord
   
   def branch
     SubjectsIntegration::Feature.flare_search(self.branch_id)
+  end
+  
+  def feature
+    self.definition.feature
   end
 end

@@ -19,7 +19,7 @@
 #
 class RelationSubjectAssociation < ApplicationRecord
 
-  belongs_to :feature_relation
+  belongs_to :feature_relation, touch: true
   
   validates_presence_of :feature_relation_id
   validates_presence_of :subject_id
@@ -31,5 +31,9 @@ class RelationSubjectAssociation < ApplicationRecord
   
   def branch
     SubjectsIntegration::Feature.flare_search(self.branch_id)
+  end
+  
+  def feature
+    self.feature_relation.feature
   end
 end

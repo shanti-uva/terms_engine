@@ -20,7 +20,7 @@ class SubjectTermAssociation < ApplicationRecord
   validates_presence_of :subject_id
   validates_presence_of :branch_id
   
-  belongs_to :feature
+  belongs_to :feature, touch: true
   has_many :imports, :as => 'item', :dependent => :destroy
   
   def subject

@@ -19,7 +19,7 @@
 #
 
 class EtymologySubjectAssociation < ApplicationRecord
-  belongs_to :etymology
+  belongs_to :etymology, touch: true
   
   validates_presence_of :etymology_id
   validates_presence_of :subject_id
@@ -31,5 +31,9 @@ class EtymologySubjectAssociation < ApplicationRecord
   
   def branch
     SubjectsIntegration::Feature.flare_search(self.branch_id)
+  end
+  
+  def feature
+    self.etymology.context.feature
   end
 end

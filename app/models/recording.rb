@@ -22,7 +22,7 @@ class Recording < ApplicationRecord
   validate :audio_validation
   validates :dialect_id, presence: true
   
-  belongs_to :feature
+  belongs_to :feature, touch: true
   has_one_attached :audio_file
   has_many :imports, :as => 'item', :dependent => :destroy
   

@@ -14,7 +14,7 @@
 class Etymology < ApplicationRecord
   include KmapsEngine::IsNotable
 
-  belongs_to :context, polymorphic: true
+  belongs_to :context, polymorphic: true, touch: true
 
   has_many :etymology_subject_associations, dependent: :destroy
   has_one :etymology_type_association, dependent: :destroy
@@ -23,6 +23,9 @@ class Etymology < ApplicationRecord
 
   def generic_etymology_subject_associations
     etymology_subject_associations.where.not(branch_id: EtymologyTypeAssociation::BRANCH_ID)
-
+  end
+  
+  def feature
+    self.context.feature
   end
 end
