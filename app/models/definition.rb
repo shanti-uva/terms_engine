@@ -25,19 +25,32 @@ class Definition < ApplicationRecord
   include KmapsEngine::HasPassages
   include TermsEngine::HasModelSentences
   
-  validates_presence_of :feature_id, :content, :language_id
+  validates_presence_of :feature_id, :language_id
   
   belongs_to :feature, touch: true
   belongs_to :language
-  belongs_to :author, :class_name => 'AuthenticatedSystem::Person', optional: true
-  has_many :definition_subject_associations, dependent: :destroy
+  belongs_to :author, class_name: 'AuthenticatedSystem::Person', optional: true
   has_many :association_notes, as: :notable, dependent: :destroy
-  has_many :legacy_citations, -> { where(info_source_type: InfoSource.model_name.name) }, as: :citable, class_name: 'Citation'
-  has_many :standard_citations, -> { where.not(info_source_type: InfoSource.model_name.name) }, as: :citable, class_name: 'Citation'
-  has_many :imports, :as => 'item', :dependent => :destroy
-  has_many :etymologies, as: :context, dependent: :destroy
-  has_many :parent_definition_associations, class_name: 'DefinitionAssociation', as: :associated, dependent: :destroy
   has_many :definition_associations, dependent: :destroy
+  has_many :definition_subject_associations, dependent: :destroy
+  has_many :etymologies, as: :context, dependent: :destroy
+  has_many :imports, as: 'item', dependent: :destroy
+  has_many :parent_definition_associations, class_name: 'DefinitionAssociation', as: :associated, dependent: :destroy
+  has_many :passage_translations, as: :context, dependent: :destroy
+  has_many :translation_equivalents, as: :context, dependent: :destroy
+  #has_many :legacy_citations, -> { where(info_source_type: InfoSource.model_name.name).joins(:info_source).where('info_sources.processed' => false) }, as: :citable, class_name: 'Citation'
+  #has_many :in_house_citations, -> { where(info_source_type: InfoSource.model_name.name).joins(:info_source).where('info_sources.processed' => true) }, as: :citable, class_name: 'Citation'
+  has_many :non_standard_citations, -> { where(info_source_type: InfoSource.model_name.name) }, as: :citable, class_name: 'Citation'
+  has_many :standard_citations, -> { where.not(info_source_type: InfoSource.model_name.name) }, as: :citable, class_name: 'Citation'
+  
+  def legacy_citations
+    self.non_standard_citations.reject{|c| c.info_source.processed} #. , -> { where(info_source_type: InfoSource.model_name.name).joins(:info_source).where('info_sources.processed' => false) }, as: :citable, class_name: 'Citation'
+  end
+  
+  def in_house_citations
+    self.non_standard_citations.select{|c| c.info_source.processed} #, -> { where(info_source_type: InfoSource.model_name.name).joins(:info_source).where('info_sources.processed' => true) }, as: :citable, class_name: 'Citation'
+  end
+  
   
   def recursive_roots_with_path(path_prefix = [])
     path = path_prefix + [self.id]

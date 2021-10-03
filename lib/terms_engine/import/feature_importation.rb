@@ -44,73 +44,46 @@ module TermsEngine
       rows = CSV.read(filename, headers: true, col_sep: "\t")
       current = 0
       total = rows.size
-      ipc_reader, ipc_writer = IO.pipe('ASCII-8BIT')
-      ipc_writer.set_encoding('ASCII-8BIT')
       puts "#{Time.now}: Processing features..."
-      STDOUT.flush
       fids_to_reindex = Array.new
       while current<total
-        limit = current + interval
-        limit = total if limit > total
-        limit = rows.size if limit > rows.size
         self.wait_if_business_hours(daylight)
-        sid = Spawnling.new do
-          begin
-            self.log.debug { "#{Time.now}: Spawning sub-process #{Process.pid}." }
-            ipc_reader.close
-            fids_in_spawn = []
-            for i in current...limit
-              row = rows[i]
-              self.fields = row.to_hash.delete_if{ |key, value| value.blank? }
-              current+=1
-              if !self.fields['features.fid'].blank?
-                next unless self.get_feature(current)
-                current_fids_to_reindex = nil
-              else
-                current_fids_to_reindex = self.infer_or_create_feature
-              end
-              self.process_feature
-              if current_fids_to_reindex.nil?
-                if self.process_names(44)
-                  fids_in_spawn << self.feature.fid
-                end
-              else
-                fids_in_spawn += current_fids_to_reindex
-                fids_in_spawn.uniq!
-              end
-              process_definitions(1)
-              self.feature.update_attributes(is_blank: false, is_public: true, skip_update: true)
-              self.progress_bar(num: i, total: total, current: self.feature.pid)
-              if self.fields.empty?
-                self.log.debug { "#{Time.now}: #{self.feature.pid} processed." }
-              else
-                self.log.warn { "#{Time.now}: #{self.feature.pid}: the following fields have been ignored: #{self.fields.keys.join(', ')}" }
-              end
-            end
-            ipc_hash = { for_reindexing: fids_in_spawn, bar: self.bar, num_errors: self.num_errors, valid_point: self.valid_point }
-            data = Marshal.dump(ipc_hash)
-            ipc_writer.puts(data.length)
-            ipc_writer.write(data)
-            ipc_writer.flush
-            ipc_writer.close
-          rescue Exception => e
-            STDOUT.flush
-            self.log.fatal { "#{Time.now}: An error occured when processing #{Process.pid}:" }
-            self.log.fatal { e.message }
-            self.log.fatal { e.backtrace.join("\n") }
+        
+        begin
+          row = rows[current]
+          self.fields = row.to_hash.delete_if{ |key, value| value.blank? }
+          current+=1
+          if !self.fields['features.fid'].blank?
+            next unless self.get_feature(current)
+            current_fids_to_reindex = nil
+          else
+            current_fids_to_reindex = self.infer_or_create_feature
           end
+          self.process_feature
+          if current_fids_to_reindex.nil?
+            if self.process_names(44)
+              fids_to_reindex << self.feature.fid
+            end
+          else
+            fids_to_reindex += current_fids_to_reindex
+          end
+          process_definitions(1)
+          self.feature.update_attributes(is_blank: false, is_public: true, skip_update: true)
+          self.progress_bar(num: current, total: total, current: self.feature.pid)
+          if self.fields.empty?
+            self.log.debug { "#{Time.now}: #{self.feature.pid} processed." }
+          else
+            self.log.warn { "#{Time.now}: #{self.feature.pid}: the following fields have been ignored: #{self.fields.keys.join(', ')}" }
+          end
+        rescue Exception => e
+          STDOUT.flush
+          self.log.fatal { "#{Time.now}: An error occured:" }
+          self.log.fatal { e.message }
+          self.log.fatal { e.backtrace.join("\n") }
         end
-        Spawnling.wait([sid])
-        size = ipc_reader.gets
-        data = ipc_reader.read(size.to_i)
-        ipc_hash = Marshal.load(data)
-        fids_in_spawn = ipc_hash[:for_reindexing]
-        fids_to_reindex += fids_in_spawn
         fids_to_reindex.uniq!
-        self.update_progress_bar(bar: ipc_hash[:bar], num_errors: ipc_hash[:num_errors], valid_point: ipc_hash[:valid_point])
-        current = limit
+        self.update_progress_bar(bar: self.bar, num_errors: self.num_errors, valid_point: self.valid_point)
       end
-      ipc_writer.close
       KmapsEngine::FlareUtils.new(self.log).reindex_fids(fids_to_reindex, daylight)
     end
     
@@ -123,9 +96,9 @@ module TermsEngine
       phonetic_str = nil
       1.upto(3) do |i|
         name_tag = "#{i}.feature_names"
-        name_str = self.fields["#{name_tag}.name"]
-        writing_system_str = self.fields["#{i}.writing_systems.code"]
-        relationship_system_str = self.fields["#{i}.feature_name_relations.relationship.code"]
+        name_str = self.fields.delete("#{name_tag}.name")
+        writing_system_str = self.fields.delete("#{i}.writing_systems.code")
+        relationship_system_str = self.fields.delete("#{i}.feature_name_relations.relationship.code")
         if writing_system_str=='tibt'
           tibetan_str = name_str.tibetan_cleanup if tibetan_str.blank?
         elsif relationship_system_str=='thl.ext.wyl.translit'

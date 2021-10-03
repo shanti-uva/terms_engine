@@ -1,5 +1,8 @@
 #TermsEngine::Engine.routes.draw do
 Rails.application.routes.draw do
+  concern :notable_citable do
+    resources :notes, :citations
+  end
   resources :features do
     resources :recordings, only: [:index,:show], defaults: { format: 'json' }
   end
@@ -25,4 +28,9 @@ Rails.application.routes.draw do
       resources :citations
     end
   end
+  resources :definition_associations, concerns: :notable_citable, only: ['show', 'index']
+  resources :definitions, concerns: :notable_citable, only: ['show', 'index']
+  resources :passages, concerns: :notable_citable, only: ['show', 'index']
+  resources :passage_translations, concerns: :notable_citable, only: ['show', 'index']
+  resources :translation_equivalents, concerns: :notable_citable, only: ['show', 'index']
 end

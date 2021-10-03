@@ -8,12 +8,12 @@
        <h4><%= "#{index}. "%><cite><a href="#"><%=" #{info_source.title}" %></a></cite></h4>
 <%   end
 if definitions.size==1 %>
-<%=  render partial: 'other_dictionaries_definition', object: definitions.first %>
+<%=  render partial: 'legacy_definition', object: definitions.first %>
 <% else %>
     <ul>
 <%  definitions.each do |definition| %>
       <li>
-<%=   render partial: 'other_dictionaries_definition', object: definition %>
+<%=   render partial: 'legacy_definition', object: definition %>
       </li>
 <%  end %>
     </ul>

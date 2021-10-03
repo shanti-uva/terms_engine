@@ -1,6 +1,7 @@
 # desc "Explaining what the task does"
 require 'terms_engine/name_utils'
 require 'terms_engine/import/feature_importation'
+require 'terms_engine/import/xml_importation'
 
 namespace :terms_engine do
   namespace :db do
@@ -28,7 +29,7 @@ namespace :terms_engine do
     
     namespace :import do
       csv_desc = "Use to import CSV containing terms into DB.\n" +
-                    "Syntax: rake db:import:features SOURCE=csv-file-name TASK=task_code"
+                  "Syntax: rake db:import:features SOURCE=csv-file-name TASK=task_code LOG_LEVEL=log-level DAYLIGHT=value"
       desc csv_desc
       task features: :environment do
         source = ENV['SOURCE']
@@ -38,6 +39,22 @@ namespace :terms_engine do
           puts csv_desc
         else
           TermsEngine::FeatureImportation.new("log/import_#{task}_#{Rails.env}.log", log_level.nil? ? Rails.logger.level : log_level.to_i).do_feature_import(filename: source, task_code: task, daylight: ENV['DAYLIGHT'])
+        end
+      end
+      
+      xml_desc = "Use to import XML containing terms into DB.\n" +
+                  "Syntax: rake db:import:xml SOURCE_FILE=xml-file-name TASK=task_code LOG_LEVEL=log-level SOURCE_ID=source-id AUTHOR=fullname"
+      desc xml_desc
+      task xml: :environment do
+        source_file = ENV['SOURCE_FILE']
+        task = ENV['TASK']
+        log_level = ENV['LOG_LEVEL']
+        source = ENV['SOURCE']
+        author_name = ENV['AUTHOR']
+        if source_file.blank? || task.blank? || source.blank? || author_name.blank?
+          puts xml_desc
+        else
+          TermsEngine::XmlImportation.new("log/import_#{task}_#{Rails.env}.log", log_level.nil? ? Rails.logger.level : log_level.to_i).do_feature_import(filename: source_file, task_code: task, source: source, author_name: author_name)
         end
       end
     end

@@ -1,0 +1,7 @@
+<%  title = note.title
+    authors = note.authors %>
+    <h4><%= title.blank? ? Note.model_name.human.titleize.s : title %></h4>
+<%= note.content.html_safe %>
+<%  if !authors.blank? %>
+    <p><span class='by'> by </span><span class='content_by'><%= authors.collect{ |author| author.fullname }.join(', ') %></span></p>
+<%  end %>

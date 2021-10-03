@@ -33,11 +33,12 @@
                   </dl>
 <%=               render(partial: 'etymologies', locals: { etymologies: feature.etymologies }) %>
                   <div class="terms-definition-list-wrapper"><!-- BEGIN terms-definitions -->
-<%=                 render partial: 'definitions', locals: { definitions: feature.definitions.in_house_definitions, is_child: false, prefix: '', def_level: 0 } %>
+<%=                 render partial: 'standard_definitions', locals: { definitions: feature.definitions.standard_definitions, is_child: false, prefix: '', def_level: 0 } %>
                   </div> <!-- END terms-definition-list-wrapper -->
+<%=               render partial: 'in_house_definitions', locals: { grouped_definitions: feature.definitions.in_house_definitions_by_info_source } %>
                   <div class="terms-dictionaries-other row">
                     <div class="col-xs-12">
-<%=                   render partial: 'other_dictionaries_definitions', locals: { grouped_definitions: feature.definitions.legacy_definitions_by_info_source } %>
+<%=                   render partial: 'legacy_definitions', locals: { grouped_definitions: feature.definitions.legacy_definitions_by_info_source } %>
                     </div>
                   </div><!-- END terms-dictionaries-other -->
                 </div>

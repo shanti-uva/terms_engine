@@ -6,6 +6,7 @@ module TermsEngine
       require 'terms_engine/extension/admin_feature_relations_controller'
       require 'terms_engine/extension/admin_feature_relation_types_controller'
       require 'terms_engine/extension/admin_citations_controller'
+      require 'terms_engine/extension/citations_controller'
       require 'terms_engine/extension/feature_controller'
       require 'terms_engine/extension/feature_model'
       require 'terms_engine/extension/feature_relation_model'
@@ -15,6 +16,7 @@ module TermsEngine
       require 'terms_engine/has_model_sentences'
 
       Feature.send :include, TermsEngine::Extension::FeatureModel
+      CitationsController.send :include, TermsEngine::Extension::CitationsController
       FeaturesController.send :include, TermsEngine::Extension::FeatureController
       FeatureRelation.send :include, TermsEngine::Extension::FeatureRelationModel
       FeatureRelationType.send :include, TermsEngine::Extension::FeatureRelationTypeModel

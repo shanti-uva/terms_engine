@@ -42,27 +42,37 @@ module TermsEngine
 
           def all_definitions
             if @all_definitions.nil?
-              definitions = self.roots.includes(:legacy_citations)
-              in_house_definitions = []
+              definitions = self.roots
+              standard_definitions = []
               legacy_definitions = {}
+              in_house_definitions = {}
               definitions.each do |d|
-                citations = d.legacy_citations
+                citation = d.non_standard_citations.first
                 #citations = d.citations.where(info_source_type: InfoSource.model_name.name)
-                if citations.empty?
-                  in_house_definitions << d
+                if citation.nil?
+                  standard_definitions << d
                 else
-                  citation_id = citations.first.info_source_id
-                  legacy_definitions[citation_id] ||= []
-                  legacy_definitions[citation_id] << d
-                  #legacy_definitions << d
+                  info_source = citation.info_source
+                  source_id = info_source.id
+                  if info_source.processed?
+                    in_house_definitions[source_id] ||= []
+                    in_house_definitions[source_id] << d
+                  else
+                    legacy_definitions[source_id] ||= []
+                    legacy_definitions[source_id] << d
+                  end
                 end
               end
-              @all_definitions = { in_house_definitions: in_house_definitions, legacy_definitions: legacy_definitions }
+              @all_definitions = { standard_definitions: standard_definitions, in_house_definitions: in_house_definitions, legacy_definitions: legacy_definitions }
             end
             @all_definitions
           end
-
-          def in_house_definitions
+          
+          def standard_definitions
+            all_definitions[:standard_definitions]
+          end
+          
+          def in_house_definitions_by_info_source
             all_definitions[:in_house_definitions]
           end
 

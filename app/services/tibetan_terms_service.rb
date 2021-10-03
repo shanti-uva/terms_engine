@@ -52,7 +52,7 @@ class TibetanTermsService
     sorted = sorted_terms
     sorted.each_index do |i|
       sorted[i].update(position: i+1, skip_update: true)
-      sorted[i].index
+      sorted[i].queued_index
     end
   end
 

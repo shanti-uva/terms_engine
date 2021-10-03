@@ -30,7 +30,7 @@
           <div>
 <%=         radio_button_tag :relation_source, definition_str %>
 <%=         label_tag :relation_source_definition, 'specific definition' %>
-<%          source_definitions = parent_object.definitions.in_house_definitions %>
+<%          source_definitions = parent_object.definitions.standard_definitions %>
 <%=         select_tag :source_definition_id, options_from_collection_for_select(source_definitions, 'id', 'snippet'), include_blank: true, class: 'form-control form-select ss-select selectpicker disabled' %>
           </div>
         </div>
@@ -46,7 +46,7 @@
           <div>
 <%=         radio_button_tag :relation_dest, definition_str %>
 <%=         label_tag :relation_dest_definition, 'specific definition' %>
-<%          dest_definitions = object.other_node(parent_object).definitions.in_house_definitions %>
+<%          dest_definitions = object.other_node(parent_object).definitions.standard_definitions %>
 <%=         select_tag :dest_definition_id, options_from_collection_for_select(dest_definitions, 'id', 'snippet'), include_blank: true, class: 'form-control form-select ss-select selectpicker disabled' %>
           </div>
         </div>

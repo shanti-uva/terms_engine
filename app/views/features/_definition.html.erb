@@ -1,29 +1,59 @@
 <% full_index_id = "#{prefix}#{index}"
    passages = definition.passages
+	 passage_translations = definition.passage_translations
    subject_associations = definition.definition_subject_associations
    parents = definition.parent_definition_associations
    children = definition.definition_associations
-	 definition_association_count = parents.size + children.size %>
+	 definition_association_count = parents.size + children.size
+	 notes = definition.notes
+	 translations = definition.translation_equivalents
+	 citation_notes = definition.standard_citations %>
 <div class="<%= definition_node_classes(is_child,def_level) %>">
   <ul id="terms-def-tabs-<%= full_index_id %>" class="nav nav-tabs terms-def-tabs-<%= full_index_id %>" role="tablist">
-		<li class="active"><a href="#terms-def-<%= full_index_id %>" role="tab" data-toggle="tab"><%= index_to_text(full_index_id ) %> <%= Definition.model_name.human.s %></a></li>
-<% if !passages.empty? %>
-    <li><a href="#terms-quotes-<%= full_index_id %>" role="tab" data-toggle="tab"><%= Passage.model_name.human(count: passages.count).titleize.s %><span> (<%= passages.count %>)</span></a></li>
-<% end
+<% active_pending = true
+   if !definition.content.blank? %>
+	   <li class="active"><a href="#terms-def-<%= full_index_id %>" role="tab" data-toggle="tab"><%= index_to_text(full_index_id ) %> <%= Definition.model_name.human.s %></a></li>
+<%   active_pending = false
+   end
+   if !notes.empty? %>
+     <li<%= " class=""active""" if active_pending %>><a href="#terms-notes-<%= full_index_id %>" role="tab" data-toggle="tab"><%= Note.model_name.human(count: notes.count).titleize.s %><span> (<%= notes.count %>)</span></a></li>
+<%   active_pending = false
+   end
+   if !passages.empty? %>
+     <li<%= " class=""active""" if active_pending %>><a href="#terms-quotes-<%= full_index_id %>" role="tab" data-toggle="tab"><%= Passage.model_name.human(count: passages.count).titleize.s %><span> (<%= passages.count %>)</span></a></li>
+<%   active_pending = false
+   end
+   if !passage_translations.empty? %>
+     <li<%= " class=""active""" if active_pending %>><a href="#terms-passage-translations-<%= full_index_id %>" role="tab" data-toggle="tab"><%= PassageTranslation.model_name.human(count: passages.count).titleize.s %><span> (<%= passage_translations.count %>)</span></a></li>
+<%   active_pending = false
+   end
    if definition_association_count > 0 %>
-    <li><a href="#definition-associations-<%= full_index_id %>" role="tab" data-toggle="tab">Related Terms/Definitions (<%= definition_association_count %>)</a></li>
-<% end
+     <li<%= " class=""active""" if active_pending %>><a href="#definition-associations-<%= full_index_id %>" role="tab" data-toggle="tab">Related Terms/Definitions (<%= definition_association_count %>)</a></li>
+<%   active_pending = false
+   end
    if !subject_associations.empty? %>
-    <li><a href="#terms-resources-<%= full_index_id %>" role="tab" data-toggle="tab"><%= DefinitionSubjectAssociation.model_name.human(count: subject_associations.count).titleize.s %><span> (<%= subject_associations.count %>)</span></a></li>
-<% end %>
+     <li<%= " class=""active""" if active_pending %>><a href="#terms-resources-<%= full_index_id %>" role="tab" data-toggle="tab"><%= DefinitionSubjectAssociation.model_name.human(count: subject_associations.count).titleize.s %><span> (<%= subject_associations.count %>)</span></a></li>
+<%   active_pending = false
+   end
+   if !translations.empty? %>
+     <li<%= " class=""active""" if active_pending %>><a href="#terms-translations-<%= full_index_id %>" role="tab" data-toggle="tab"><%= TranslationEquivalent.model_name.human(count: notes.count).titleize.s %><span> (<%= translations.count %>)</span></a></li>
+<%   active_pending = false
+   end
+   if !citation_notes.empty? %>
+     <li<%= " class=""active""" if active_pending %>><a href="#terms-citation-notes-<%= full_index_id %>" role="tab" data-toggle="tab">Citation Notes<span> (<%= citation_notes.count %>)</span></a></li>
+<%   active_pending = false
+   end %>
   </ul>
   <div class="tab-content">
+<%  active_pending = true
+    if !definition.content.blank?
+			active_pending = false %>
     <div role="tabpanel" class="tab-pane active" id="terms-def-<%= full_index_id %>">
       <p><%= definition.content.s.html_safe %></p>
 <%=   render(partial: 'etymologies', locals: { etymologies: definition.etymologies }) %>
       <p><a data-toggle="collapse" href="#definition-details-<%= full_index_id %>" role="button" aria-expanded="false" aria-controls="definition-details" class="definition-details-control collapsed">
         <span class="glyphicon"></span>Further Details
-      </a></p>
+			</a></p>
       <div id="definition-details-<%= full_index_id %>" class="collapse definition-details-wrapper">
       <dl>
         <dt><%= Language.model_name.human %>:</dt> <dd><%= definition.language.name %></dd>
@@ -39,29 +69,67 @@
       </dl>
       </div>
     </div>
-<%  if !passages.empty? %>
-      <div role="tabpanel" class="tab-pane" id="terms-quotes-<%= full_index_id %>">
-<%    passages.each do |passage| %>
-<%=     passage.content %><%= citation_popup_link_for(passage) %>
-<%    end %>
-      </div>
 <%  end
-		if definition_association_count > 0 %>
-      <div role="tabpanel" class="tab-pane" id="definition-associations-<%= full_index_id %>">
-				<dl>
-        <dd><p><%= definition.content.s.html_safe %></p></dd>
-<%=     render partial: 'definition_associations', locals: { lists: [parents, children], related_methods: ['definition', 'associated'] } %>
+    if !notes.empty? %>
+      <div role="tabpanel" class="tab-pane terms-notes-tab-content<%= " active" if active_pending %>" id="terms-notes-<%= full_index_id %>">
+        <dl>
+<%=       render partial: 'note', collection: notes %>
         </dl>
       </div>
-<%  end %>
+<%    active_pending = false
+    end
+    if !passages.empty? %>
+      <div role="tabpanel" class="tab-pane<%= " active" if active_pending %>" id="terms-quotes-<%= full_index_id %>">
+				<dl>
+<%=       render partial: 'passage', collection: passages %>
+				</dl>
+      </div>
+<%    active_pending = false
+    end
+    if !passage_translations.empty? %>
+      <div role="tabpanel" class="tab-pane<%= " active" if active_pending %>" id="terms-passage-translations-<%= full_index_id %>">
+				<dl>
+<%=       render partial: 'passage_translation', collection: passage_translations %>
+				</dl>
+      </div>
+<%    active_pending = false
+    end
+		if definition_association_count > 0 %>
+      <div role="tabpanel" class="tab-pane<%= " active" if active_pending %>" id="definition-associations-<%= full_index_id %>">
+				<dl>
+        <dd><p><%= definition.content.s.html_safe %></p></dd>
+<%=     render partial: 'definition_associations', locals: { lists: [parents, children], related_methods: ['definition', 'associated'], label_methods: ['asymmetric_label', 'label'] } %>
+        </dl>
+      </div>
+<%    active_pending = false
+    end %>
 <%  if !subject_associations.empty? %>
-      <div role="tabpanel" class="tab-pane terms-resources-tab-content" id="terms-resources-<%= full_index_id %>">
-        <h4><%= SubjectsIntegration::Feature.human_name(count: :many).titleize.s %></h4>
+      <div role="tabpanel" class="tab-pane terms-resources-tab-content<%= " active" if active_pending %>" id="terms-resources-<%= full_index_id %>">
+        <h4><%= SubjectsIntegration::Feature.human_name(count: subject_associations.count).titleize.s %></h4>
         <dl>
 <%=       render partial: 'subjects', locals: { associations: subject_associations } %>
         </dl>
       </div>
-<%  end %>
+<%    active_pending = false
+    end
+    if !translations.empty? %>
+      <div role="tabpanel" class="tab-pane terms-translations-tab-content<%= " active" if active_pending %>" id="terms-translations-<%= full_index_id %>">
+        <h4><%= TranslationEquivalent.model_name.human(count: translations.count).titleize.s %></h4>
+        <dl>
+<%=       render partial: 'translation_equivalent', collection: translations %>
+        </dl>
+      </div>
+<%    active_pending = false
+    end
+    if !citation_notes.empty? %>
+      <div role="tabpanel" class="tab-pane terms-citation-notes-tab-content<%= " active" if active_pending %>" id="terms-citation-notes-<%= full_index_id %>">
+        <h4>Citation Notes</h4>
+        <dl>
+<%=       render partial: 'citation_note', collection: citation_notes %>
+        </dl>
+      </div>
+<%    active_pending = false
+    end %>
   </div> <!-- END tab-content -->
 </div> <!-- END terms-definition-node -->
 <% definitions = definition.children
