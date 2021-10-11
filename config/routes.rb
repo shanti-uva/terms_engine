@@ -28,7 +28,6 @@ Rails.application.routes.draw do
       resources :citations
     end
   end
-  resources :definition_associations, concerns: :notable_citable, only: ['show', 'index']
   resources :definitions, concerns: :notable_citable, only: ['show', 'index']
   resources :passages, concerns: :notable_citable, only: ['show', 'index']
   resources :passage_translations, concerns: :notable_citable, only: ['show', 'index']

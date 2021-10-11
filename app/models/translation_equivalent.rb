@@ -15,7 +15,9 @@
 #  index_translation_equivalents_on_context_type_and_context_id  (context_type,context_id)
 #
 class TranslationEquivalent < ApplicationRecord
-  belongs_to :context, polymorphic: true
+  include KmapsEngine::IsCitable
+  
+  belongs_to :feature
   belongs_to :language
   
   has_many :imports, as: 'item', dependent: :destroy

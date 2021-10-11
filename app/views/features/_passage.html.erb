@@ -1,5 +1,0 @@
-<h4><%= Passage.model_name.human.titleize.s %> <%= citation_popup_link_for(passage) %></h4>
-<%= passage.content.html_safe %>
-<%= render partial: 'passage_translation', collection: passage.passage_translations %>
-<%= render partial: 'note', collection: passage.notes %>
-<hr>

@@ -43,18 +43,20 @@ namespace :terms_engine do
       end
       
       xml_desc = "Use to import XML containing terms into DB.\n" +
-                  "Syntax: rake db:import:xml SOURCE_FILE=xml-file-name TASK=task_code LOG_LEVEL=log-level SOURCE_ID=source-id AUTHOR=fullname"
+                  "Syntax: rake db:import:xml SOURCE_FILE=xml-file-name TASK=task_code LOG_LEVEL=log-level SOURCE=source-name SOURCE_ID=source-id AUTHOR=fullname COLLECTION=collection-name"
       desc xml_desc
       task xml: :environment do
         source_file = ENV['SOURCE_FILE']
         task = ENV['TASK']
         log_level = ENV['LOG_LEVEL']
         source = ENV['SOURCE']
+        source_id = ENV['SOURCE_ID']
         author_name = ENV['AUTHOR']
-        if source_file.blank? || task.blank? || source.blank? || author_name.blank?
+        collection_name = ENV['COLLECTION']
+        if source_file.blank? || task.blank? || source.blank? || source_id.blank? || author_name.blank? || collection_name.blank?
           puts xml_desc
         else
-          TermsEngine::XmlImportation.new("log/import_#{task}_#{Rails.env}.log", log_level.nil? ? Rails.logger.level : log_level.to_i).do_feature_import(filename: source_file, task_code: task, source: source, author_name: author_name)
+          TermsEngine::XmlImportation.new("log/import_#{task}_#{Rails.env}.log", log_level.nil? ? Rails.logger.level : log_level.to_i).do_feature_import(filename: source_file, task_code: task, source: source, source_id: source_id, author_name: author_name, collection: collection_name)
         end
       end
     end

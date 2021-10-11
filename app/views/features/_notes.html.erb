@@ -1,0 +1,25 @@
+<div id="accordion" class="panel-group">
+<% first = true
+   notes.each do |note| %>
+   <section class="panel panel-default">
+     <div class="panel-heading">
+<%     title = note.title
+       authors = note.authors %>
+       <h4><a class="accordion-toggle<%= " collapsed" if !first %>" data-parent="#accordion" data-toggle="collapse" href="#collapseDefinitionNotes-<%= note.id %>" aria-expanded="true"><span class="glyphicon glyphicon-plus"></span><%= title.blank? ? Note.model_name.human.titleize.s : title %></h4></a>
+     </div>
+	   <div id="collapseDefinitionNotes-<%= note.id %>" class="panel-collapse collapse<%= " in" if first %>">
+	     <div class="panel-body">
+<%=      note.content.html_safe %>
+<%       if !authors.blank? %>
+         <p><span class='by'> by </span><span class='content_by'><%= authors.collect{ |author| author.fullname }.join(', ') %></span></p>
+<%       end %>
+       </div>
+     </div>
+   </section>
+<%   first = false if first
+   end %>
+</div>
+
+
+
+

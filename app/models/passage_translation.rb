@@ -16,6 +16,7 @@
 #
 class PassageTranslation < ApplicationRecord
   include KmapsEngine::IsCitable
+  include KmapsEngine::IsNotable
   
   belongs_to :context, polymorphic: true
   belongs_to :language

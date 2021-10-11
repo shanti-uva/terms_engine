@@ -94,7 +94,9 @@ body.page-terms article.main-col{
 
 .terms-node-wrapper .tab-pane.terms-intro,
 .terms-node-wrapper .tab-pane.terms-intro-details,
-.terms-node-wrapper .tab-pane.terms-intro-citations{
+.terms-node-wrapper .tab-pane.terms-intro-citations,
+.terms-node-wrapper .tab-pane.terms-relations,
+.terms-node-wrapper .tab-pane.terms-translations {
   padding: 3rem 2.5rem 7rem;
 }
 
@@ -324,12 +326,6 @@ body.page-terms article.main-col{
 .terms-definition-node .nav-tabs>li:first-child>a{
   text-transform: uppercase;
 }
-
-
-
-
-
-
 
 .terms-definition-node .nav-tabs>li{
   background: #f5f5f5;
