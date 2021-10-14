@@ -1,9 +1,5 @@
 <%= stylesheet_link_tag('collapsible_list/kmaps_collapsible_list') %>
-<% parents = feature.all_parent_relations
-   children = feature.all_child_relations
-   feature_relation_count = parents.size + children.size
-   translations = feature.translation_equivalents
-
+<% translations = feature.translation_equivalents
    feature_label = fname_labels(feature).s %>
 <div class="field field-name-body field-type-text-with-summary field-label-hidden">
   <div class="field-items">
@@ -13,10 +9,7 @@
           <ul id="terms-intro-tabs" class="nav nav-tabs nav-justified terms-intro-tabs" role="tablist">
             <li class="active"><a href="#terms-intro" role="tab" data-toggle="tab">Term Definition</a></li>
             <li><a href="#terms-intro-details" id="details-tab-link" role="tab" data-toggle="tab">Details</a></li>
-<%        if feature_relation_count > 1 %>
-            <li><a href="#terms-relations" role="tab" data-toggle="tab">Related</a></li>
-<%        end
-          if !translations.empty? %>
+<%        if !translations.empty? %>
             <li><a href="#terms-translations" role="tab" data-toggle="tab">Translations (<%= translations.count %>)</span></a></li>
 <%        end %>
           </ul>
@@ -70,18 +63,7 @@
 <%            end %>
               </div>
             </div><!-- END tab panel -->
-<%        if feature_relation_count > 1 %>
-            <div role="tabpanel" class="tab-pane terms-relations" id="terms-relations">
-              <div class="row"><!-- INTRO TAB 2 -->
-                <div class="col-xs-12">
-                  <dl>
-<%=                 render partial: 'feature_relations', locals: { lists: [parents, children], related_methods: ['parent_node', 'child_node'], label_methods: ['asymmetric_label', 'label'] } %>
-                  </dl>
-                </div>
-              </div>
-            </div><!-- END tab panel -->
-<%        end
-          if !translations.empty? %>
+<%        if !translations.empty? %>
             <div role="tabpanel" class="tab-pane terms-translations" id="terms-translations">
               <div class="row"><!-- INTRO TAB 2 -->
                 <div class="col-xs-12">

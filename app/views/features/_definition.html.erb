@@ -2,6 +2,9 @@
    passages = definition.passages
 	 passage_translations = definition.passage_translations
    subject_associations = definition.definition_subject_associations
+	 parents = definition.parent_definition_associations
+	 children = definition.definition_associations
+	 definition_association_count = parents.size + children.size
 	 notes = definition.notes
 	 citation_notes = definition.standard_citations %>
 <div class="<%= definition_node_classes(is_child,def_level) %>">
@@ -15,16 +18,16 @@
      <li<%= " class=""active""" if active_pending %>><a href="#terms-notes-<%= full_index_id %>" role="tab" data-toggle="tab"><%= Note.model_name.human(count: notes.count).titleize.s %><span> (<%= notes.count %>)</span></a></li>
 <%   active_pending = false
    end
-   if !passages.empty? || !passage_translations.empty? %>
-     <li<%= " class=""active""" if active_pending %>><a href="#terms-quotes-<%= full_index_id %>" role="tab" data-toggle="tab"><%= Passage.model_name.human(count: passages.count + passage_translations.count).titleize.s %><span> (<%= passages.count + passage_translations.count %>)</span></a></li>
+   if !passages.empty? || !passage_translations.empty? || !citation_notes.empty? %>
+     <li<%= " class=""active""" if active_pending %>><a href="#terms-quotes-<%= full_index_id %>" role="tab" data-toggle="tab"><%= Passage.model_name.human(count: passages.count + passage_translations.count + citation_notes.count).titleize.s %><span> (<%= passages.count + passage_translations.count %>)</span></a></li>
+<%   active_pending = false
+   end
+	 if definition_association_count > 0 %>
+	   <li<%= " class=""active""" if active_pending %>><a href="#definition-associations-<%= full_index_id %>" role="tab" data-toggle="tab">Related Terms/Definitions (<%= definition_association_count %>)</a></li>
 <%   active_pending = false
    end
    if !subject_associations.empty? %>
      <li<%= " class=""active""" if active_pending %>><a href="#terms-resources-<%= full_index_id %>" role="tab" data-toggle="tab"><%= DefinitionSubjectAssociation.model_name.human(count: subject_associations.count).titleize.s %><span> (<%= subject_associations.count %>)</span></a></li>
-<%   active_pending = false
-   end
-   if !citation_notes.empty? %>
-     <li<%= " class=""active""" if active_pending %>><a href="#terms-citation-notes-<%= full_index_id %>" role="tab" data-toggle="tab">Citation Notes<span> (<%= citation_notes.count %>)</span></a></li>
 <%   active_pending = false
    end %>
   </ul>
@@ -60,10 +63,22 @@
       </div>
 <%    active_pending = false
     end
-    if !passages.empty? || !passage_translations.empty? %>
+    if !passages.empty? || !passage_translations.empty? || !citation_notes.empty? %>
       <div role="tabpanel" class="tab-pane<%= " active" if active_pending %>" id="terms-quotes-<%= full_index_id %>">
-<%=     render partial: 'passages', locals: { passages: passages, passage_translations: passage_translations } %>
+				<div id="accordion" class="panel-group">
+<%=     render partial: 'passage', collection: passages %>
+<%=     render partial: 'passage_translations', object: passage_translations %>
+<%=     render partial: 'citation_note', collection: citation_notes %>
+        </div>
       </div>
+<%    active_pending = false
+    end
+		if definition_association_count > 0 %>
+		  <div role="tabpanel" class="tab-pane<%= " active" if active_pending %>" id="definition-associations-<%= full_index_id %>">
+		    <dl>
+<%=       render partial: 'definition_associations', locals: { lists: [parents, children], related_methods: ['definition', 'associated'], label_methods: ['asymmetric_label', 'label'] } %>
+		    </dl>
+		  </div>
 <%    active_pending = false
     end
     if !subject_associations.empty? %>
@@ -72,12 +87,6 @@
         <dl>
 <%=       render partial: 'subjects', locals: { associations: subject_associations } %>
         </dl>
-      </div>
-<%    active_pending = false
-    end
-    if !citation_notes.empty? %>
-      <div role="tabpanel" class="tab-pane terms-citation-notes-tab-content<%= " active" if active_pending %>" id="terms-citation-notes-<%= full_index_id %>">
-<%=     render partial: 'citation_notes', object: citation_notes %>
       </div>
 <%    active_pending = false
     end %>

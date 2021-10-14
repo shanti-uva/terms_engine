@@ -1,0 +1,10 @@
+<section class="panel panel-default">
+  <div class="panel-heading">
+	  <div class="citation-reference"><a class="accordion-toggle collapsed" data-parent="#accordion" data-toggle="collapse" href="#collapseCitationNotes-<%= citation_note.id %>" aria-expanded="true"><span class="glyphicon glyphicon-plus"></a><%= citation_note.bibliographic_reference.html_safe %></div>
+  </div>
+	<div id="collapseCitationNotes-<%= citation_note.id %>" class="panel-collapse collapse">
+	  <div class="panel-body">
+      <div class="note-content"><%= citation_note.notes.s %></div>
+    </div>
+  </div>
+</section>
