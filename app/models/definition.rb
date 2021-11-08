@@ -22,7 +22,7 @@ class Definition < ApplicationRecord
   
   include KmapsEngine::IsCitable
   include KmapsEngine::IsNotable
-  include KmapsEngine::HasPassages
+  include TermsEngine::HasPassages
   include TermsEngine::HasModelSentences
   
   validates_presence_of :feature_id, :language_id

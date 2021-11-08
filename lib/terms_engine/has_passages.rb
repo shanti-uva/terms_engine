@@ -1,4 +1,4 @@
-module KmapsEngine
+module TermsEngine
   module HasPassages
     extend ActiveSupport::Concern
 

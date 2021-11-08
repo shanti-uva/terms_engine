@@ -25,15 +25,10 @@
 #  fk_rails_...  (perspective_id => perspectives.id)
 #
 class DefinitionAssociation < ApplicationRecord
-  include KmapsEngine::IsNotable
-  include KmapsEngine::IsCitable
-  
   belongs_to :definition, touch: true
   belongs_to :associated, polymorphic: true, touch: true
   belongs_to :perspective
   belongs_to :feature_relation_type
-  
-  has_many :imports, as: 'item', dependent: :destroy
   
   def feature
     self.definition.feature

@@ -20,4 +20,15 @@ class PassageTranslation < ApplicationRecord
   
   belongs_to :context, polymorphic: true
   belongs_to :language
+  
+  def rsolr_document_tags(document, prefix = '')
+    prefix_ = prefix.blank? ? '' : "#{prefix}_"
+    passage_translation_prefix = "#{prefix_}passage_translation_#{self.id}"
+    document["#{passage_translation_prefix}_content_s"] = self.content
+    document["#{passage_translation_prefix}_language_s"] = self.language.name
+    document["#{passage_translation_prefix}_language_code_s"] = self.language.code
+    citation_references = self.citations.collect { |c| c.bibliographic_reference }
+    document["#{passage_translation_prefix}_citation_references_ss"] = citation_references if !citation_references.blank?
+    self.notes.each { |n| n.rsolr_document_tags(document, passage_translation_prefix) }
+  end
 end

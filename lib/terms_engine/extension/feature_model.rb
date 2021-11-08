@@ -2,7 +2,7 @@ module TermsEngine
   module Extension
     module FeatureModel
       extend ActiveSupport::Concern
-      include KmapsEngine::HasPassages
+      include TermsEngine::HasPassages
 
       included do
         BOD_PHONEME_SUBJECT_ID = 9310
@@ -210,6 +210,8 @@ module TermsEngine
             cd["#{etymology_prefix}_type_#{subject['uid']}_s"] = subject['header'] if !subject.nil?
             de.notes.each { |n| n.rsolr_document_tags(cd, etymology_prefix) }
           end
+          d.passage_translations.each { |pt| pt.rsolr_document_tags(cd, def_prefix) }
+          d.passages.each { |p| p.rsolr_document_tags(cd, def_prefix) }
           author = d.author
           cd["#{def_prefix}_author_s"] = d.author.fullname if !author.nil?
           cd["#{def_prefix}_numerology_i"] = d.numerology if !d.numerology.nil?
@@ -218,6 +220,8 @@ module TermsEngine
           cd["#{def_prefix}_citation_references_ss"] = citation_references if !citation_references.blank?
           info_source = d.legacy_citations.collect(&:info_source).first
           cd["#{def_prefix}_source_s"] = info_source.title if !info_source.nil?
+          info_source = d.in_house_citations.collect(&:info_source).first
+          cd["#{def_prefix}_in_house_source_s"] = info_source.title if !info_source.nil?
           d.notes.each { |n| n.rsolr_document_tags(cd, def_prefix) }
           subject_associations = d.definition_subject_associations
           related_branches = subject_associations.select(:branch_id).distinct.collect(&:branch_id)
@@ -271,6 +275,12 @@ module TermsEngine
           associations = subject_associations.where(branch_id: branch_id)
           doc["associated_subject_#{branch_id}_ls"] = associations.collect(&:subject_id)
           doc["associated_subject_#{branch_id}_ss"] = associations.collect{ |a| a.subject['header'] }
+        end
+        self.passages.each do |p|
+          p.rsolr_document_tags(doc)
+        end
+        self.translation_equivalents.each do |te|
+          te.rsolr_document_tags(doc)
         end
         doc
       end
