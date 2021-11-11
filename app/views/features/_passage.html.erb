@@ -6,7 +6,7 @@
   </div>
 	<div id="collapsePassages-<%= passage.id %>" class="panel-collapse collapse">
 	  <div class="panel-body">
-      <h4><%= Passage.model_name.human.titleize.s %></h4>
+      <h5><%= Passage.model_name.human.titleize.s %></h5>
 <%=   passage.content.html_safe %>
 <%=   render partial: 'note', collection: passage.notes %>
 <%=   render partial: 'passage_translation', collection: passage.passage_translations %>

@@ -1,6 +1,6 @@
 <% if !etymologies.empty? %>
 <dl>
-  <h4><%= Etymology.model_name.human(count: etymologies.size).titleize.s %></h4>
+  <h5><%= Etymology.model_name.human(count: etymologies.size).titleize.s %></h5>
 <% etymologies.each do |etymology|
      eta = etymology.etymology_type_association
      if !eta.nil?
