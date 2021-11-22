@@ -122,8 +122,10 @@ module TermsEngine
             related_kmaps_node_type: 'parent',
             block_type: ['child']
           }
-          p_rel_citation_references = pr.citations.collect { |c| c.bibliographic_reference }
+          citations = pr.citations
+          p_rel_citation_references = citations.collect { |c| c.bibliographic_reference }
           cd["#{prefix}_relation_citation_references_ss"] = p_rel_citation_references if !p_rel_citation_references.blank?
+          citations.each{ |ci| ci.rsolr_document_tags_for_notes(cd, "#{prefix}_relation") }
           time_units = pr.time_units_ordered_by_date.collect { |t| t.to_s }
           cd["#{prefix}_relation_time_units_ss"] = time_units if !time_units.blank?
           pr.notes.each { |n| n.rsolr_document_tags(cd, prefix) }
@@ -163,8 +165,10 @@ module TermsEngine
             related_kmaps_node_type: 'child',
             block_type: ['child']
           }
-          p_rel_citation_references = pr.citations.collect { |c| c.bibliographic_reference }
+          citations = pr.citations
+          p_rel_citation_references = citations.collect { |c| c.bibliographic_reference }
           cd["#{prefix}_relation_citation_references_ss"] = p_rel_citation_references if !p_rel_citation_references.blank?
+          citations.each{ |ci| ci.rsolr_document_tags_for_notes(cd, "#{prefix}_relation") }
           time_units = pr.time_units_ordered_by_date.collect { |t| t.to_s }
           cd["#{prefix}_relation_time_units_ss"] = time_units if !time_units.blank?
           pr.notes.each { |n| n.rsolr_document_tags(cd, prefix) }
@@ -216,8 +220,10 @@ module TermsEngine
           cd["#{def_prefix}_author_s"] = d.author.fullname if !author.nil?
           cd["#{def_prefix}_numerology_i"] = d.numerology if !d.numerology.nil?
           cd["#{def_prefix}_tense_s"] = d.tense if !d.tense.nil?
-          citation_references = d.standard_citations.collect { |c| c.bibliographic_reference }
+          citations = d.standard_citations
+          citation_references = citations.collect { |c| c.bibliographic_reference }
           cd["#{def_prefix}_citation_references_ss"] = citation_references if !citation_references.blank?
+          citations.each{ |ci| ci.rsolr_document_tags_for_notes(cd, def_prefix) }
           info_source = d.legacy_citations.collect(&:info_source).first
           cd["#{def_prefix}_source_s"] = info_source.title if !info_source.nil?
           info_source = d.in_house_citations.collect(&:info_source).first
@@ -258,10 +264,13 @@ module TermsEngine
                 '_childDocuments_'  => child_documents }
         subject_associations.each do |sa|
           branch_prefix = "#{prefix}_branch_#{sa.branch_id}"
-          citations = sa.citations.collect { |c| c.bibliographic_reference }
-          doc["#{branch_prefix}_#{SubjectsIntegration::Feature.uid_prefix}_#{sa.subject_id}_citation_references_ss"] = citations if !citations.blank?
+          subject_prefix = "#{branch_prefix}_#{SubjectsIntegration::Feature.uid_prefix}_#{sa.subject_id}"
+          citations = sa.citations
+          citation_references = citations.collect { |c| c.bibliographic_reference }
+          doc["#{subject_prefix}_citation_references_ss"] = citation_references if !citation_references.blank?
+          citations.each{ |ci| ci.rsolr_document_tags_for_notes(doc, subject_prefix) }
           time_units = sa.time_units_ordered_by_date.collect { |t| t.to_s }
-          doc["#{branch_prefix}_#{SubjectsIntegration::Feature.uid_prefix}_#{sa.subject_id}_time_units_ss"] = time_units if !time_units.blank?
+          doc["#{subject_prefix}_time_units_ss"] = time_units if !time_units.blank?
           sa.notes.each { |n| n.rsolr_document_tags(doc, branch_prefix) }
         end
         self.etymologies.each do |e|
