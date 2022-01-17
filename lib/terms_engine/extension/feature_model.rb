@@ -101,6 +101,7 @@ module TermsEngine
           per = Perspective.get_by_code(KmapsEngine::ApplicationSettings.default_perspective_code)
         else
           per = self.perspective_by_name
+          per = Perspective.get_by_code(KmapsEngine::ApplicationSettings.default_perspective_code) if per.nil?
         end
         v = View.get_by_code(KmapsEngine::ApplicationSettings.default_view_code)
         prefix = "related_#{Feature.uid_prefix}"
