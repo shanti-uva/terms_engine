@@ -8,6 +8,11 @@ namespace :terms_engine do
       TermsEngine::FlareUtils.new("log/reindexing_#{Rails.env}.log", ENV['LOG_LEVEL']).reindex_all(from: ENV['FROM'], to: ENV['TO'], level: ENV['LEVEL'], letter: ENV['LETTER'], phoneme: ENV['PHONEME'], daylight: ENV['DAYLIGHT'])
     end
     
+    desc "Reindex all english and tibetan expressions. rake terms_engine:flare:reindex_expressions [FROM=fid] [TO=fid] [DAYLIGHT=daylight]"
+    task :reindex_expressions => :environment do
+      TermsEngine::FlareUtils.new("log/reindexing_#{Rails.env}.log", ENV['LOG_LEVEL']).reindex_expressions(from: ENV['FROM'], to: ENV['TO'], daylight: ENV['DAYLIGHT'])
+    end
+    
     desc "Reindexes features updated after last full reindex."
     task :reindex_stale_since_all => :environment do
       KmapsEngine::FlareUtils.reindex_stale_since_all([DefinitionAssociation, DefinitionRelation, DefinitionSubjectAssociation, Definition, EtymologySubjectAssociation, Etymology, ModelSentence, PhonemeTermAssociation, Recording, RelationSubjectAssociation, SubjectTermAssociation])

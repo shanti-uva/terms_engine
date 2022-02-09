@@ -11,5 +11,5 @@
 #
 
 class PhonemeTermAssociation < SubjectTermAssociation
-  default_scope { where(branch_id: 9310) }
+  default_scope { where(branch_id: [Feature::BOD_PHONEME_SUBJECT_ID, Feature::ENG_PHONEME_SUBJECT_ID]) }
 end

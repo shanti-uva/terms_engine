@@ -87,6 +87,10 @@ module TermsEngine
         "T#{self.fid}"
       end
       
+      def is_phoneme?(phoneme_id_or_array)
+        !self.phoneme_term_associations.where(subject_id: phoneme_id_or_array).first.nil?
+      end
+      
       def phonemes
         self.phoneme_term_associations.collect(&:subject)
       end
@@ -263,6 +267,16 @@ module TermsEngine
                 etymologies_ss: self.etymologies.collect(&:content),
                 block_type: ['parent'],
                 '_childDocuments_'  => child_documents }
+        if self.is_phoneme?(Feature::BOD_EXPRESSION_SUBJECT_ID)
+          type = FeatureRelationType.get_by_code('heads')
+          phrase = self.parent_relations.where(feature_relation_type: type).first.parent_node
+          letter = phrase.parent_relations.where(feature_relation_type: type).first.parent_node
+          doc[:cascading_position_i] = letter.position * 1000 * 1000 + phrase.position*1000 + self.position
+        elsif self.is_phoneme?([Feature::ENG_WORD_SUBJECT_ID, Feature::ENG_PHRASE_SUBJECT_ID])
+          type = FeatureRelationType.get_by_code('is.beginning.of')
+          letter = self.parent_relations.where(feature_relation_type: type).first.parent_node
+          doc[:cascading_position_i] = letter.position * 1000 + self.position
+        end
         subject_associations.each do |sa|
           branch_prefix = "#{prefix}_branch_#{sa.branch_id}"
           subject_prefix = "#{branch_prefix}_#{SubjectsIntegration::Feature.uid_prefix}_#{sa.subject_id}"

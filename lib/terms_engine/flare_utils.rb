@@ -45,5 +45,24 @@ module TermsEngine
       end
       self.reindex_fids(fids, daylight)
     end
+    
+    def reindex_expressions(from:, to:, daylight:)
+      from_i = from.blank? ? nil : from.to_i
+      to_i = to.blank? ? nil : to.to_i
+      fids = []
+      english_letters = Feature.roots.includes(:phoneme_term_associations).where('subject_term_associations.subject_id' => Feature::ENG_LETTER_SUBJECT_ID)
+      tibetan_letters = Feature.roots.includes(:phoneme_term_associations).where('subject_term_associations.subject_id' => Feature::BOD_LETTER_SUBJECT_ID)
+      fids = english_letters.collect do |letter|
+        letter.children.collect(&:fid)
+      end.flatten + tibetan_letters.collect do |letter|
+        letter.children.collect do |phrase|
+          phrase.children.collect(&:fid)
+        end
+      end.flatten
+      fids.sort!
+      fids.select!{|fid| fid >= from_i } if !from_i.nil?
+      fids.select!{|fid| fid <= to_i } if !to_i.nil?
+      self.reindex_fids(fids, daylight)
+    end
   end
 end
