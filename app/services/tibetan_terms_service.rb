@@ -51,8 +51,12 @@ class TibetanTermsService
   def reposition
     sorted = sorted_terms
     sorted.each_index do |i|
-      sorted[i].update(position: i+1, skip_update: true)
-      sorted[i].queued_index
+      new_position = i+1
+      term = sorted[i]
+      if term.position != new_position
+        term.update(position: i+1, skip_update: true)
+        term.queued_index
+      end
     end
   end
 
