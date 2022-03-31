@@ -15,7 +15,7 @@ namespace :terms_engine do
     
     desc "Reindexes features updated after last full reindex."
     task :reindex_stale_since_all => :environment do
-      KmapsEngine::FlareUtils.reindex_stale_since_all([DefinitionAssociation, DefinitionRelation, DefinitionSubjectAssociation, Definition, EtymologySubjectAssociation, Etymology, ModelSentence, PhonemeTermAssociation, Recording, RelationSubjectAssociation, SubjectTermAssociation])
+      KmapsEngine::FlareUtils.reindex_stale_since_all([DefinitionAssociation, DefinitionRelation, DefinitionSubjectAssociation, Definition, EtymologySubjectAssociation, Etymology, ModelSentence, Passage, PhonemeTermAssociation, Recording, RelationSubjectAssociation, SubjectTermAssociation])
     end
     
     desc "Create solr documents in filesystem. rake terms_engine:flare:fs_reindex_all [FROM=fid] [TO=fid] [FIDS=fid1,fid2,...] [DAYLIGHT=daylight] [LOG_LEVEL=0..5]"
