@@ -312,6 +312,10 @@ module TermsEngine
         doc
       end
       
+      def solr_url
+        URI.join(TermsResource.get_url, "solr/#{self.fid}.json")
+      end
+      
       module ClassMethods
         
         def current_roots_by_perspective(current_perspective)

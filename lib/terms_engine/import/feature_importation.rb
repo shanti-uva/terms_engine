@@ -156,6 +156,7 @@ module TermsEngine
             0.upto(4) do |j|
               info_prefix = j==0 ? prefix : "#{prefix}.#{j}"
               self.add_info_source(info_prefix, definition)
+              self.add_note(info_prefix, definition)
             end
           end
         end
