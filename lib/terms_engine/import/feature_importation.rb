@@ -89,7 +89,7 @@ module TermsEngine
     
     def infer_or_create_feature
       @tib_alpha ||= Perspective.get_by_code('tib.alpha')
-      @relation_type ||= FeatureRelationType.get_by_code('is.beginning.of')
+      @relation_type ||= FeatureRelationType.get_by_code('heads')
       
       tibetan_str = nil
       wylie_str = nil
