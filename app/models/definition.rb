@@ -69,4 +69,19 @@ class Definition < ApplicationRecord
   def snippet(length = 40)
     ActionController::Base.helpers.strip_tags(content).squish.truncate(length)
   end
+  
+  def writing_system
+    case self.language.code
+    when 'eng', 'fre', 'deu', 'ita', 'spa'
+      return WritingSystem.get_by_code('latin')
+    when 'zho'
+      return WritingSystem.get_by_code('hant') # when needed can see https://github.com/jpatokal/script_detector for distinguishing simplified and trad.
+    when 'bod'
+      return WritingSystem.get_by_code('tibt')
+    when 'hin', 'nep'
+      return WritingSystem.get_by_code('deva')
+    when 'dzo'
+      return WritingSystem.get_by_code('dzongkha')
+    end
+  end
 end

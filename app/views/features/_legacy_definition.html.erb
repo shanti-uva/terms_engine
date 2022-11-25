@@ -2,9 +2,8 @@
 <p>
 <%= legacy_definition.content.s.html_safe %>
 </p>
-    <p><a data-toggle="collapse" href="#other-definition-details-<%= legacy_definition.id %>" role="button" aria-expanded="false" aria-controls="definition-details" class="definition-details-control collapsed">
-  <span class="glyphicon"></span>Further Details
-    </a></p>
+<p><a data-toggle="collapse" href="#other-definition-details-<%= legacy_definition.id %>" role="button" aria-expanded="false" aria-controls="definition-details" class="definition-details-control collapsed">
+  <span class="glyphicon"></span>Further Details</a></p>
 <div id="other-definition-details-<%= legacy_definition.id %>" class="collapse definition-details-wrapper">
   <dl>
     <dt><%= Language.model_name.human %>:</dt> <dd><%= legacy_definition.language.name %></dd>
@@ -16,3 +15,15 @@
     </dl>
   <% end %>
 </div>
+<% definitions = legacy_definition.children
+   if definitions.size==1 %>
+<%=  render partial: 'legacy_definition', object: definitions.first %>
+<% elsif definitions.size>1 %>
+    <ul>
+<%  definitions.each do |definition| %>
+      <li>
+<%=   render partial: 'legacy_definition', object: definition %>
+      </li>
+<%  end %>
+    </ul>
+<% end %>

@@ -4,10 +4,18 @@
    grouped_definitions.each do |info_source_id, definitions|
      info_source = InfoSource.find(info_source_id) %>
 <div class="terms-dictionaries-other-node">
-<%   if !info_source.nil? %>
-       <h4><%= "#{index}. "%><cite><a href="#"><%=" #{info_source.title}" %></a></cite></h4>
+<% if !info_source.nil? %>
+     <h4><%= "#{index}. "%><cite><a href="#"><%=" #{info_source.title}" %></a></cite></h4>
+<%   relations_by_type = feature.legacy_relations_by_type(info_source)
+     if relations_by_type.size>0 %>
+     <dl>
+<%     relations_by_type.each do |label, features| %>
+         <dt><%= label %></dt> <dd><%= features.collect{ |f| link_to feature_name_header(f), feature_path(f.fid) }.join(', ').html_safe %></dd>
+<%     end %>
+     </dl>
 <%   end
-if definitions.size==1 %>
+   end
+   if definitions.size==1 %>
 <%=  render partial: 'legacy_definition', object: definitions.first %>
 <% else %>
     <ul>

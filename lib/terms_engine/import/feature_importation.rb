@@ -10,8 +10,9 @@ module TermsEngine
     # i.phonetic_systems.code/name, i.orthographic_systems.code/name, BOTH DEPRECATED, INSTEAD USE: i.feature_name_relations.relationship.code
     # i.feature_name_relations.parent_node, i.feature_name_relations.is_translation, 
     # i.feature_name_relations.is_phonetic, i.feature_name_relations.is_orthographic, BOTH DEPRECATED AND USELESS
+    # feature_relations.delete, [i.]feature_relations.related_feature.fid or [i.]feature_relations.related_feature.name,
+    # [i.]feature_relations.type.code, [i.]perspectives.code/name, feature_relations.replace
     # [i.]definitions.content, [i.]definitions.languages.code/name
-    
     # Fields that accept time_units:
     # features, i.feature_names[.j]
 
@@ -48,7 +49,6 @@ module TermsEngine
       fids_to_reindex = Array.new
       while current<total
         self.wait_if_business_hours(daylight)
-        
         begin
           row = rows[current]
           self.fields = row.to_hash.delete_if{ |key, value| value.blank? }
@@ -67,7 +67,8 @@ module TermsEngine
           else
             fids_to_reindex += current_fids_to_reindex
           end
-          process_definitions(1)
+          process_definitions(16)
+          process_feature_relations(0)
           self.feature.update_attributes(is_blank: false, is_public: true, skip_update: true)
           self.progress_bar(num: current, total: total, current: self.feature.pid)
           if self.fields.empty?
@@ -129,34 +130,62 @@ module TermsEngine
     
     # [i.]definitions:
     # content, language.code/name
-    def process_definitions(n)
+    # Additionally, optional column "i.definition_relations.parent_node" can be
+    # used to establish name i as child of name j by simply specifying the name number.
+    # The parent name has to precede the child name. If a parent column is specified,
+    def process_definitions(total)
       definitions = self.feature.definitions
-      0.upto(n) do |i|
+      definition = Array.new(total)
+      0.upto(total) do |i|
         prefix = i>0 ? "#{i}.definitions" : 'definitions'
         definition_content = self.fields.delete("#{prefix}.content")
         if !definition_content.blank?
-          definition = definitions.find_by(['LEFT(content, 200) = ?', definition_content[0...200]]) # find_by(content: definition_content)
+          info_sources = {}
+          0.upto(4) do |j|
+            info_prefix = j==0 ? prefix : "#{prefix}.#{j}"
+            info_source = self.get_info_source(info_prefix)
+            info_sources[info_prefix] = info_source if !info_source.nil?
+          end
+          definition[i] = definitions.find_by(['LEFT(content, 200) = ?', definition_content[0...200]]) # find_by(content: definition_content)
+          if !definition[i].nil?
+            citation = definition[i].citations.order(:created_at).first
+            definition[i] = nil if !info_sources.values.include?(citation.info_source)
+          end
           language = Language.get_by_code_or_name(self.fields.delete("#{prefix}.languages.code"), self.fields.delete("#{prefix}.languages.name"))
           position = definitions.maximum(:position)
           position = position.nil? ? 1 : position + 1
           attributes = {content: definition_content, is_public: true, position: position}
           attributes[:language_id] = language.id if !language.nil?
-          if definition.nil?
+          if definition[i].nil?
             if language.nil?
               self.say "Language needed to create definition for feature #{self.feature.pid}."
-              definition = nil
+              definition[i] = nil
             else
-              definition = definitions.create(attributes)
+              definition[i] = definitions.create(attributes)
             end
           else
-            definition.update_attributes(attributes)
+            definition[i].update_attributes(attributes)
           end
-          if !definition.nil?
-            self.spreadsheet.imports.create(item: definition) if definition.imports.find_by(spreadsheet_id: self.spreadsheet.id).nil?
+          if !definition[i].nil?
+            self.spreadsheet.imports.create(item: definition[i]) if definition[i].imports.find_by(spreadsheet_id: self.spreadsheet.id).nil?
             0.upto(4) do |j|
               info_prefix = j==0 ? prefix : "#{prefix}.#{j}"
-              self.add_info_source(info_prefix, definition)
-              self.add_note(info_prefix, definition)
+              self.add_note(info_prefix, definition[i])
+            end
+            info_sources.each{ |prefix, info_source| self.process_info_source(prefix, definition[i], info_source) }
+            parent_node_str = self.fields.delete("#{i}.definition_relations.parent_node")
+            if !parent_node_str.blank?
+              parent_position = parent_node_str.to_i
+              parent_node = definition[parent_position]
+              if parent_node.nil?
+                self.say "Parent definition #{parent_position} of definition #{i} for feature #{self.feature.pid} not found."
+              else
+                relation = definition[i].parent_relations.find_by(parent_node_id: parent_node.id)
+                if relation.nil?
+                  relation = definition[i].parent_relations.create(parent_node_id: parent_node.id)
+                  self.say "Relation between definitions #{i} and #{parent_position} for feature #{self.feature.pid} could not be saved." if relation.nil?
+                end
+              end
             end
           end
         end

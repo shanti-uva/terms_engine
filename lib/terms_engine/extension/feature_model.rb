@@ -83,6 +83,49 @@ module TermsEngine
         end
       end
       
+      def legacy_relations(info_source)
+        self.all_relations.reject{ |r| r.non_standard_citations.where(info_source: info_source).first.nil? }
+      end
+      
+      def legacy_parent_relations(info_source)
+        self.all_parent_relations.reject{ |r| r.non_standard_citations.where(info_source: info_source).first.nil? }
+      end
+      
+      def legacy_child_relations(info_source)
+        self.all_child_relations.reject{ |r| r.non_standard_citations.where(info_source: info_source).first.nil? }
+      end
+      
+      def legacy_relations_by_type(info_source)
+        hash = {}
+        legacy_parent_relations(info_source).each do |r|
+          rt = r.feature_relation_type
+          f = r.parent_node
+          if rt.is_symmetric?
+            if hash[rt.label].nil?
+              hash[rt.label] = [f]
+            else
+              hash[rt.label] << f
+            end
+          else
+            if hash[rt.asymmetric_label].nil?
+              hash[rt.asymmetric_label] = [f]
+            else
+              hash[rt.asymmetric_label] << f
+            end
+          end
+        end
+        legacy_child_relations(info_source).each do |r|
+          f = r.child_node
+          rt = r.feature_relation_type
+          if hash[rt.label].nil?
+            hash[rt.label] = [f]
+          else
+            hash[rt.label] << f
+          end
+        end
+        return hash
+      end
+      
       def pid
         "T#{self.fid}"
       end
@@ -203,7 +246,7 @@ module TermsEngine
           { id: "#{self.uid}_#{uid}",
             origin_uid_s: self.uid,
             block_child_type: ["related_definitions"],
-            "#{def_prefix}_content_s" => d.content,
+            "#{def_prefix}_content_#{d.writing_system.code}u" => d.content,
             "#{def_prefix}_path_s" => path.join('/'),
             "#{def_prefix}_level_i" => path.size,
             "#{def_prefix}_language_s" => d.language.name,

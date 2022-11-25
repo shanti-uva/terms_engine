@@ -26,7 +26,7 @@ class Passage < ApplicationRecord
   def rsolr_document_tags(document, prefix = '')
     prefix_ = prefix.blank? ? '' : "#{prefix}_"
     passage_prefix = "#{prefix_}passage_#{self.id}"
-    document["#{passage_prefix}_content_s"] = self.content
+    document["#{passage_prefix}_content_t"] = self.content
     self.passage_translations.each { |pt| pt.rsolr_document_tags(document, passage_prefix) }
     citation_references = self.citations.collect { |c| c.bibliographic_reference }
     document["#{passage_prefix}_citation_references_ss"] = citation_references if !citation_references.blank?

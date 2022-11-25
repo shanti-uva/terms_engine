@@ -38,7 +38,7 @@
 <%=               render partial: 'in_house_definitions', locals: { grouped_definitions: feature.definitions.in_house_definitions_by_info_source } %>
                   <div class="terms-dictionaries-other row">
                     <div class="col-xs-12">
-<%=                   render partial: 'legacy_definitions', locals: { grouped_definitions: feature.definitions.legacy_definitions_by_info_source } %>
+<%=                   render partial: 'legacy_definitions', locals: { grouped_definitions: feature.definitions.legacy_definitions_by_info_source, feature: feature } %>
                     </div>
                   </div><!-- END terms-dictionaries-other -->
                 </div>
