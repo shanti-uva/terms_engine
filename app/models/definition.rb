@@ -72,7 +72,7 @@ class Definition < ApplicationRecord
   
   def writing_system
     case self.language.code
-    when 'eng', 'fre', 'deu', 'ita', 'spa'
+    when 'eng', 'fre', 'deu', 'ita', 'spa', 'san' # this will have to be revised once devanagari is added for sanskrit.
       return WritingSystem.get_by_code('latin')
     when 'zho'
       return WritingSystem.get_by_code('hant') # when needed can see https://github.com/jpatokal/script_detector for distinguishing simplified and trad.

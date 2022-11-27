@@ -170,10 +170,12 @@ module TermsEngine
             related_kmaps_node_type: 'parent',
             block_type: ['child']
           }
-          citations = pr.citations
+          citations = pr.standard_citations
           p_rel_citation_references = citations.collect { |c| c.bibliographic_reference }
           cd["#{prefix}_relation_citation_references_ss"] = p_rel_citation_references if !p_rel_citation_references.blank?
           citations.each{ |ci| ci.rsolr_document_tags_for_notes(cd, "#{prefix}_relation") }
+          info_source = pr.non_standard_citations.collect(&:info_source).first
+          cd["#{prefix}_relation_source_s"] = info_source.title if !info_source.nil?
           time_units = pr.time_units_ordered_by_date.collect { |t| t.to_s }
           cd["#{prefix}_relation_time_units_ss"] = time_units if !time_units.blank?
           pr.notes.each { |n| n.rsolr_document_tags(cd, prefix) }
@@ -213,10 +215,12 @@ module TermsEngine
             related_kmaps_node_type: 'child',
             block_type: ['child']
           }
-          citations = pr.citations
+          citations = pr.standard_citations
           p_rel_citation_references = citations.collect { |c| c.bibliographic_reference }
           cd["#{prefix}_relation_citation_references_ss"] = p_rel_citation_references if !p_rel_citation_references.blank?
           citations.each{ |ci| ci.rsolr_document_tags_for_notes(cd, "#{prefix}_relation") }
+          info_source = pr.non_standard_citations.collect(&:info_source).first
+          cd["#{prefix}_relation_source_s"] = info_source.title if !info_source.nil?
           time_units = pr.time_units_ordered_by_date.collect { |t| t.to_s }
           cd["#{prefix}_relation_time_units_ss"] = time_units if !time_units.blank?
           pr.notes.each { |n| n.rsolr_document_tags(cd, prefix) }
