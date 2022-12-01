@@ -120,6 +120,8 @@
     root_kmap_path: null,
     features_path: "<%= (defined?(admin) && admin) ? admin_features_path : features_path %>/%%ID%%",
     solrUtils: menuSolrUtils,
+    empty_sort: 'cascading_position_i ASC',
+    sort: 'score DESC, cascading_position_i ASC',
     language: $('#menu_js_data').data('language'),
   });
 
