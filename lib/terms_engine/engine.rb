@@ -1,6 +1,13 @@
 module TermsEngine
   class Engine < ::Rails::Engine
     # isolate_namespace TermsEngine
+    initializer :sweepers do |config|
+      observers = [InfoSourceSweeper]
+      Rails.application.config.active_record.observers ||= []
+      Rails.application.config.active_record.observers += observers
+      observers.each { |o| o.instance }
+    end
+    
     initializer :loader do |config|
       require 'terms_engine/extension/admin_features_controller'
       require 'terms_engine/extension/admin_feature_relations_controller'

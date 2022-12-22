@@ -39,6 +39,9 @@ bo:
             geo_code_type:
                 one: 'term code type'
                 other: 'term code types'
+            info_source:
+                one: 'dictionary'
+                other: 'dictionaries'
             recording:
                 one: 'recording'
                 other: 'recordings'

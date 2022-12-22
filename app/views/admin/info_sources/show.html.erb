@@ -15,6 +15,10 @@
     <span><%= def_if_blank(object, :title) %></span>
   </div>
   <div class="row">
+    <label><%= InfoSource.human_attribute_name(:processed).s %></label>
+    <span><%= object.processed ? ts(:affirmation) : ts(:negation) %></span>
+  </div>
+  <div class="row">
     <label><%= InfoSource.human_attribute_name(:agent).s %></label>
     <span><%= def_if_blank(object, :agent) %></span>
   </div>

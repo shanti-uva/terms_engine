@@ -1,0 +1,39 @@
+<%= javascript_include_tag 'kmaps_engine/jquery.ajax.sortable' %>
+<%= javascript_on_load do %>
+  jQuery('#infoSourcesList').ajaxSortable({
+    action: '<%= prioritize_admin_info_sources_path %>'
+  });
+<% end
+   add_breadcrumb_item InfoSource.model_name.human(count: :many).s
+   add_breadcrumb_item ts('change.record', what: t('priorit.ization_of', what: InfoSource.model_name.human(count: :many))) %>
+<section class="panel panel-content">
+  <div class="panel-heading">
+    <h6><%= InfoSource.model_name.human(count: :many).titleize.s %></h6>
+  </div>
+  <div class="panel-body">
+<p class="page-tip"><%= ts 'snippet.info_source_drag_priority' %></p>
+<% if @info_sources.empty? %>
+<%=  empty_collection_message %>
+<% else %>
+   <table class="listGrid" id="infoSourcesList">
+     <tr>
+       <th><%= InfoSource.human_attribute_name(:position).s %></th>
+       <th><%= InfoSource.human_attribute_name(:code).s %></th>
+       <th><%= InfoSource.human_attribute_name(:title).s %></th>
+       <th><%= InfoSource.human_attribute_name(:processed).s %></th>
+     </tr>
+<%   @info_sources.each do |item| %>
+     <tr id="info_source_<%= item.id %>">
+       <td class="sortable-priority-value"><%= item.position %></td>
+       <td><%= item.code %></td>
+       <td><%= item.title %></td>
+       <td><%= item.processed ? ts(:affirmation) : ts(:negation) %></td>    
+     </tr>
+<%   end %>
+   </table>
+<% end %>
+    <div class="returnLink">
+<%= link_to "&#8592; #{ts 'return_to', what: InfoSource.model_name.human(count: :many).titleize }".html_safe, admin_info_sources_path %>
+    </div>
+  </div> <!-- END panel-body -->
+</section> <!-- END panel -->

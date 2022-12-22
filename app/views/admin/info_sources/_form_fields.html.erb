@@ -17,6 +17,10 @@
 <%= f.label(:title).s %>
 <%= f.text_field :title, class: [:text, 'text-full form-control form-text'] %>
   </div>
+  <div class="row">
+<%= f.check_box :processed %>
+<%= f.label(:processed).s %>
+  </div>
 	<div class="row">
 	<%= f.label(:agent).s %>
 	<%= f.text_field :agent, class: [:text, 'text-full form-control form-text'] %>

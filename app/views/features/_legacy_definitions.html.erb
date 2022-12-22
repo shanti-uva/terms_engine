@@ -1,11 +1,12 @@
 <header class="sr-only">Other Dictionaries</header>
 <h3>Other Dictionaries</h3>
-<% index = 1
-   grouped_definitions.each do |info_source_id, definitions|
-     info_source = InfoSource.find(info_source_id) %>
+<% sorted_grouped_definitions = grouped_definitions.to_a.collect{ |a| [InfoSource.find(a.first), a.last] }.reject{ |a| a.first.nil? }.sort{ |a, b| a.first.position <=> b.first.position }
+   sorted_grouped_definitions.each_index do |index|
+     grouped_definition = sorted_grouped_definitions[index]
+     info_source = grouped_definition.first
+     definitions = grouped_definition.last %>
 <div class="terms-dictionaries-other-node">
-<% if !info_source.nil? %>
-     <h4><%= "#{index}. "%><cite><a href="#"><%=" #{info_source.title}" %></a></cite></h4>
+     <h4><%= "#{index+1}. "%><cite><a href="#"><%=" #{info_source.title}" %></a></cite></h4>
 <%   relations_by_type = feature.legacy_relations_by_type(info_source)
      if relations_by_type.size>0 %>
      <dl>
@@ -14,18 +15,16 @@
 <%     end %>
      </dl>
 <%   end
-   end
-   if definitions.size==1 %>
-<%=  render partial: 'legacy_definition', object: definitions.first %>
-<% else %>
-    <ul>
-<%  definitions.each do |definition| %>
-      <li>
-<%=   render partial: 'legacy_definition', object: definition %>
-      </li>
-<%  end %>
-    </ul>
-<% end %>
+     if definitions.size==1 %>
+<%=    render partial: 'legacy_definition', object: definitions.first %>
+<%   else %>
+       <ul>
+<%     definitions.each do |definition| %>
+         <li>
+<%=      render partial: 'legacy_definition', object: definition %>
+         </li>
+<%     end %>
+       </ul>
+<%   end %>
 </div>
-<%   index += 1
-   end %>
+<% end %>

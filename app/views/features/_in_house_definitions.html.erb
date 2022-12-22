@@ -1,14 +1,13 @@
-<% index = 1
-   count = grouped_definitions.size
-   grouped_definitions.each_pair do |source_id, definitions| %>
+<% sorted_grouped_definitions = grouped_definitions.to_a.collect{ |a| [InfoSource.find(a.first), a.last] }.reject{ |a| a.first.nil? }.sort{ |a, b| a.first.position <=> b.first.position }
+   count = sorted_grouped_definitions.size
+   sorted_grouped_definitions.each_index do |index|
+     grouped_definition = sorted_grouped_definitions[index]
+     info_source = grouped_definition.first
+     definitions = grouped_definition.last %>
    <div class="terms-dictionaries-other-node">		 
-<%   info_source = InfoSource.find(source_id)
-     if !info_source.nil? %>
-       <h4><%= "#{index}. " if count>1 %><cite><a href="#"><%=" #{info_source.title}" %></a></cite></h4>
-<%   end %>
+     <h4><%= "#{index+1}. " if count>1 %><cite><a href="#"><%=" #{info_source.title}" %></a></cite></h4>
      <div class="terms-definition-list-wrapper"><!-- BEGIN terms-definitions -->
-<%=    render partial: 'standard_definitions', locals: { definitions: definitions, is_child: false, prefix: "in_house-#{source_id}-", def_level: 0 } %>
+<%=    render partial: 'standard_definitions', locals: { definitions: definitions, is_child: false, prefix: "in_house-#{info_source.id}-", def_level: 0 } %>
      </div> <!-- END terms-definition-list-wrapper -->
    </div>
-<%   index += 1
-   end %>
+<% end %>

@@ -8,7 +8,11 @@ Rails.application.routes.draw do
   end
   resources :recordings, only: [:show]
   namespace :admin do
-    resources :definition_relations, :info_sources
+    resources :definition_relations
+    resources :info_sources do
+      get :prioritize, on: :collection, to: 'info_sources#prioritize'
+      post :prioritize, on: :collection, to: 'info_sources#set_priorities'
+    end
     resources :definitions do
       resources :citations, :etymologies, :definition_relations, :definition_subject_associations, :passages
       resources :definition_associations, except: [:new, :index]

@@ -118,7 +118,7 @@ GIT
 PATH
   remote: .
   specs:
-    terms_engine (0.9.9)
+    terms_engine (1.0.1)
 
 GEM
   remote: https://rubygems.org/

@@ -19,9 +19,7 @@ bo:
         unused_ids: 'Unused Term IDs'
     definition:
         association_link: 'Associate to another term or defintion of another term.'
-    priorit:
-        ization_of:
-            feature_types: 'Prioritization of Term Types'
+    return_to: 'Return to %{what}'
     snippet:
         characteristic_needs_feature: 'Knowledge Map characteristics can only be associated from a term.'
         definition:
@@ -40,4 +38,5 @@ bo:
             too_many: 'Sorry, this term contains too many terms for us to currently be able to provide this data.'
             type:
                 drag_priority: 'Click a term type and drag to a new location to indicate the priority between the different term types. This priority sequencing of term types will be used to decide which term types to show on the navigational tree, and other contexts.'
+        info_source_drag_priority: 'Click a dictionary row and drag to a new location to indicate the priority between the different dictionaries. This priority sequencing of dictionaries will be used to sort definitions.'
         search: 'Use the search field above to search for terms.'

@@ -88,6 +88,39 @@ module TermsEngine
       KmapsEngine::FlareUtils.new(self.log).reindex_fids(fids_to_reindex, daylight)
     end
     
+    def get_info_source(field_prefix)
+      byebug
+      info_source = nil
+      return nil if self.fields.keys.find{|k| !k.nil? && k.starts_with?("#{field_prefix}.info_source")}.nil?
+      begin
+        info_source_id = self.fields.delete("#{field_prefix}.info_source.id")
+        if info_source_id.blank?
+          info_source_code = self.fields.delete("#{field_prefix}.info_source.code")
+          if info_source_code.blank?
+            source_name = self.fields.delete("#{field_prefix}.info_source.oral.fullname")
+            if source_name.blank?
+              source_title = self.fields.delete("#{field_prefix}.info_source.title")
+              if !source_title.blank?
+                info_source = InfoSource.where(title: source_title).first
+              end
+            else
+              info_source = OralSource.find_by_name(source_name)
+              self.say "Oral source with name #{source_name} was not found." if info_source.nil?
+            end
+          else
+            info_source = InfoSource.get_by_code(info_source_code)
+            self.say "Info source with code #{info_source_code} was not found." if info_source.nil?
+          end
+        else
+          info_source = ShantiIntegration::Source.find(info_source_id)
+          self.say "Info source with Shanti Source ID #{info_source_id} was not found." if info_source.nil?
+        end
+      rescue Exception => e
+        self.say e.to_s
+      end
+      return info_source
+    end
+    
     def infer_or_create_feature
       @tib_alpha ||= Perspective.get_by_code('tib.alpha')
       @relation_type ||= FeatureRelationType.get_by_code('heads')
