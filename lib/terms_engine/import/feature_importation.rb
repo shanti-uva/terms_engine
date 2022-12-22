@@ -89,7 +89,6 @@ module TermsEngine
     end
     
     def get_info_source(field_prefix)
-      byebug
       info_source = nil
       return nil if self.fields.keys.find{|k| !k.nil? && k.starts_with?("#{field_prefix}.info_source")}.nil?
       begin
