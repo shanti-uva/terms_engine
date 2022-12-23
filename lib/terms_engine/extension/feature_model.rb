@@ -158,7 +158,7 @@ module TermsEngine
           name_str = name.nil? ? nil : name.name
           parent = pr.parent_node
           relation_type = pr.feature_relation_type
-          cd = { id: "#{self.uid}_#{pr.feature_relation_type.code}_#{parent.fid}",
+          cd = { id: "#{self.uid}_#{relation_type.code}_#{parent.fid}",
             related_uid_s: parent.uid,
             origin_uid_s: self.uid,
             block_child_type: [prefix],
@@ -202,8 +202,9 @@ module TermsEngine
           name_str = name.nil? ? nil : name.name
           child = pr.child_node
           relation_type = pr.feature_relation_type
+          code = relation_type.is_symmetric ? relation_type.code : relation_type.asymmetric_code
           cd =
-          { id: "#{self.uid}_#{pr.feature_relation_type.asymmetric_code}_#{child.fid}",
+          { id: "#{self.uid}_#{code}_#{child.fid}",
             related_uid_s: child.uid,
             origin_uid_s: self.uid,
             block_child_type: [prefix],
@@ -211,7 +212,7 @@ module TermsEngine
             "#{prefix}_header_s" => name_str,
             "#{prefix}_path_s" => child_node.closest_ancestors_by_perspective(per).collect(&:fid).join('/'),
             "#{prefix}_relation_label_s" => relation_type.label,
-            "#{prefix}_relation_code_s" => relation_type.is_symmetric ? relation_type.code : relation_type.asymmetric_code,
+            "#{prefix}_relation_code_s" => code,
             related_kmaps_node_type: 'child',
             block_type: ['child']
           }
