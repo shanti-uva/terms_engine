@@ -14,7 +14,7 @@
     </div>
 <%    elsif object.info_source_type == 'ShantiIntegration::Source' %>
     <div class="row">
-<%=     label :info_source_id, 'Source ID from Shanti Sources' %>
+<%=     label :info_source_id, ShantiIntegration::Source.model_name.human.s %>
 <%=     f.text_field :info_source_id, class: [:text, 'form-text'] %>
 <i>Or <a id="source-search-toggler" href="#">click here to search from name</a></i>
 <div id="source-search-container">

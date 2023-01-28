@@ -21,7 +21,7 @@
 <fieldset>
   <div class="row">
 <%=   label :info_source_type, InfoSource.human_attribute_name(:info_source_type).s %>
-<%=   select_tag(:info_source_type, options_for_select([['Source from Terms Dictionary','InfoSource'], ['Source ID from Shanti Sources','ShantiIntegration::Source'], ['Document or Online Resource ID from MMS application','MmsIntegration::Medium']], 'ShantiIntegration::Source')) %>
+<%=   select_tag(:info_source_type, options_for_select([['Source from Terms Dictionary','InfoSource'], [ShantiIntegration::Source.model_name.human.s,'ShantiIntegration::Source'], ['Document or Online Resource ID from MMS application','MmsIntegration::Medium']], 'ShantiIntegration::Source')) %>
   </div>
   <div class="row text">
 <%=   f.label(:info_source_id).s %>

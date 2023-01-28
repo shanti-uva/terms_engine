@@ -14,19 +14,22 @@
   <legend><%= ts(:for, what: t('information.general'), whom: DefinitionSubjectAssociation.model_name.human.titleize) %></legend>
   <div class="row">
     <%= form.label :branch_name, DefinitionSubjectAssociation.human_attribute_name('branch').s %>
-    <br/>
-    <br/>
+    <%= info_popup_link_for('Branch', "<p>The <i>branch</i> refers to the general category such as <i>Religious Systems</i> from which a specific instance under it will be chosen as <i>subject</i> below.</p>", 100) %>
     <%= form.hidden_field :branch_id, id: :branch_id %>
+    <br/>
+    <br/>
     <p>Search by name</p>
     <%= text_field_tag :branch_name, :post, { placeholder: 'Search by branch name', value: object.branch.blank? ? '' : object.branch['header'] } %>
     <a href="#" id="js-expand-branch-tree">Or click here to view branch hierarchy</a>
      <div id="branch_tree_container"></div>
   </div>
+	<br/>
   <div class="row" id="subject_container">
     <%= form.label :subject_name, SubjectsIntegration::Feature.human_name(count: 1).titleize %>
-    <br/>
-    <br/>
+    <%= info_popup_link_for('Subject', "<p>The <i>subject</i> refers to the specific instance such as <i>The Vehicle of the Yoga Tantras</i> under the general category specified above as <i>branch</i>.</p>", 100) %>
     <%= form.hidden_field :subject_id, id: :subject_id %>
+    <br/>
+    <br/>
     <p>Search by name</p>
     <%= text_field_tag :subject_name, :post, { placeholder: 'Search by subject name', value: object.subject.blank? ? '' : object.subject['header'] } %>
     <a href="#" id="js-expand-subject-tree">Or click here to view subject hierarchy</a>

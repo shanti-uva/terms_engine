@@ -13,4 +13,19 @@ module ExtendedAdminHelper
     end
     return menu
   end
+  
+  def extended_stacked_parents
+    array = [:admin]
+    if !parent_object.instance_of?(Feature)
+      if parent_object.instance_of?(FeatureNameRelation)
+        array << parent_object.child_node
+      elsif parent_object.instance_of?(Passage)
+        array << parent_object.context
+      elsif parent_object.respond_to?(:feature)
+        array << parent_object.feature
+      end
+    end
+    array << parent_object
+    array
+  end
 end
