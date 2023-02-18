@@ -3,11 +3,11 @@
 # Table name: passage_translations
 #
 #  id           :bigint           not null, primary key
-#  content      :text
-#  context_type :string
+#  content      :text             not null
+#  context_type :string           not null
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
-#  context_id   :bigint
+#  context_id   :bigint           not null
 #  language_id  :integer          not null
 #
 # Indexes

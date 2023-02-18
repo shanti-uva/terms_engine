@@ -3,12 +3,12 @@
 # Table name: definition_associations
 #
 #  id                       :bigint           not null, primary key
-#  associated_type          :string
+#  associated_type          :string           not null
 #  created_at               :datetime         not null
 #  updated_at               :datetime         not null
-#  associated_id            :bigint
-#  definition_id            :bigint
-#  feature_relation_type_id :bigint
+#  associated_id            :bigint           not null
+#  definition_id            :bigint           not null
+#  feature_relation_type_id :bigint           not null
 #  perspective_id           :bigint
 #
 # Indexes

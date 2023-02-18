@@ -1,7 +1,24 @@
 <div class="row"><!-- INTRO TAB 2 -->
   <div class="col-xs-12">
     <dl>
-<%=   render partial: 'translation_equivalent', collection: translations %>
+<% grouped_by_language = TranslationEquivalent.grouped_by_language_then_info_sources(feature)
+   grouped_by_language.each_pair do |language_id, grouped_by_info_sources|
+     language = Language.find(language_id) %>
+     <dt><%= language.name %>:</dt>
+     <dd>
+<%   grouped = grouped_by_info_sources.values
+     if grouped.count==1
+       translation_equivalents = grouped.first %>
+       <%= translation_equivalents.collect(&:content).join(', ') %> <%= citation_popup_link_for(translation_equivalents.last) %>
+<%   else %>
+       <br><br><ul>
+<%       grouped.each do |translation_equivalents| %>
+         <li><%= translation_equivalents.collect(&:content).join(', ') %> <%= citation_popup_link_for(translation_equivalents.last) %></li>
+<%       end %>
+       <ul>
+<%   end %>
+     </dd>
+<% end %>
     </dl>
   </div>
 </div>

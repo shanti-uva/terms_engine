@@ -65,7 +65,7 @@
             </div><!-- END tab panel -->
 <%        if !translations.empty? %>
             <div role="tabpanel" class="tab-pane terms-translations" id="terms-translations">
-<%=           render partial: 'translation_equivalents', locals: { translations: translations } %>
+<%=           render partial: 'translation_equivalents', locals: { feature: feature } %>
             </div><!-- END tab panel -->
 <%        end %>
           </div> <!-- END tab-content -->

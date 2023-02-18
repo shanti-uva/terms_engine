@@ -6,6 +6,7 @@
 #  agent          :string
 #  code           :string           not null
 #  date_published :date
+#  position       :integer          default(0), not null
 #  processed      :boolean          default(FALSE), not null
 #  title          :string
 #  created_at     :datetime

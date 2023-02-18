@@ -2,17 +2,20 @@
 #
 # Table name: translation_equivalents
 #
-#  id           :bigint           not null, primary key
-#  content      :string
-#  context_type :string
-#  created_at   :datetime         not null
-#  updated_at   :datetime         not null
-#  context_id   :bigint
-#  language_id  :integer          not null
+#  id          :bigint           not null, primary key
+#  content     :string           not null
+#  created_at  :datetime         not null
+#  updated_at  :datetime         not null
+#  feature_id  :bigint           not null
+#  language_id :integer          not null
 #
 # Indexes
 #
-#  index_translation_equivalents_on_context_type_and_context_id  (context_type,context_id)
+#  index_translation_equivalents_on_feature_id  (feature_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (feature_id => features.id)
 #
 class TranslationEquivalent < ApplicationRecord
   include KmapsEngine::IsCitable
@@ -30,5 +33,32 @@ class TranslationEquivalent < ApplicationRecord
     document["#{translation_equivalent_prefix}_language_code_s"] = self.language.code
     citation_references = self.citations.collect { |c| c.bibliographic_reference }
     document["#{translation_equivalent_prefix}_citation_references_ss"] = citation_references if !citation_references.blank?
+  end
+  
+  # Produces a hash of hashes. First level is keyed on language id. Second level on an array of citation_ids.
+  def self.grouped_by_language_then_info_sources(feature)
+    translations = feature.translation_equivalents.includes(:citations)
+    grouped_by_language = {}
+    translations.each do |translation|
+      if grouped_by_language[translation.language_id].nil?
+        grouped_by_language[translation.language_id] = [translation]
+      else
+        grouped_by_language[translation.language_id] << translation
+      end
+    end
+    grouped_by_language_then_citation = {}
+    grouped_by_language.each_pair do |language_id, translations|
+      grouped = {}
+      translations.each do |translation|
+        citation_ids = translation.citations.collect(&:info_source_id).sort
+        if grouped[citation_ids].blank?
+          grouped[citation_ids] = [translation]
+        else
+          grouped[citation_ids] << translation
+        end
+      end
+      grouped_by_language_then_citation[language_id] = grouped
+    end
+    return grouped_by_language_then_citation
   end
 end
