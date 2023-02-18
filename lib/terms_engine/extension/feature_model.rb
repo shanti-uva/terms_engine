@@ -175,7 +175,7 @@ module TermsEngine
           cd["#{prefix}_relation_citation_references_ss"] = p_rel_citation_references if !p_rel_citation_references.blank?
           citations.each{ |ci| ci.rsolr_document_tags_for_notes(cd, "#{prefix}_relation") }
           info_source = pr.non_standard_citations.collect(&:info_source).first
-          cd["#{prefix}_relation_source_s"] = info_source.title if !info_source.nil?
+          cd["#{prefix}_relation_source_code_s"] = info_source.code if !info_source.nil?
           time_units = pr.time_units_ordered_by_date.collect { |t| t.to_s }
           cd["#{prefix}_relation_time_units_ss"] = time_units if !time_units.blank?
           pr.notes.each { |n| n.rsolr_document_tags(cd, prefix) }
@@ -221,7 +221,7 @@ module TermsEngine
           cd["#{prefix}_relation_citation_references_ss"] = p_rel_citation_references if !p_rel_citation_references.blank?
           citations.each{ |ci| ci.rsolr_document_tags_for_notes(cd, "#{prefix}_relation") }
           info_source = pr.non_standard_citations.collect(&:info_source).first
-          cd["#{prefix}_relation_source_s"] = info_source.title if !info_source.nil?
+          cd["#{prefix}_relation_source_code_s"] = info_source.code if !info_source.nil?
           time_units = pr.time_units_ordered_by_date.collect { |t| t.to_s }
           cd["#{prefix}_relation_time_units_ss"] = time_units if !time_units.blank?
           pr.notes.each { |n| n.rsolr_document_tags(cd, prefix) }
@@ -278,9 +278,9 @@ module TermsEngine
           cd["#{def_prefix}_citation_references_ss"] = citation_references if !citation_references.blank?
           citations.each{ |ci| ci.rsolr_document_tags_for_notes(cd, def_prefix) }
           info_source = d.legacy_citations.collect(&:info_source).first
-          cd["#{def_prefix}_source_s"] = info_source.title if !info_source.nil?
+          cd["#{def_prefix}_source_code_s"] = info_source.code if !info_source.nil?
           info_source = d.in_house_citations.collect(&:info_source).first
-          cd["#{def_prefix}_in_house_source_s"] = info_source.title if !info_source.nil?
+          cd["#{def_prefix}_in_house_source_code_s"] = info_source.code if !info_source.nil?
           d.notes.each { |n| n.rsolr_document_tags(cd, def_prefix) }
           subject_associations = d.definition_subject_associations
           related_branches = subject_associations.select(:branch_id).distinct.collect(&:branch_id)
