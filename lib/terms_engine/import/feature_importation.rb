@@ -21,7 +21,7 @@ module TermsEngine
     # .time_units.calendar_id, .time_units.frequency_id
 
     # Fields that accept info_source:
-    # [i.]feature_names[.j], [i.]definitions[.j]
+    # [i.]feature_names[.j], [i.]definitions[.j], [i.]translations[.j]
 
     # info_source fields:
     # .info_source.id/code, info_source.note, info_source.title
@@ -68,6 +68,7 @@ module TermsEngine
             fids_to_reindex += current_fids_to_reindex
           end
           process_definitions(16)
+          process_translations(64)
           process_feature_relations(0)
           self.feature.update_attributes(is_blank: false, is_public: true, skip_update: true)
           self.progress_bar(num: current, total: total, current: self.feature.pid)
@@ -219,6 +220,43 @@ module TermsEngine
                 end
               end
             end
+          end
+        end
+      end
+    end
+    
+    # [i.]translations:
+    # content, language.code/name
+    def process_translations(total)
+      translations = self.feature.translation_equivalents
+      definition = Array.new(total)
+      0.upto(total) do |i|
+        prefix = i>0 ? "#{i}.translations" : 'translations'
+        translation_content = self.fields.delete("#{prefix}.content")
+        if !translation_content.blank?
+          info_sources = {}
+          0.upto(4) do |j|
+            info_prefix = j==0 ? prefix : "#{prefix}.#{j}"
+            info_source = self.get_info_source(info_prefix)
+            info_sources[info_prefix] = info_source if !info_source.nil?
+          end
+          translation_content.strip!
+          next if translation_content.blank?
+          language = Language.get_by_code_or_name(self.fields.delete("#{prefix}.languages.code"), self.fields.delete("#{prefix}.languages.name"))
+          attributes = { content: translation_content }
+          attributes[:language_id] = language.id if !language.nil?
+          translation = translations.where(attributes).first
+          if translation.nil?
+            if language.nil?
+              self.say "Language needed to create a translation for feature #{self.feature.pid}."
+              translation = nil
+            else
+              translation = translations.create(attributes)
+            end
+          end
+          if !translation.nil?
+            self.spreadsheet.imports.create(item: translation) if translation.imports.find_by(spreadsheet_id: self.spreadsheet.id).nil?
+            info_sources.each{ |prefix, info_source| self.process_info_source(prefix, translation, info_source) }
           end
         end
       end

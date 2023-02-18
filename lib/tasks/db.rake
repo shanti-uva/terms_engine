@@ -1,6 +1,7 @@
 # desc "Explaining what the task does"
 require 'terms_engine/name_utils'
 require 'terms_engine/import/feature_importation'
+require 'terms_engine/import/filter'
 require 'terms_engine/import/xml_importation'
 
 namespace :terms_engine do
@@ -57,6 +58,20 @@ namespace :terms_engine do
           puts xml_desc
         else
           TermsEngine::XmlImportation.new("log/import_#{task}_#{Rails.env}.log", log_level.nil? ? Rails.logger.level : log_level.to_i).do_feature_import(filename: source_file, task_code: task, source: source, source_id: source_id, author_name: author_name, collection: collection_name)
+        end
+      end
+    end
+    
+    namespace :filter do
+      csv_desc = "Use to infer fids from CSV containing terms in tibetan and wylie.\n" +
+                  "Syntax: rake db:filter:get_features SOURCE=csv-file-name"
+      desc csv_desc
+      task get_features: :environment do
+        source = ENV['SOURCE']
+        if source.blank?
+          puts csv_desc
+        else
+          TermsEngine::Filter.new.do_feature_filter(filename: source)
         end
       end
     end
