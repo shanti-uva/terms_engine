@@ -67,7 +67,7 @@ module TermsEngine
           else
             fids_to_reindex += current_fids_to_reindex
           end
-          process_definitions(16)
+          process_definitions(87)
           process_translations(64)
           process_feature_relations(0)
           self.feature.update_attributes(is_blank: false, is_public: true, skip_update: true)

@@ -156,13 +156,12 @@ module TermsEngine
           parent_node = pr.parent_node
           name = parent_node.prioritized_name(v)
           name_str = name.nil? ? nil : name.name
-          parent = pr.parent_node
           relation_type = pr.feature_relation_type
-          cd = { id: "#{self.uid}_#{relation_type.code}_#{parent.fid}",
-            related_uid_s: parent.uid,
+          cd = { id: "#{self.uid}_#{relation_type.code}_#{parent_node.fid}",
+            related_uid_s: parent_node.uid,
             origin_uid_s: self.uid,
             block_child_type: [prefix],
-            "#{prefix}_id_s" => "#{Feature.uid_prefix}-#{parent.fid}",
+            "#{prefix}_id_s" => "#{Feature.uid_prefix}-#{parent_node.fid}",
             "#{prefix}_header_s" => name_str,
             "#{prefix}_path_s" => parent_node.closest_ancestors_by_perspective(per).collect(&:fid).join('/'),
             "#{prefix}_relation_label_s" => relation_type.is_symmetric ? relation_type.label : relation_type.asymmetric_label,
@@ -200,15 +199,14 @@ module TermsEngine
           child_node = pr.child_node
           name = child_node.prioritized_name(v)
           name_str = name.nil? ? nil : name.name
-          child = pr.child_node
           relation_type = pr.feature_relation_type
           code = relation_type.is_symmetric ? relation_type.code : relation_type.asymmetric_code
           cd =
-          { id: "#{self.uid}_#{code}_#{child.fid}",
-            related_uid_s: child.uid,
+          { id: "#{self.uid}_#{code}_#{child_node.fid}",
+            related_uid_s: child_node.uid,
             origin_uid_s: self.uid,
             block_child_type: [prefix],
-            "#{prefix}_id_s" => "#{Feature.uid_prefix}-#{child.fid}",
+            "#{prefix}_id_s" => "#{Feature.uid_prefix}-#{child_node.fid}",
             "#{prefix}_header_s" => name_str,
             "#{prefix}_path_s" => child_node.closest_ancestors_by_perspective(per).collect(&:fid).join('/'),
             "#{prefix}_relation_label_s" => relation_type.label,
