@@ -34,7 +34,7 @@ module TermsEngine
     # Note fields:
     # .note
 
-    def do_feature_import(filename:, task_code:, daylight:)
+    def do_feature_import(filename:, task_code:)
       puts "#{Time.now}: Starting importation."
       task = ImportationTask.find_by(task_code: task_code)
       task = ImportationTask.create(:task_code => task_code) if task.nil?
@@ -46,26 +46,18 @@ module TermsEngine
       current = 0
       total = rows.size
       puts "#{Time.now}: Processing features..."
-      fids_to_reindex = Array.new
       while current<total
-        self.wait_if_business_hours(daylight)
         begin
           row = rows[current]
           self.fields = row.to_hash.delete_if{ |key, value| value.blank? }
           current+=1
           if !self.fields['features.fid'].blank?
             next unless self.get_feature(current)
-            current_fids_to_reindex = nil
+            self.process_feature
+            self.process_names(44)
           else
-            current_fids_to_reindex = self.infer_or_create_feature
-          end
-          self.process_feature
-          if current_fids_to_reindex.nil?
-            if self.process_names(44)
-              fids_to_reindex << self.feature.fid
-            end
-          else
-            fids_to_reindex += current_fids_to_reindex
+            self.infer_or_create_feature
+            self.process_feature
           end
           process_definitions(87)
           process_translations(64)
@@ -83,10 +75,8 @@ module TermsEngine
           self.log.fatal { e.message }
           self.log.fatal { e.backtrace.join("\n") }
         end
-        fids_to_reindex.uniq!
         self.update_progress_bar(bar: self.bar, num_errors: self.num_errors, valid_point: self.valid_point)
       end
-      KmapsEngine::FlareUtils.new(self.log).reindex_fids(fids_to_reindex, daylight)
     end
     
     def get_info_source(field_prefix)

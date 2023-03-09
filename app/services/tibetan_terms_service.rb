@@ -42,10 +42,23 @@ class TibetanTermsService
   end
   
   def self.recursive_trunk_for(name)
-    letters = TibetanTermsService.new
-    letter = letters.trunk_for(name)
-    return nil if letter.nil?
-    TibetanTermsService.new(letter).trunk_for(name)
+    if name.instance_of? String
+      letters = TibetanTermsService.new
+      letter = letters.trunk_for(name)
+      return letter.nil? ? nil : TibetanTermsService.new(letter).trunk_for(name)
+    elsif name.instance_of? Feature
+      name_str = name.names.first.name
+      letters_a = Feature.current_roots_by_perspective(Perspective.get_by_code('tib.alpha'))
+      letters_a.reject! do |l|
+        a = l.phoneme_term_associations.first
+        a.nil? || a.subject_id != Feature::BOD_LETTER_SUBJECT_ID
+      end
+      letters = TibetanTermsService.new(letters_a)
+      letter = letters.trunk_for(name_str)
+      return letter.nil? ? nil : TibetanTermsService.new(letter).trunk_for(name_str)
+    else
+      return nil
+    end
   end
   
   def reposition

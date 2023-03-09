@@ -39,7 +39,7 @@ namespace :terms_engine do
         if source.blank? || task.blank?
           puts csv_desc
         else
-          TermsEngine::FeatureImportation.new("log/import_#{task}_#{Rails.env}.log", log_level.nil? ? Rails.logger.level : log_level.to_i).do_feature_import(filename: source, task_code: task, daylight: ENV['DAYLIGHT'])
+          TermsEngine::FeatureImportation.new("log/import_#{task}_#{Rails.env}.log", log_level.nil? ? Rails.logger.level : log_level.to_i).do_feature_import(filename: source, task_code: task)
         end
       end
       
