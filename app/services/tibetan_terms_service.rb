@@ -37,7 +37,7 @@ class TibetanTermsService
   end
     
   def position_for(name)
-    pos = names.find_index{ |n| n.bo_compare(name)>=0 }
+    pos = names.find_index { |n| n.bo_compare(name)>0 }
     pos.nil? || pos==0 ? nil : pos - 1
   end
   

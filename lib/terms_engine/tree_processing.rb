@@ -33,7 +33,7 @@ module TermsEngine
           expressions.each do |expression|
             current = expression.prioritized_name(@view).name
             ok = current_phrase.bo_compare(current) <= 0
-            ok &&= current.bo_compare(next_phrase) <= 0 if next_phrase.nil?
+            ok &&= current.bo_compare(next_phrase) < 0 if !next_phrase.nil?
             if !ok
               puts "Fixing #{current}..."
               self.fix_expression(expression)
