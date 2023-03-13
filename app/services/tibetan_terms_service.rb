@@ -5,7 +5,7 @@ class TibetanTermsService
     elsif arg.instance_of? Array
       @terms = arg
     elsif arg.instance_of? Feature
-      @terms = arg.children
+      @terms = arg.children.order(:position)
     end
   end
   
@@ -37,7 +37,7 @@ class TibetanTermsService
   end
     
   def position_for(name)
-    pos = names.find_index{|n| n.bo_compare(name)>=0}
+    pos = names.find_index{ |n| n.bo_compare(name)>=0 }
     pos.nil? || pos==0 ? nil : pos - 1
   end
   
@@ -47,7 +47,8 @@ class TibetanTermsService
       letter = letters.trunk_for(name)
       return letter.nil? ? nil : TibetanTermsService.new(letter).trunk_for(name)
     elsif name.instance_of? Feature
-      name_str = name.names.first.name
+      @view ||= View.get_by_code('pri.tib.sec.roman')
+      name_str = name.prioritized_name(@view).name
       letters_a = Feature.current_roots_by_perspective(Perspective.get_by_code('tib.alpha'))
       letters_a.reject! do |l|
         a = l.phoneme_term_associations.first
