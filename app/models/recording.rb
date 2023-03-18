@@ -27,7 +27,7 @@ class Recording < ApplicationRecord
   has_many :imports, :as => 'item', :dependent => :destroy
   
   def dialect
-    SubjectsIntegration::Feature.flare_search(self.dialect_id)
+    SubjectsIntegration::Feature.search(self.dialect_id)
   end
 
   private

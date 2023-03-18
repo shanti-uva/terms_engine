@@ -7,7 +7,7 @@ module TermsEngine
       end
 
       def branch
-        SubjectsIntegration::Feature.flare_search(self.branch_id)
+        SubjectsIntegration::Feature.search(self.branch_id)
       end
 
     end

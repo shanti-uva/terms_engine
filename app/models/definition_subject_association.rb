@@ -27,11 +27,11 @@ class DefinitionSubjectAssociation < ApplicationRecord
   has_many :imports, :as => 'item', :dependent => :destroy
   
   def subject
-    SubjectsIntegration::Feature.flare_search(self.subject_id)
+    SubjectsIntegration::Feature.search(self.subject_id)
   end
   
   def branch
-    SubjectsIntegration::Feature.flare_search(self.branch_id)
+    SubjectsIntegration::Feature.search(self.branch_id)
   end
   
   def feature
