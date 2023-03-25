@@ -74,6 +74,18 @@ namespace :terms_engine do
           TermsEngine::Filter.new.do_feature_filter(filename: source)
         end
       end
+      
+      csv_desc = "Use to infer parents from CSV containing term in tibetan.\n" +
+                  "Syntax: rake db:filter:get_parents SOURCE=csv-file-name"
+      desc csv_desc
+      task get_parents: :environment do
+        source = ENV['SOURCE']
+        if source.blank?
+          puts csv_desc
+        else
+          TermsEngine::Filter.new.do_parent_filter(filename: source)
+        end
+      end
     end
     
     desc "Load seeds for terms engine tables"
