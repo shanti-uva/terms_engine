@@ -134,6 +134,7 @@ module TermsEngine
       self.feature = Feature.search_bod_expression(tibetan_str)
       if self.feature.nil?
         self.log.debug "Adding new term #{tibetan_str}"
+        Rails.cache.delete("features/current_roots/#{@tib_alpha.id}")
         parent = TibetanTermsService.recursive_trunk_for(tibetan_str)
         if parent.ancestors_by_perspective(@tib_alpha).count != 2
           self.say "There is a problem for term: #{current_entry} with calculated parent: #{parent.pid} in herarchy. Skipping term creation."
