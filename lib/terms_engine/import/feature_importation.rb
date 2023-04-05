@@ -45,38 +45,60 @@ module TermsEngine
       rows = CSV.read(filename, headers: true, col_sep: "\t")
       current = 0
       total = rows.size
+      ipc_reader, ipc_writer = IO.pipe('ASCII-8BIT')
+      ipc_writer.set_encoding('ASCII-8BIT')
       puts "#{Time.now}: Processing features..."
+      STDOUT.flush
       while current<total
-        begin
-          row = rows[current]
-          self.fields = row.to_hash.delete_if{ |key, value| value.blank? }
-          current+=1
-          if !self.fields['features.fid'].blank?
-            next unless self.get_feature(current)
-            self.process_feature
-            self.process_names(44)
-          else
-            self.infer_or_create_feature
-            self.process_feature
+        limit = current + interval
+        limit = total if limit > total
+        sid = Spawnling.new do
+          begin
+            self.log.debug { "#{Time.now}: Spawning sub-process #{Process.pid}." }
+            ipc_reader.close
+            for i in current...limit
+              row = rows[i]
+              self.fields = row.to_hash.delete_if{ |key, value| value.blank? }
+              if !self.fields['features.fid'].blank?
+                next unless self.get_feature(current)
+                self.process_feature
+                self.process_names(44)
+              else
+                self.infer_or_create_feature
+                self.process_feature
+              end
+              process_definitions(87)
+              process_translations(64)
+              process_feature_relations(0)
+              self.feature.update_attributes(is_blank: false, is_public: true, skip_update: true)
+              self.progress_bar(num: current, total: total, current: self.feature.pid)
+              if self.fields.empty?
+                self.log.debug { "#{Time.now}: #{self.feature.pid} processed." }
+              else
+                self.log.warn { "#{Time.now}: #{self.feature.pid}: the following fields have been ignored: #{self.fields.keys.join(', ')}" }
+              end
+            end
+            ipc_hash = { bar: self.bar, num_errors: self.num_errors, valid_point: self.valid_point }
+            data = Marshal.dump(ipc_hash)
+            ipc_writer.puts(data.length)
+            ipc_writer.write(data)
+            ipc_writer.flush
+            ipc_writer.close
+          rescue Exception => e
+            STDOUT.flush
+            self.log.fatal { "#{Time.now}: An error occured:" }
+            self.log.fatal { e.message }
+            self.log.fatal { e.backtrace.join("\n") }
           end
-          process_definitions(87)
-          process_translations(64)
-          process_feature_relations(0)
-          self.feature.update_attributes(is_blank: false, is_public: true, skip_update: true)
-          self.progress_bar(num: current, total: total, current: self.feature.pid)
-          if self.fields.empty?
-            self.log.debug { "#{Time.now}: #{self.feature.pid} processed." }
-          else
-            self.log.warn { "#{Time.now}: #{self.feature.pid}: the following fields have been ignored: #{self.fields.keys.join(', ')}" }
-          end
-        rescue Exception => e
-          STDOUT.flush
-          self.log.fatal { "#{Time.now}: An error occured:" }
-          self.log.fatal { e.message }
-          self.log.fatal { e.backtrace.join("\n") }
         end
-        self.update_progress_bar(bar: self.bar, num_errors: self.num_errors, valid_point: self.valid_point)
+        Spawnling.wait([sid])
+        size = ipc_reader.gets
+        data = ipc_reader.read(size.to_i)
+        ipc_hash = Marshal.load(data)
+        self.update_progress_bar(bar: ipc_hash[:bar], num_errors: ipc_hash[:num_errors], valid_point: ipc_hash[:valid_point])
+        current = limit
       end
+      ipc_writer.close
     end
     
     def get_info_source(field_prefix)
