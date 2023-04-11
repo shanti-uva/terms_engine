@@ -41,7 +41,7 @@ module TermsEngine
       self.log.debug { "#{Time.now}: Starting importation." }
       self.spreadsheet = task.spreadsheets.find_by(filename: filename)
       self.spreadsheet = task.spreadsheets.create(:filename => filename, :imported_at => Time.now) if self.spreadsheet.nil?
-      interval = 100
+      interval = 25
       rows = CSV.read(filename, headers: true, col_sep: "\t")
       current = 0
       total = rows.size
