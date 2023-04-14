@@ -195,7 +195,7 @@ module TermsEngine
           definition[i] = definitions.find_by(['LEFT(content, 200) = ?', definition_content[0...200]]) # find_by(content: definition_content)
           if !definition[i].nil?
             citation = definition[i].citations.order(:created_at).first
-            definition[i] = nil if !info_sources.values.include?(citation.info_source)
+            definition[i] = nil if !citation.nil? && !info_sources.values.include?(citation.info_source)
           end
           language = Language.get_by_code_or_name(self.fields.delete("#{prefix}.languages.code"), self.fields.delete("#{prefix}.languages.name"))
           position = definitions.maximum(:position)
