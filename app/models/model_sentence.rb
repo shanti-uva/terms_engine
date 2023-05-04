@@ -12,6 +12,7 @@
 
 class ModelSentence < ApplicationRecord
   belongs_to :context, polymorphic: true, touch: true
+  has_many :imports, as: 'item', dependent: :destroy
 
   validates_presence_of :content
   

@@ -13,6 +13,8 @@ module TermsEngine
     # feature_relations.delete, [i.]feature_relations.related_feature.fid or [i.]feature_relations.related_feature.name,
     # [i.]feature_relations.type.code, [i.]perspectives.code/name, feature_relations.replace
     # [i.]definitions.content, [i.]definitions.languages.code/name
+    # [i].definitions.[j].model_sentence
+    
     # Fields that accept time_units:
     # features, i.feature_names[.j]
 
@@ -233,6 +235,7 @@ module TermsEngine
                 end
               end
             end
+            self.process_model_sentences(definition[i], prefix, 4)
           end
         end
       end
@@ -274,5 +277,31 @@ module TermsEngine
         end
       end
     end
+    
+    # [i].definitions.[j].model_sentence
+    def process_model_sentences(definition, prefix, n)
+      sentences = definition.model_sentences
+      0.upto(n) do |j|
+        sentence_tag = j>0 ? "#{prefix}.#{j}.model_sentence" : "#{prefix}.model_sentence"
+        sentence_content = self.fields.delete(sentence_tag)
+        if !sentence_content.blank?
+          sentence_html = "<p>#{sentence_content.strip}</p>"
+          conditions = {content: sentence_html}
+          sentence = sentences.find_by(conditions)
+          if sentence.nil?
+            sentence = sentences.create(conditions)
+            if sentence.id.nil?
+              self.say "Sentence #{sentence_content} not saved for definition #{definition.id}.- #{sentence.errors.messages}"
+              next
+            else
+              self.spreadsheet.imports.create(item: sentence) if sentence.imports.find_by(spreadsheet_id: self.spreadsheet.id).nil?
+            end
+          else
+            self.say "Sentence #{sentence_content} already imported for definition #{definition.id}."
+          end
+        end
+      end
+    end
+    
   end
 end
