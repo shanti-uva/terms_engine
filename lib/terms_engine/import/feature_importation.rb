@@ -101,6 +101,7 @@ module TermsEngine
         current = limit
       end
       ipc_writer.close
+      puts "#{Time.now}: Importation done."
     end
     
     def get_info_source(field_prefix)
