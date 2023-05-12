@@ -2,6 +2,8 @@ require 'kmaps_engine/import/feature_importation'
 
 module TermsEngine
   class FeatureImportation < KmapsEngine::FeatureImportation
+    attr_accessor :last_parent
+    
     # Currently supported fields:
     # features.fid, features.old_pid, features.position, feature_names.delete, feature_names.is_primary.delete
     # i.feature_names.existing_name
@@ -40,10 +42,11 @@ module TermsEngine
       puts "#{Time.now}: Starting importation."
       task = ImportationTask.find_by(task_code: task_code)
       task = ImportationTask.create(:task_code => task_code) if task.nil?
+      self.last_parent = nil
       self.log.debug { "#{Time.now}: Starting importation." }
       self.spreadsheet = task.spreadsheets.find_by(filename: filename)
       self.spreadsheet = task.spreadsheets.create(:filename => filename, :imported_at => Time.now) if self.spreadsheet.nil?
-      interval = 25
+      interval = 100
       rows = CSV.read(filename, headers: true, col_sep: "\t")
       current = 0
       total = rows.size
@@ -80,7 +83,7 @@ module TermsEngine
                 self.log.warn { "#{Time.now}: #{self.feature.pid}: the following fields have been ignored: #{self.fields.keys.join(', ')}" }
               end
             end
-            ipc_hash = { bar: self.bar, num_errors: self.num_errors, valid_point: self.valid_point }
+            ipc_hash = { bar: self.bar, num_errors: self.num_errors, valid_point: self.valid_point, last_parent_fid: self.last_parent.nil? ? nil : self.last_parent.fid }
             data = Marshal.dump(ipc_hash)
             ipc_writer.puts(data.length)
             ipc_writer.write(data)
@@ -98,9 +101,11 @@ module TermsEngine
         data = ipc_reader.read(size.to_i)
         ipc_hash = Marshal.load(data)
         self.update_progress_bar(bar: ipc_hash[:bar], num_errors: ipc_hash[:num_errors], valid_point: ipc_hash[:valid_point])
+        self.last_parent = Feature.get_by_fid(ipc_hash[:last_parent_fid]) if !ipc_hash[:last_parent_fid].nil?
         current = limit
       end
       ipc_writer.close
+      reposition_parent if !self.last_parent.nil?
       puts "#{Time.now}: Importation done."
     end
     
@@ -163,18 +168,23 @@ module TermsEngine
         parent = TibetanTermsService.recursive_trunk_for(tibetan_str)
         if parent.ancestors_by_perspective(@tib_alpha).count != 2
           self.say "There is a problem for term: #{current_entry} with calculated parent: #{parent.pid} in herarchy. Skipping term creation."
-          return nil
+          return
         end
         self.feature = TibetanTermsService.add_term(Feature::BOD_EXPRESSION_SUBJECT_ID, tibetan_str, wylie_str, phonetic_str)
         FeatureRelation.create!(child_node: self.feature, parent_node: parent, perspective: @tib_alpha, feature_relation_type: @relation_type)
-        ts = TibetanTermsService.new(parent)
-        ts.reposition
-        self.feature.reload
-        position = self.feature.position
-        return [parent.fid, self.feature.fid] + parent.children.where('position > ?', position).collect(&:fid)
-      else
-        return [self.feature.fid]
+        if self.last_parent.nil?
+          self.last_parent = parent
+        elsif self.last_parent != parent
+          reposition_parent
+          self.last_parent = parent
+        end
       end
+    end
+    
+    def reposition_parent
+      self.log.debug { "#{Time.now}: Repositioning parent #{self.last_parent.fid}." }
+      ts = TibetanTermsService.new(self.last_parent)
+      ts.reposition
     end
     
     # [i.]definitions:
