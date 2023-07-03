@@ -16,11 +16,16 @@ module TermsEngine
         ENG_WORD_SUBJECT_ID = 9668
         ENG_PHRASE_SUBJECT_ID = 9669
         
-        has_many :subject_term_associations, dependent: :destroy
-        has_many :phoneme_term_associations
-        has_many :recordings, dependent: :destroy
-        has_many :etymologies, as: :context, dependent: :destroy
         has_many :definition_associations, as: :associated, dependent: :destroy
+        has_many :etymologies, as: :context, dependent: :destroy
+        has_many :model_sentences, as: :context, dependent: :destroy
+        has_many :phoneme_term_associations, dependent: :destroy
+        has_many :recordings, dependent: :destroy do
+          def corrupted
+            self.select{ |r| r.corrupted? }
+          end
+        end
+        has_many :subject_term_associations, dependent: :destroy
         has_many :translation_equivalents, dependent: :destroy
         
         # This fetches root *Definitions* (definitions that don't have parents),
@@ -257,6 +262,10 @@ module TermsEngine
             "#{def_prefix}_etymologies_ss" => d.etymologies.collect(&:content),
             block_type: ['child']
           }
+          author = d.author
+          cd["#{def_prefix}_author_s"] = author.fullname if !author.nil?
+          cd["#{def_prefix}_numerology_i"] = d.numerology if !d.numerology.nil?
+          cd["#{def_prefix}_tense_s"] = d.tense if !d.tense.nil?
           d.etymologies.each do |de|
             etymology_prefix = "#{def_prefix}_etymology_#{de.id}"
             cd["#{etymology_prefix}_content_ss"] = de.content
@@ -267,10 +276,9 @@ module TermsEngine
           end
           d.passage_translations.each { |pt| pt.rsolr_document_tags(cd, def_prefix) }
           d.passages.each { |p| p.rsolr_document_tags(cd, def_prefix) }
-          author = d.author
-          cd["#{def_prefix}_author_s"] = d.author.fullname if !author.nil?
-          cd["#{def_prefix}_numerology_i"] = d.numerology if !d.numerology.nil?
-          cd["#{def_prefix}_tense_s"] = d.tense if !d.tense.nil?
+          d.model_sentences.each do |s|
+            cd["#{def_prefix}_model_sentence_#{s.id}_content_t"] = s.content
+          end
           citations = d.standard_citations
           citation_references = citations.collect { |c| c.bibliographic_reference }
           cd["#{def_prefix}_citation_references_ss"] = citation_references if !citation_references.blank?
@@ -354,6 +362,9 @@ module TermsEngine
         end
         self.translation_equivalents.each do |te|
           te.rsolr_document_tags(doc)
+        end
+        self.model_sentences.each do |s|
+          doc["model_sentence_#{s.id}_content_t"] = s.content
         end
         doc
       end

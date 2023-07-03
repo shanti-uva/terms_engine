@@ -29,6 +29,15 @@ class Recording < ApplicationRecord
   def dialect
     SubjectsIntegration::Feature.search(self.dialect_id)
   end
+  
+  def corrupted?
+    begin
+      self.audio_file.download
+    rescue Exception => e
+      return true
+    end
+    return false
+  end
 
   private
   def audio_validation

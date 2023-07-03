@@ -35,6 +35,7 @@ class Definition < ApplicationRecord
   has_many :definition_subject_associations, dependent: :destroy
   has_many :etymologies, as: :context, dependent: :destroy
   has_many :imports, as: 'item', dependent: :destroy
+  has_many :model_sentences, as: :context, dependent: :destroy
   has_many :parent_definition_associations, class_name: 'DefinitionAssociation', as: :associated, dependent: :destroy
   has_many :passage_translations, as: :context, dependent: :destroy
   #has_many :legacy_citations, -> { where(info_source_type: InfoSource.model_name.name).joins(:info_source).where('info_sources.processed' => false) }, as: :citable, class_name: 'Citation'
