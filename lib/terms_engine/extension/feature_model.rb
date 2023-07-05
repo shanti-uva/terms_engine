@@ -374,6 +374,36 @@ module TermsEngine
       end
       
       module ClassMethods
+        def corrupted
+          ipc_reader, ipc_writer = IO.pipe('ASCII-8BIT')
+          ipc_writer.set_encoding('ASCII-8BIT')
+          n = Feature.count
+          i = 0
+          limit = 100
+          corrupted = []
+          while i<n
+            sid = Spawnling.new do
+              ipc_reader.close
+              range = Feature.all.order(:fid).limit(limit).offset(i)
+              new_corrupted = range.collect { |f| f.recordings.corrupted.collect{|r| r.id} }
+              new_corrupted.reject! { |c| c.blank? }
+              ipc_hash = {corrupted: new_corrupted }
+              data = Marshal.dump(ipc_hash)
+              ipc_writer.puts(data.length)
+              ipc_writer.write(data)
+              ipc_writer.flush
+              ipc_writer.close
+            end
+            Spawnling.wait([sid])
+            size = ipc_reader.gets
+            data = ipc_reader.read(size.to_i)
+            ipc_hash = Marshal.load(data)
+            corrupted += ipc_hash[:corrupted]
+            i += limit
+          end
+          ipc_writer.close
+          return corrupted
+        end
         
         def current_roots_by_perspective(current_perspective)
           feature_ids = Rails.cache.fetch("features/current_roots/#{current_perspective.id}", expires_in: 1.day) do

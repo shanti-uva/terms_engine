@@ -2,6 +2,7 @@
 .byebug_history
 .DS_Store
 .rbenv-gemsets
+config/.DS_Store
 log/*.log
 pkg/
 spec/dummy/db/*.sqlite3
