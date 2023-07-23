@@ -32,6 +32,7 @@
 <%=                 render partial: 'recordings/list', locals: { recordings: feature.recordings } %>
                   </dl>
 <%=               render(partial: 'etymologies', locals: { etymologies: feature.etymologies }) %>
+<%=               render(partial: 'model_sentences', locals: { model_sentences: feature.model_sentences }) %>
                   <div class="terms-definition-list-wrapper"><!-- BEGIN terms-definitions -->
 <%=                 render partial: 'standard_definitions', locals: { definitions: feature.definitions.standard_definitions, is_child: false, prefix: '', def_level: 0 } %>
                   </div> <!-- END terms-definition-list-wrapper -->

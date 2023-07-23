@@ -1,0 +1,16 @@
+<% if !model_sentences.empty?
+     count = model_sentences.size %>
+<%   if count==1 %>
+     <dl>
+       <dt><%= ModelSentence.model_name.human(count: count).titleize.s %></dt>
+       <dd><%= model_sentences.first.content.s %></dd>
+     </dl>
+<%   else %>
+     <h5><%= ModelSentence.model_name.human(count: count).titleize.s %></h5>
+     <ul>
+<%     model_sentences.each do |model_sentence| %>
+         <li><%= model_sentence.content.s %></li>
+<%     end %>
+     </ul>
+<%   end
+   end %>

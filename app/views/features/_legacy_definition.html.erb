@@ -2,6 +2,7 @@
 <p>
 <%= legacy_definition.content.s.html_safe %>
 </p>
+<%= render(partial: 'model_sentences', locals: { model_sentences: legacy_definition.model_sentences }) %>
 <p><a data-toggle="collapse" href="#other-definition-details-<%= legacy_definition.id %>" role="button" aria-expanded="false" aria-controls="definition-details" class="definition-details-control collapsed">
   <span class="glyphicon"></span>Further Details</a></p>
 <div id="other-definition-details-<%= legacy_definition.id %>" class="collapse definition-details-wrapper">

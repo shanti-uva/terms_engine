@@ -20,7 +20,6 @@ module TermsEngine
       require 'terms_engine/extension/feature_relation_type_model'
       require 'terms_engine/extension/illustration_model'
       require 'terms_engine/extension/perspective_model'
-      require 'terms_engine/has_model_sentences'
 
       Feature.send :include, TermsEngine::Extension::FeatureModel
       CitationsController.send :include, TermsEngine::Extension::CitationsController
