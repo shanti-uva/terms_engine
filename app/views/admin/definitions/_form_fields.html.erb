@@ -1,5 +1,3 @@
-<%= tinymce_assets %>
-<%= tinymce %>
 <% if object.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(object.errors.count, "error") %> prohibited this definition from being saved:</h2>
@@ -29,7 +27,7 @@
   <div class="row">
     <%= form.text_area :content, rows: 4, class: 'tinymce' %>
   </div>
-
+<%= tinymce %>
   <div class="row">
     <%= form.label(:numerology).s %>
     <%= form.number_field :numerology %>
