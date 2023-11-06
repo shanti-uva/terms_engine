@@ -305,7 +305,7 @@ module TermsEngine
           end
           cd
         end
-        child_documents = child_documents + self.recordings.collect do |recording|
+        child_documents = child_documents + self.recordings.reject{ |recording| recording.audio_file.blob.nil? }.collect do |recording|
           {id: "#{self.uid}_recording_#{recording.id}",
            block_child_type: ['terms_recording'],
            block_type: ['child'],
