@@ -21,9 +21,9 @@
 <%=      globalized_submit_tag 'select.this' %>
          </form>
 <%     else %>
-<%=      list_actions_for_item(item, :delete_path => admin_feature_definition_path(item.feature, item),
-         :edit_path => edit_admin_feature_definition_path(item.feature, item),
-         :view_path => admin_feature_definition_path(item.feature, item)) %>
+<%=      list_actions_for_item(item, delete_path: admin_feature_definition_path(item.feature, item),
+         edit_path: edit_admin_feature_definition_path(item.feature, item),
+         view_path: admin_feature_definition_path(item.feature, item)) %>
 <%   end %>
        </td>
        <td><%= item.language.name %></td>

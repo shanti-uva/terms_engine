@@ -28,7 +28,7 @@
                       <dt>ID:</dt><dd><%= feature.pid %></dd>
                     </div>
 <%=                 feature_name_ul(feature, false) %>
-<%=                 note_popup_link_list_for(feature, {association_type: FeatureName.name}) %>
+<%=                 note_popup_link_list_for(feature, association_type: FeatureName.name) %>
 <%=                 render partial: 'recordings/list', locals: { recordings: feature.recordings } %>
                   </dl>
 <%=               render(partial: 'etymologies', locals: { etymologies: feature.etymologies }) %>
@@ -52,7 +52,7 @@
                   if !subject_term_associations.empty? %>
                     <dl>
 <%=                   render partial: 'subjects', locals: { associations: subject_term_associations } %>
-<%=                   note_popup_link_list_for(feature, {:association_type => SubjectTermAssociation.name}) %>
+<%=                   note_popup_link_list_for(feature, association_type: SubjectTermAssociation.name) %>
                     </dl>
 <%                end %>
                 </div>

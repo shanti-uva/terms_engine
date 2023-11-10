@@ -18,9 +18,9 @@
 <%     list.each do |item| %>
        <tr>
          <td class="listActionsCol">
-<%=        list_actions_for_item(item, :delete_path => admin_definition_definition_relation_path(item.child_node, item),
-           :edit_path   => edit_admin_definition_definition_relation_path(item.child_node, item),
-           :view_path   => admin_definition_definition_relation_path(item.child_node, item)) %>
+<%=        list_actions_for_item(item, delete_path: admin_definition_definition_relation_path(item.child_node, item),
+           edit_path: edit_admin_definition_definition_relation_path(item.child_node, item),
+           view_path: admin_definition_definition_relation_path(item.child_node, item)) %>
          </td>
 <%=     "<td>#{item.child_node.snippet.s rescue 'child_node Ka-Blam!'}</td>".html_safe unless options[:hide_child] %>
 <%=     "<td>#{item.parent_node.snippet.s rescue 'parent_node Ka-Blam!'}</td>".html_safe unless options[:hide_related_to] %>
