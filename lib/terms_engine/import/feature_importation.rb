@@ -75,7 +75,7 @@ module TermsEngine
               process_definitions(87)
               process_translations(64)
               process_feature_relations(0)
-              self.feature.update_attributes(is_blank: false, is_public: true, skip_update: true)
+              self.feature.update(is_blank: false, is_public: true, skip_update: true)
               self.progress_bar(num: current, total: total, current: self.feature.pid)
               if self.fields.empty?
                 self.log.debug { "#{Time.now}: #{self.feature.pid} processed." }
@@ -223,7 +223,7 @@ module TermsEngine
               definition[i] = definitions.create(attributes)
             end
           else
-            definition[i].update_attributes(attributes)
+            definition[i].update(attributes)
           end
           if !definition[i].nil?
             self.spreadsheet.imports.create(item: definition[i]) if definition[i].imports.find_by(spreadsheet_id: self.spreadsheet.id).nil?
