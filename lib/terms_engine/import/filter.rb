@@ -23,7 +23,7 @@ module TermsEngine
     end
     
     def do_parent_filter(filename:)
-      view = View.get_by_code('pri.tib.sec.roman')
+      view = View.get_by_code('pri.orig.sec.roman')
       rows = CSV.read(filename, headers: true, col_sep: "\t")
       puts "features.fid\t1.feature_names.name"
       begin

@@ -6,6 +6,10 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
+[ { name: 'Scholarly Standard (romanization)',       code: 'roman.scholar' },
+  { name: 'Original Script (secondary romanization)', code: 'pri.orig.sec.roman' }
+].each{|a| View.update_or_create(a)}
+
 [ { name: 'Tibetan Alphabetical', code: 'tib.alpha', is_public: true },
   { name: 'English Alphabetical', code: 'eng.alpha', is_public: true }
 ].each { |p| Perspective.update_or_create(p) }

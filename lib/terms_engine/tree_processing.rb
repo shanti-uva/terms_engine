@@ -3,7 +3,7 @@ module TermsEngine
     def initialize
       @tib_alpha = Perspective.get_by_code('tib.alpha')
       @relation_type = FeatureRelationType.get_by_code('heads')
-      @view = View.get_by_code('pri.tib.sec.roman')
+      @view = View.get_by_code('pri.orig.sec.roman')
     end
     
     def fix_expression(f)

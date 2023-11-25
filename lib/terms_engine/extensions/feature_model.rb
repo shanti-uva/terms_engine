@@ -16,6 +16,11 @@ module TermsEngine
         ENG_WORD_SUBJECT_ID = 9668
         ENG_PHRASE_SUBJECT_ID = 9669
         
+        NEW_PHONEME_SUBJECT_ID = 10522
+        NEW_LETTER_SUBJECT_ID = 10523
+        NEW_PLACE_HOLDER_SUBJECT_ID = 10524
+        NEW_EXPRESSION_SUBJECT_ID = 10525
+        
         has_many :definition_associations, as: :associated, dependent: :destroy
         has_many :etymologies, as: :context, dependent: :destroy
         has_many :model_sentences, as: :context, dependent: :destroy
@@ -371,6 +376,18 @@ module TermsEngine
       
       def solr_url
         URI.join(TermsResource.get_url, "solr/#{self.fid}.json")
+      end
+      
+      def calculate_prioritized_name(current_view)
+        all_names = prioritized_names
+        case current_view.code
+        when 'roman.scholar'
+          name = scholarly_prioritized_name(all_names)
+        when 'pri.orig.sec.roman'
+          name = tibetan_prioritized_name(all_names)
+          name = FeatureExtensionForNamePositioning::HelperMethods.find_name_for_writing_system(all_names, WritingSystem.get_by_code('deva').id) if name.nil?
+        end
+        name || popular_prioritized_name(all_names)
       end
       
       module ClassMethods

@@ -15,7 +15,7 @@ class TibetanTermsService
   
   def sorted_terms
     if @sorted_terms.nil?
-      @view ||= View.get_by_code('pri.tib.sec.roman')
+      @view ||= View.get_by_code('pri.orig.sec.roman')
       terms_with_name = terms.collect{|t| [t, t.prioritized_name(@view).name] }
       sorted_terms_with_name = terms_with_name.sort{ |a,b| a[1].bo_compare(b[1]) }
       @sorted_terms = sorted_terms_with_name.collect(&:first)
@@ -25,7 +25,7 @@ class TibetanTermsService
   
   def names
     if @names.nil?
-      @view ||= View.get_by_code('pri.tib.sec.roman')
+      @view ||= View.get_by_code('pri.orig.sec.roman')
       @names = terms.collect{|t| t.prioritized_name(@view).name}
     end
     @names
@@ -47,7 +47,7 @@ class TibetanTermsService
       letter = letters.trunk_for(name)
       return letter.nil? ? nil : TibetanTermsService.new(letter).trunk_for(name)
     elsif name.instance_of? Feature
-      @view ||= View.get_by_code('pri.tib.sec.roman')
+      @view ||= View.get_by_code('pri.orig.sec.roman')
       name_str = name.prioritized_name(@view).name
       letters_a = Feature.current_roots_by_perspective(Perspective.get_by_code('tib.alpha'))
       letters_a.reject! do |l|

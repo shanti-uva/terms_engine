@@ -30,16 +30,18 @@ namespace :terms_engine do
     
     namespace :import do
       csv_desc = "Use to import CSV containing terms into DB.\n" +
-                  "Syntax: rake db:import:features SOURCE=csv-file-name TASK=task_code LOG_LEVEL=log-level DAYLIGHT=value"
+                  "Syntax: rake db:import:features SOURCE=csv-file-name TASK=task_code LOG_LEVEL=log-level DAYLIGHT=value PERSPECTIVE=perspective-code"
       desc csv_desc
       task features: :environment do
         source = ENV['SOURCE']
         task = ENV['TASK']
+        perspective_code = ENV['PERSPECTIVE']
+        
         log_level = ENV['LOG_LEVEL']
         if source.blank? || task.blank?
           puts csv_desc
         else
-          TermsEngine::FeatureImportation.new("log/import_#{task}_#{Rails.env}.log", log_level.nil? ? Rails.logger.level : log_level.to_i).do_feature_import(filename: source, task_code: task)
+          TermsEngine::FeatureImportation.new("log/import_#{task}_#{Rails.env}.log", log_level.nil? ? Rails.logger.level : log_level.to_i).do_feature_import(filename: source, task_code: task, perspective_code: perspective_code)
         end
       end
       

@@ -144,9 +144,11 @@
     extraFields: ['associated_subject_ids'],
 <% case perspective_code # A predicate is: {field:, value:, operation: 'eq', mark: 'nonInteractive'}
    when 'tib.alpha' %>
-     nodeMarkerPredicates: [{field: 'associated_subject_ids', value: <%= Feature::BOD_EXPRESSION_SUBJECT_ID %>, operation: '!includes', mark: 'nonInteractiveNode'}],
+     nodeMarkerPredicates: [{field: 'associated_subject_ids', value: <%= Feature::BOD_EXPRESSION_SUBJECT_ID %>, operation: '!includes', mark: 'nonInteractiveNode'}]
 <% when 'eng.alpha' %>
-     nodeMarkerPredicates: [{field: 'associated_subject_ids', value: <%= Feature::ENG_LETTER_SUBJECT_ID %>, operation: 'includes', mark: 'nonInteractiveNode'}],
+     nodeMarkerPredicates: [{field: 'associated_subject_ids', value: <%= Feature::ENG_LETTER_SUBJECT_ID %>, operation: 'includes', mark: 'nonInteractiveNode'}]
+<% when 'new.alpha' %>
+     nodeMarkerPredicates: [{field: 'associated_subject_ids', value: <%= Feature::NEW_LETTER_SUBJECT_ID %>, operation: 'includes', mark: 'nonInteractiveNode'}]
 <% end %>
   });
 

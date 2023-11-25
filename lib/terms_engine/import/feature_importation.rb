@@ -3,6 +3,7 @@ require 'kmaps_engine/import/feature_importation'
 module TermsEngine
   class FeatureImportation < KmapsEngine::FeatureImportation
     attr_accessor :last_parent
+    attr_accessor :perspective
     
     # Currently supported fields:
     # features.fid, features.old_pid, features.position, feature_names.delete, feature_names.is_primary.delete
@@ -38,11 +39,12 @@ module TermsEngine
     # Note fields:
     # .note
 
-    def do_feature_import(filename:, task_code:)
+    def do_feature_import(filename:, task_code:, perspective_code:)
       puts "#{Time.now}: Starting importation."
       task = ImportationTask.find_by(task_code: task_code)
       task = ImportationTask.create(:task_code => task_code) if task.nil?
       self.last_parent = nil
+      self.perspective = Perspective.get_by_code(perspective_code)
       self.log.debug { "#{Time.now}: Starting importation." }
       self.spreadsheet = task.spreadsheets.find_by(filename: filename)
       self.spreadsheet = task.spreadsheets.create(:filename => filename, :imported_at => Time.now) if self.spreadsheet.nil?
@@ -64,17 +66,18 @@ module TermsEngine
             for i in current...limit
               row = rows[i]
               self.fields = row.to_hash.delete_if{ |key, value| value.blank? }
-              if !self.fields['features.fid'].blank?
+              if self.fields['features.fid'].blank?
+                self.infer_or_create_feature
+                self.process_feature
+              else
                 next unless self.get_feature(current)
                 self.process_feature
                 self.process_names(44)
-              else
-                self.infer_or_create_feature
-                self.process_feature
               end
+              self.process_kmaps(3)
               process_definitions(87)
               process_translations(64)
-              process_feature_relations(0)
+              process_feature_relations(10)
               self.feature.update(is_blank: false, is_public: true, skip_update: true)
               self.progress_bar(num: current, total: total, current: self.feature.pid)
               if self.fields.empty?
@@ -142,41 +145,75 @@ module TermsEngine
     end
     
     def infer_or_create_feature
-      @tib_alpha ||= Perspective.get_by_code('tib.alpha')
       @relation_type ||= FeatureRelationType.get_by_code('heads')
       
-      tibetan_str = nil
-      wylie_str = nil
-      phonetic_str = nil
-      1.upto(3) do |i|
-        name_tag = "#{i}.feature_names"
-        name_str = self.fields.delete("#{name_tag}.name")
-        writing_system_str = self.fields.delete("#{i}.writing_systems.code")
-        relationship_system_str = self.fields.delete("#{i}.feature_name_relations.relationship.code")
-        if writing_system_str=='tibt'
-          tibetan_str = name_str.tibetan_cleanup if tibetan_str.blank?
-        elsif relationship_system_str=='thl.ext.wyl.translit'
-          wylie_str = name_str if wylie_str.blank?
-        elsif relationship_system_str=='thl.simple.transcrip'
-          phonetic_str = name_str if phonetic_str.blank?
+      case self.perspective.code
+      when 'tib.alpha'
+        tibetan_str = nil
+        wylie_str = nil
+        phonetic_str = nil
+        1.upto(3) do |i|
+          name_tag = "#{i}.feature_names"
+          name_str = self.fields.delete("#{name_tag}.name")
+          writing_system_str = self.fields.delete("#{i}.writing_systems.code")
+          relationship_system_str = self.fields.delete("#{i}.feature_name_relations.relationship.code")
+          if writing_system_str=='tibt'
+            tibetan_str = name_str.tibetan_cleanup if tibetan_str.blank?
+          elsif relationship_system_str=='thl.ext.wyl.translit'
+            wylie_str = name_str if wylie_str.blank?
+          elsif relationship_system_str=='thl.simple.transcrip'
+            phonetic_str = name_str if phonetic_str.blank?
+          end
         end
-      end
-      self.feature = Feature.search_bod_expression(tibetan_str)
-      if self.feature.nil?
-        self.log.debug "Adding new term #{tibetan_str}"
-        Rails.cache.delete("features/current_roots/#{@tib_alpha.id}")
-        parent = TibetanTermsService.recursive_trunk_for(tibetan_str)
-        if parent.ancestors_by_perspective(@tib_alpha).count != 2
-          self.say "There is a problem for term: #{current_entry} with calculated parent: #{parent.pid} in herarchy. Skipping term creation."
-          return
+        self.feature = Feature.search_bod_expression(tibetan_str)
+        if self.feature.nil?
+          self.log.debug "Adding new term #{tibetan_str}"
+          Rails.cache.delete("features/current_roots/#{self.perspective.id}")
+          parent = TibetanTermsService.recursive_trunk_for(tibetan_str)
+          if parent.ancestors_by_perspective(self.perspective).count != 2
+            self.say "There is a problem for term: #{current_entry} with calculated parent: #{parent.pid} in herarchy. Skipping term creation."
+            return
+          end
+          self.feature = TibetanTermsService.add_term(Feature::BOD_EXPRESSION_SUBJECT_ID, tibetan_str, wylie_str, phonetic_str)
+          FeatureRelation.create!(child_node: self.feature, parent_node: parent, perspective: self.perspective, feature_relation_type: @relation_type)
+          if self.last_parent.nil?
+            self.last_parent = parent
+          elsif self.last_parent != parent
+            reposition_parent
+            self.last_parent = parent
+          end
         end
-        self.feature = TibetanTermsService.add_term(Feature::BOD_EXPRESSION_SUBJECT_ID, tibetan_str, wylie_str, phonetic_str)
-        FeatureRelation.create!(child_node: self.feature, parent_node: parent, perspective: @tib_alpha, feature_relation_type: @relation_type)
-        if self.last_parent.nil?
-          self.last_parent = parent
-        elsif self.last_parent != parent
-          reposition_parent
-          self.last_parent = parent
+      when 'new.alpha'
+        deva_str = nil
+        latin_str = nil
+        1.upto(2) do |i|
+          name_tag = "#{i}.feature_names"
+          name_str = self.fields.delete("#{name_tag}.name")
+          writing_system_str = self.fields.delete("#{i}.writing_systems.code")
+          relationship_system_str = self.fields.delete("#{i}.feature_name_relations.relationship.code")
+          if writing_system_str=='deva'
+            deva_str = name_str.trim if deva_str.blank?
+          elsif relationship_system_str=='indo.standard.translit'
+            latin_str = name_str.trim if latin_str.blank?
+          end
+        end
+        self.feature = Feature.search_bod_expression(tibetan_str)
+        if self.feature.nil?
+          self.log.debug "Adding new term #{tibetan_str}"
+          Rails.cache.delete("features/current_roots/#{self.perspective.id}")
+          parent = TibetanTermsService.recursive_trunk_for(tibetan_str)
+          if parent.ancestors_by_perspective(self.perspective).count != 2
+            self.say "There is a problem for term: #{current_entry} with calculated parent: #{parent.pid} in herarchy. Skipping term creation."
+            return
+          end
+          self.feature = TibetanTermsService.add_term(Feature::BOD_EXPRESSION_SUBJECT_ID, tibetan_str, wylie_str, phonetic_str)
+          FeatureRelation.create!(child_node: self.feature, parent_node: parent, perspective: self.perspective, feature_relation_type: @relation_type)
+          if self.last_parent.nil?
+            self.last_parent = parent
+          elsif self.last_parent != parent
+            reposition_parent
+            self.last_parent = parent
+          end
         end
       end
     end
@@ -314,5 +351,37 @@ module TermsEngine
       end
     end
     
+    def process_kmaps(n)
+      # Now deal with i.kmaps.id
+      subject_term_associations = self.feature.subject_term_associations
+      delete_kmaps = self.fields.delete('kmaps.delete')
+      subject_term_associations.clear if !delete_kmaps.blank? && delete_kmaps.downcase == 'yes'
+      1.upto(n) do |i|
+        kmap_prefix = "#{i}.kmaps"
+        kmap_str = self.fields.delete("#{kmap_prefix}.id")
+        next if kmap_str.blank?
+        kmap = SubjectsIntegration::Feature.find(kmap_str.scan(/\d+/).first.to_i)
+        if kmap.nil?
+          self.say "Could find kmap #{kmap_str} for feature #{self.feature.pid}."
+          next
+        end
+        values = { subject_id: kmap.id, branch_id: kmap.parents.first.id }
+        # avoid checking first
+        # subject_term_association = subject_term_associations.find_by(conditions)
+        #if subject_term_association.nil?
+        subject_term_association = subject_term_associations.create(values)
+        #else
+          #subject_term_association.update(values)
+        #end
+        self.spreadsheet.imports.create(item: subject_term_association) if subject_term_association.imports.find_by(spreadsheet_id: self.spreadsheet.id).nil?
+        next if subject_term_association.nil?
+        0.upto(3) do |j|
+          prefix = j==0 ? kmap_prefix : "#{kmap_prefix}.#{j}"
+          self.add_date(prefix, subject_term_association)
+          self.add_note(prefix, subject_term_association)
+          self.add_info_source(prefix, subject_term_association)
+        end
+      end
+    end
   end
 end

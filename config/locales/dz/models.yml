@@ -55,8 +55,8 @@ dz:
                 one: 'subject term association'
                 other: 'subject term associations'
             view:
-                one: 'term language'
-                other: 'term languages'
+                one: 'term script'
+                other: 'term scripts'
         # Attribute names will be titleized.
         attributes:
             definition_subject_association:
