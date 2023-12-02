@@ -56,6 +56,7 @@ module TermsEngine
       ipc_writer.set_encoding('ASCII-8BIT')
       puts "#{Time.now}: Processing features..."
       STDOUT.flush
+      feature_ids_with_changes = Array.new
       while current<total
         limit = current + interval
         limit = total if limit > total
@@ -74,11 +75,11 @@ module TermsEngine
                 self.process_feature
                 self.process_names(44)
               end
-              self.process_kmaps(3)
+              feature_ids_with_changes << self.feature.id
+              self.process_kmaps(5)
               process_definitions(87)
               process_translations(64)
-              process_feature_relations(10)
-              self.feature.update(is_blank: false, is_public: true, skip_update: true)
+              feature_ids_with_changes += process_feature_relations(10)
               self.progress_bar(num: current, total: total, current: self.feature.pid)
               if self.fields.empty?
                 self.log.debug { "#{Time.now}: #{self.feature.pid} processed." }
@@ -86,7 +87,7 @@ module TermsEngine
                 self.log.warn { "#{Time.now}: #{self.feature.pid}: the following fields have been ignored: #{self.fields.keys.join(', ')}" }
               end
             end
-            ipc_hash = { bar: self.bar, num_errors: self.num_errors, valid_point: self.valid_point, last_parent_fid: self.last_parent.nil? ? nil : self.last_parent.fid }
+            ipc_hash = { bar: self.bar, num_errors: self.num_errors, valid_point: self.valid_point, changes: feature_ids_with_changes, last_parent_fid: self.last_parent.nil? ? nil : self.last_parent.fid }
             data = Marshal.dump(ipc_hash)
             ipc_writer.puts(data.length)
             ipc_writer.write(data)
@@ -103,11 +104,21 @@ module TermsEngine
         size = ipc_reader.gets
         data = ipc_reader.read(size.to_i)
         ipc_hash = Marshal.load(data)
+        feature_ids_with_changes = ipc_hash[:changes]
         self.update_progress_bar(bar: ipc_hash[:bar], num_errors: ipc_hash[:num_errors], valid_point: ipc_hash[:valid_point])
         self.last_parent = Feature.get_by_fid(ipc_hash[:last_parent_fid]) if !ipc_hash[:last_parent_fid].nil?
         current = limit
       end
       ipc_writer.close
+      puts "#{Time.now}: Reindexing changed features..."
+      STDOUT.flush
+      feature_ids_with_changes.each_index do |i|
+        id = feature_ids_with_changes[i]
+        feature = Feature.find(id)
+        feature.queued_index
+        self.progress_bar(num: i, total: feature_ids_with_changes.size, current: feature.pid)
+        self.log.debug "#{Time.now}: Reindexed feature #{feature.fid}."
+      end
       reposition_parent if !self.last_parent.nil?
       puts "#{Time.now}: Importation done."
     end
