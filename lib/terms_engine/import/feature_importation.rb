@@ -48,24 +48,24 @@ module TermsEngine
       self.log.debug { "#{Time.now}: Starting importation." }
       self.spreadsheet = task.spreadsheets.find_by(filename: filename)
       self.spreadsheet = task.spreadsheets.create(:filename => filename, :imported_at => Time.now) if self.spreadsheet.nil?
-      interval = TermsEngine::ApplicationSettings.import_interval || 100
+      #interval = TermsEngine::ApplicationSettings.import_interval || 100
       rows = CSV.read(filename, headers: true, col_sep: "\t")
       current = 0
       total = rows.size
-      ipc_reader, ipc_writer = IO.pipe('ASCII-8BIT')
-      ipc_writer.set_encoding('ASCII-8BIT')
+      #ipc_reader, ipc_writer = IO.pipe('ASCII-8BIT')
+      #ipc_writer.set_encoding('ASCII-8BIT')
       puts "#{Time.now}: Processing features..."
       STDOUT.flush
       feature_ids_with_changes = Array.new
       while current<total
-        limit = current + interval
-        limit = total if limit > total
-        sid = Spawnling.new do
+        #limit = current + interval
+        #limit = total if limit > total
+        #sid = Spawnling.new do
           begin
-            self.log.debug { "#{Time.now}: Spawning sub-process #{Process.pid}." }
-            ipc_reader.close
-            for i in current...limit
-              row = rows[i]
+            #self.log.debug { "#{Time.now}: Spawning sub-process #{Process.pid}." }
+            #ipc_reader.close
+            #for i in current...limit
+              row = rows[current]
               self.fields = row.to_hash.delete_if{ |key, value| value.blank? }
               if self.fields['features.fid'].blank?
                 self.infer_or_create_feature
@@ -86,30 +86,31 @@ module TermsEngine
               else
                 self.log.warn { "#{Time.now}: #{self.feature.pid}: the following fields have been ignored: #{self.fields.keys.join(', ')}" }
               end
-            end
-            ipc_hash = { bar: self.bar, num_errors: self.num_errors, valid_point: self.valid_point, changes: feature_ids_with_changes, last_parent_fid: self.last_parent.nil? ? nil : self.last_parent.fid }
-            data = Marshal.dump(ipc_hash)
-            ipc_writer.puts(data.length)
-            ipc_writer.write(data)
-            ipc_writer.flush
-            ipc_writer.close
+            #end
+            #ipc_hash = { bar: self.bar, num_errors: self.num_errors, valid_point: self.valid_point, changes: feature_ids_with_changes, last_parent_fid: self.last_parent.nil? ? nil : self.last_parent.fid }
+            #data = Marshal.dump(ipc_hash)
+            #ipc_writer.puts(data.length)
+            #ipc_writer.write(data)
+            #ipc_writer.flush
+            #ipc_writer.close
           rescue Exception => e
             STDOUT.flush
             self.log.fatal { "#{Time.now}: An error occured:" }
             self.log.fatal { e.message }
             self.log.fatal { e.backtrace.join("\n") }
           end
-        end
-        Spawnling.wait([sid])
-        size = ipc_reader.gets
-        data = ipc_reader.read(size.to_i)
-        ipc_hash = Marshal.load(data)
-        feature_ids_with_changes = ipc_hash[:changes]
-        self.update_progress_bar(bar: ipc_hash[:bar], num_errors: ipc_hash[:num_errors], valid_point: ipc_hash[:valid_point])
-        self.last_parent = Feature.get_by_fid(ipc_hash[:last_parent_fid]) if !ipc_hash[:last_parent_fid].nil?
-        current = limit
+        #end
+        #Spawnling.wait([sid])
+        #size = ipc_reader.gets
+        #data = ipc_reader.read(size.to_i)
+        #ipc_hash = Marshal.load(data)
+        #feature_ids_with_changes = ipc_hash[:changes]
+        #self.update_progress_bar(bar: ipc_hash[:bar], num_errors: ipc_hash[:num_errors], valid_point: ipc_hash[:valid_point])
+        #self.last_parent = Feature.get_by_fid(ipc_hash[:last_parent_fid]) if !ipc_hash[:last_parent_fid].nil?
+        #current = limit
+        current += 1
       end
-      ipc_writer.close
+      #ipc_writer.close
       puts "#{Time.now}: Reindexing changed features..."
       STDOUT.flush
       feature_ids_with_changes.each_index do |i|
