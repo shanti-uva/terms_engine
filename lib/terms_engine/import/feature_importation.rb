@@ -117,6 +117,7 @@ module TermsEngine
       feature_ids_with_changes.each_index do |i|
         id = feature_ids_with_changes[i]
         feature = Feature.find(id)
+        feature.skip_update = false
         feature.queued_index
         self.progress_bar(num: i, total: feature_ids_with_changes.size, current: feature.pid)
         self.log.debug "#{Time.now}: Reindexed feature #{feature.fid}."
