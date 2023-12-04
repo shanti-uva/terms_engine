@@ -81,7 +81,7 @@ module TermsEngine
               process_definitions(87)
               process_translations(64)
               feature_ids_with_changes += process_feature_relations(10)
-              self.progress_bar(num: current, total: total, current: self.feature.pid)
+              self.progress_bar(num: i, total: total, current: self.feature.pid)
               if self.fields.empty?
                 self.log.debug { "#{Time.now}: #{self.feature.pid} processed." }
               else
