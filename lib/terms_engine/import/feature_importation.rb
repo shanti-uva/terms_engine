@@ -80,7 +80,7 @@ module TermsEngine
               self.process_kmaps(5)
               process_definitions(87)
               process_translations(64)
-              feature_ids_with_changes += process_feature_relations(10)
+              feature_ids_with_changes.concat(process_feature_relations(10))
               self.progress_bar(num: i, total: total, current: self.feature.pid)
               if self.fields.empty?
                 self.log.debug { "#{Time.now}: #{self.feature.pid} processed." }
@@ -107,6 +107,7 @@ module TermsEngine
         ipc_hash = Marshal.load(data)
         feature_ids_with_changes = ipc_hash[:changes]
         feature_ids_with_changes_accumulated.concat(feature_ids_with_changes)
+        feature_ids_with_changes_accumulated.uniq!
         self.update_progress_bar(bar: ipc_hash[:bar], num_errors: ipc_hash[:num_errors], valid_point: ipc_hash[:valid_point])
         self.last_parent = Feature.get_by_fid(ipc_hash[:last_parent_fid]) if !ipc_hash[:last_parent_fid].nil?
         current = limit
@@ -114,12 +115,13 @@ module TermsEngine
       ipc_writer.close
       puts "#{Time.now}: Reindexing changed features..."
       STDOUT.flush
-      feature_ids_with_changes.each_index do |i|
-        id = feature_ids_with_changes[i]
+      feature_ids_with_changes_accumulated.sort!
+      feature_ids_with_changes_accumulated.each_index do |i|
+        id = feature_ids_with_changes_accumulated[i]
         feature = Feature.find(id)
         feature.skip_update = false
         feature.queued_index
-        self.progress_bar(num: i, total: feature_ids_with_changes.size, current: feature.pid)
+        self.progress_bar(num: i, total: feature_ids_with_changes_accumulated.size, current: feature.pid)
         self.log.debug "#{Time.now}: Reindexed feature #{feature.fid}."
       end
       reposition_parent if !self.last_parent.nil?
@@ -376,19 +378,18 @@ module TermsEngine
         next if kmap_str.blank?
         kmap = SubjectsIntegration::Feature.find(kmap_str.scan(/\d+/).first.to_i)
         if kmap.nil?
-          self.say "Could find kmap #{kmap_str} for feature #{self.feature.pid}."
+          self.say "Could find kmap #{kmap_str} for term #{self.feature.pid}."
           next
         end
-        values = { subject_id: kmap.id, branch_id: kmap.parents.first.id }
-        # avoid checking first
-        # subject_term_association = subject_term_associations.find_by(conditions)
-        #if subject_term_association.nil?
-        subject_term_association = subject_term_associations.create(values)
-        #else
-          #subject_term_association.update(values)
-        #end
+        conditions = { subject_id: kmap.id, branch_id: kmap.parents.first.id }
+        subject_term_association = subject_term_associations.find_by(conditions)
+        next if !subject_term_association.nil?
+        subject_term_association = subject_term_associations.create(conditions)
+        if subject_term_association.nil?
+          self.say "Could create the association between subject kmap #{kmap_str} and term #{self.feature.pid}."
+          next
+        end
         self.spreadsheet.imports.create(item: subject_term_association) if subject_term_association.imports.find_by(spreadsheet_id: self.spreadsheet.id).nil?
-        next if subject_term_association.nil?
         0.upto(3) do |j|
           prefix = j==0 ? kmap_prefix : "#{kmap_prefix}.#{j}"
           self.add_date(prefix, subject_term_association)

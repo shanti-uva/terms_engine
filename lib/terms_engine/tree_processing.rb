@@ -2,8 +2,10 @@ module TermsEngine
   class TreeProcessing
     def initialize
       @tib_alpha = Perspective.get_by_code('tib.alpha')
+      @new_alpha = Perspective.get_by_code('new.alpha')
       @relation_type = FeatureRelationType.get_by_code('heads')
       @view = View.get_by_code('pri.orig.sec.roman')
+      @fixed_size = 100
     end
     
     def fix_expression(f)
@@ -50,6 +52,94 @@ module TermsEngine
         end
       end
       puts "#{k} terms fixed."
+    end
+    
+    def run_tibetan_tree_flattening_fixed
+      v = View.get_by_code('roman.scholar')
+      relation_type = @relation_type
+      Feature.current_roots_by_perspective(@tib_alpha).sort_by{|f| f.position}.each do |letter|
+        puts "#{Time.now}: Deleting names under letter #{letter.prioritized_name(v).name}..."
+        destroy_features(get_term_fids_under_letter_by_phoneme(letter.fid, Feature::BOD_NAME_SUBJECT_ID))
+        puts "#{Time.now}: Deleting phrases under letter #{letter.prioritized_name(v).name}..."
+        destroy_features(get_term_fids_under_letter_by_phoneme(letter.fid, Feature::BOD_PHRASE_SUBJECT_ID))
+        # there should not be children if index was correct
+        destroy_features(letter.children.order(:fid).collect(&:fid))
+        expressions = get_term_fids_under_letter_by_phoneme(letter.fid, Feature::BOD_EXPRESSION_SUBJECT_ID)
+        head = nil
+        sid = Spawnling.new do
+          begin
+            puts "#{Time.now}: Spawning sub-process #{Process.pid} for processing of expressions under letter #{letter.prioritized_name(v).name}..."
+            expressions.each_index do |i|
+              f = Feature.get_by_fid(expressions[i])
+              if i % @fixed_size == 0
+                head = f.clone_with_names
+                FeatureRelation.create!(child_node: head, parent_node: letter, perspective: @tib_alpha, feature_relation_type: relation_type)
+                head.subject_term_associations.create(subject_id: Feature::BOD_PHRASE_SUBJECT_ID, branch_id: Feature::BOD_PHONEME_SUBJECT_ID)
+                head.update(is_public: true, position: f.position)
+                puts "#{Time.now}: Created head #{head.prioritized_name(v).name} (#{head.fid}) under letter #{letter.prioritized_name(v).name}..."
+              end
+              FeatureRelation.create!(child_node: f, parent_node: head, perspective: @tib_alpha, feature_relation_type: relation_type)
+            end
+            puts "#{Time.now}: Finishing sub-process #{Process.pid}."
+          rescue Exception => e
+            STDERR.puts e.to_s
+          end
+        end
+        Spawnling.wait([sid])
+      end
+      Flare.commit
+    end
+
+    def run_newar_tree_flattening_fixed
+      v = View.get_by_code('roman.scholar')
+      relation_type = @relation_type
+      Feature.current_roots_by_perspective(@new_alpha).sort_by{|f| f.position}.each do |letter|
+        puts "#{Time.now}: Deleting intermediate level under letter #{letter.prioritized_name(v).name}..."
+        destroy_features(get_term_fids_under_letter_by_phoneme(letter.fid, Feature::NEW_PLACE_HOLDER_SUBJECT_ID))
+        expressions = get_term_fids_under_letter_by_phoneme(letter.fid, Feature::NEW_EXPRESSION_SUBJECT_ID)
+        head = nil
+        sid = Spawnling.new do
+          begin
+            puts "#{Time.now}: Spawning sub-process #{Process.pid} for processing of expressions under letter #{letter.prioritized_name(v).name}..."
+            expressions.each_index do |i|
+              f = Feature.get_by_fid(expressions[i])
+              if i % @fixed_size == 0
+                head = f.clone_with_names
+                FeatureRelation.create!(child_node: head, parent_node: letter, perspective: @new_alpha, feature_relation_type: relation_type)
+                head.subject_term_associations.create(subject_id: Feature::NEW_PLACE_HOLDER_SUBJECT_ID, branch_id: Feature::BOD_PHONEME_SUBJECT_ID)
+                head.update(is_public: true, position: f.position)
+                puts "#{Time.now}: Created head #{head.prioritized_name(v).name} (#{head.fid}) under letter #{letter.prioritized_name(v).name}..."
+              end
+              FeatureRelation.create!(child_node: f, parent_node: head, perspective: @new_alpha, feature_relation_type: relation_type)
+            end
+            puts "#{Time.now}: Finishing sub-process #{Process.pid}."
+          rescue Exception => e
+            STDERR.puts e.to_s
+          end
+        end
+        Spawnling.wait([sid])
+      end
+      Flare.commit
+    end
+    
+    private
+    
+    def get_term_fids_under_letter_by_phoneme(letter_fid, phoneme_sid)
+      query = "tree:terms AND ancestor_ids_tib.alpha:#{letter_fid} AND associated_subject_#{Feature::BOD_PHONEME_SUBJECT_ID}_ls:#{phoneme_sid}"
+      numFound = Feature.search_by(query)['numFound']
+      resp = Feature.search_by(query, fl: 'uid', rows: numFound, sort: 'position_i asc')['docs']
+      resp.collect{|f| f['uid'].split('-').last.to_i}
+    end
+    
+    def destroy_features(fids)
+      fids.each do |fid|
+        f = Feature.get_by_fid(fid)
+        if !f.nil?
+          f.remove!
+          f.destroy
+          puts "#{Time.now}: Deleted term #{fid}."
+        end
+      end
     end
   end
 end
