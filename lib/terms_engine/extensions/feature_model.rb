@@ -341,10 +341,17 @@ module TermsEngine
         elsif self.is_phoneme?(Feature::NEW_EXPRESSION_SUBJECT_ID)
           perspective = Perspective.get_by_code('new.alpha')
           type = FeatureRelationType.get_by_code('heads')
-          phrase = self.parent_relations.where(feature_relation_type: type, perspective: perspective).first.parent_node
-          type = FeatureRelationType.get_by_code('is.beginning.of')
-          letter = phrase.parent_relations.where(feature_relation_type: type, perspective: perspective).first.parent_node
-          doc[:cascading_position_i] = letter.position * 1000 * 1000 + phrase.position * 1000 + self.position
+          phrase_relation = self.parent_relations.where(feature_relation_type: type, perspective: perspective).first
+          if phrase_relation.nil?
+            type = FeatureRelationType.get_by_code('is.beginning.of')
+            letter = self.parent_relations.where(feature_relation_type: type, perspective: perspective).first.parent_node
+            doc[:cascading_position_i] = letter.position * 1000 + self.position
+          else
+            phrase = phrase_relation.parent_node
+            type = FeatureRelationType.get_by_code('is.beginning.of')
+            letter = phrase.parent_relations.where(feature_relation_type: type, perspective: perspective).first.parent_node
+            doc[:cascading_position_i] = letter.position * 1000 * 1000 + phrase.position * 1000 + self.position
+          end
         end
         subject_associations.each do |sa|
           branch_prefix = "#{prefix}_branch_#{sa.branch_id}"
