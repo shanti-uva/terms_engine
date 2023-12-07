@@ -100,9 +100,13 @@ module TermsEngine
             letter.skip_update = true
             puts "#{Time.now}: Deleting intermediate level under letter #{letter.prioritized_name(v).name}..."
             expression_fids = get_new_term_fids_under_letter_by_phoneme(letter.fid, Feature::NEW_EXPRESSION_SUBJECT_ID)
-            expressions = expression_fids.collect{ |id| Feature.get_by_fid(id) }
+            if expression_fids.blank?
+              expressions = letter.children.order(:position)
+            else
+              expressions = expression_fids.collect{ |id| Feature.get_by_fid(id) }
+              destroy_features(get_new_term_fids_under_letter_by_phoneme(letter.fid, Feature::NEW_PLACE_HOLDER_SUBJECT_ID))
+            end
             expressions.each{ |f| f.skip_update = true }
-            destroy_features(get_new_term_fids_under_letter_by_phoneme(letter.fid, Feature::NEW_PLACE_HOLDER_SUBJECT_ID))
             head = nil
             puts "#{Time.now}: Spawning sub-process #{Process.pid} for processing of expressions under letter #{letter.prioritized_name(v).name}..."
             expressions.each_index do |i|
