@@ -22,8 +22,8 @@ en:
                 one: 'etymology subject association'
                 other: 'etymology subject associations'
             feature:
-                one: 'term'
-                other: 'terms'
+                one: 'term spelling'
+                other: 'term spellings'
             feature_geo_code:
                 one: 'term code'
                 other: 'term codes'
