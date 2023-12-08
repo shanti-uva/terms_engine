@@ -109,8 +109,9 @@ module TermsEngine
             expressions.each{ |f| f.skip_update = true }
             head = nil
             puts "#{Time.now}: Spawning sub-process #{Process.pid} for processing of expressions under letter #{letter.prioritized_name(v).name}..."
-            expressions.each_index do |i|
-              f = expressions[i]
+            i = 0
+            expressions.each do |f|
+              # f = expressions[i]
               if i % @fixed_size == 0
                 if !head.nil?
                   head.skip_update = false
@@ -126,6 +127,7 @@ module TermsEngine
               letter_relation.skip_update = true
               letter_relation.destroy if !letter_relation.nil?
               FeatureRelation.create!(child_node: f, parent_node: head, perspective: @new_alpha, feature_relation_type: heads_type)
+              i += 1
             end
             letter.skip_update = false
             letter.queued_index(priority: 1)
