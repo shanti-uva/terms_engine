@@ -3,7 +3,7 @@
 <% else %>
 <%     if @locating_relation %>
           <div class="left highlight">
-            <%= link_to ts('definition.association_link'), locate_for_relation_admin_feature_path(object.feature.fid) %>.
+<%=         link_to ts('definition.association_link'), locate_for_relation_admin_feature_path(object.feature.fid) %>.
           </div>
 <%     end %>
    <table class="listGrid">
@@ -11,13 +11,13 @@
        <th class="listActionsCol"></th>
        <th><%= Language.model_name.human.titleize.s %></th>
        <th><%= Definition.model_name.human.titleize.s %></th>
-       <th><%= Citation.model_name.human.titleize.s %></th>
+       <th><%= Citation.model_name.human(count: :many).titleize.s %></th>
      </tr>
 <%   list.each do |item| %>
      <tr>
        <td class="centerText">
 <%     if @locating_relation %>
-<%=      form_tag new_admin_definition_definition_relation_path(object), {:method=>:get} %>
+<%=      form_tag new_admin_definition_definition_relation_path(object), {method: :get} %>
 <%=      hidden_field_tag :target_id, item.id %>
 <%=      globalized_submit_tag 'select.this' %>
          </form>
