@@ -120,13 +120,15 @@ module TermsEngine
                 head = f.clone_with_names
                 head.update(is_public: true, position: f.position, skip_update: true)
                 FeatureRelation.create!(child_node: head, parent_node: letter, perspective: @new_alpha, feature_relation_type: starts_type)
-                head.subject_term_associations.create(subject_id: Feature::NEW_PLACE_HOLDER_SUBJECT_ID, branch_id: Feature::BOD_PHONEME_SUBJECT_ID)
+                head.subject_term_associations.create(subject_id: Feature::NEW_PLACE_HOLDER_SUBJECT_ID, branch_id: Feature::NEW_PHONEME_SUBJECT_ID)
                 puts "#{Time.now}: Created head #{head.prioritized_name(v).name} (#{head.fid}) under letter #{letter.prioritized_name(v).name}..."
               end
               letter_relation = FeatureRelation.where(parent_node: letter, child_node: f).first
               letter_relation.skip_update = true
               letter_relation.destroy if !letter_relation.nil?
               FeatureRelation.create!(child_node: f, parent_node: head, perspective: @new_alpha, feature_relation_type: heads_type)
+              f.skip_update = false
+              f.queued_index(priority: 3)
               i += 1
             end
             letter.skip_update = false
