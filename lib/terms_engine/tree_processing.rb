@@ -90,11 +90,15 @@ module TermsEngine
       Flare.commit
     end
 
-    def run_newar_tree_flattening_fixed
+    def run_newar_tree_flattening_fixed(**options)
       v = View.get_by_code('roman.scholar')
       heads_type = @relation_type
       starts_type = FeatureRelationType.get_by_code('is.beginning.of')
-      Feature.current_roots_by_perspective(@new_alpha).sort_by{|f| f.position}.each do |letter|
+      letters = Feature.current_roots_by_perspective(@new_alpha)
+      letters.select!{|f| f.fid >= options[:from].to_i} if !options[:from].nil?
+      letters.select!{|f| f.fid <= options[:to].to_i} if !options[:to].nil?
+      puts "#{Time.now}: Starting the processing of #{letters.size} letters..."
+      letters.sort_by{|f| f.position}.each do |letter|
         sid = Spawnling.new do
           begin
             puts "#{Time.now}: Spawning sub-process #{Process.pid} for processing of expressions under letter #{letter.prioritized_name(v).name}..."
