@@ -97,6 +97,7 @@ module TermsEngine
       Feature.current_roots_by_perspective(@new_alpha).sort_by{|f| f.position}.each do |letter|
         sid = Spawnling.new do
           begin
+            puts "#{Time.now}: Spawning sub-process #{Process.pid} for processing of expressions under letter #{letter.prioritized_name(v).name}..."
             letter.skip_update = true
             puts "#{Time.now}: Deleting intermediate level under letter #{letter.prioritized_name(v).name}..."
             expression_fids = get_new_term_fids_under_letter_by_phoneme(letter.fid, Feature::NEW_EXPRESSION_SUBJECT_ID)
@@ -106,12 +107,11 @@ module TermsEngine
               expressions = expression_fids.collect{ |id| Feature.get_by_fid(id) }
               destroy_features(get_new_term_fids_under_letter_by_phoneme(letter.fid, Feature::NEW_PLACE_HOLDER_SUBJECT_ID))
             end
-            expressions.each{ |f| f.skip_update = true }
             head = nil
-            puts "#{Time.now}: Spawning sub-process #{Process.pid} for processing of expressions under letter #{letter.prioritized_name(v).name}..."
             i = 0
             expressions.each do |f|
               # f = expressions[i]
+              f.skip_update = true
               if i % @fixed_size == 0
                 if !head.nil?
                   head.skip_update = false
@@ -119,14 +119,14 @@ module TermsEngine
                 end
                 head = f.clone_with_names
                 head.update(is_public: true, position: f.position, skip_update: true)
-                FeatureRelation.create!(child_node: head, parent_node: letter, perspective: @new_alpha, feature_relation_type: starts_type)
+                FeatureRelation.create(child_node: head, parent_node: letter, perspective: @new_alpha, feature_relation_type: starts_type)
                 head.subject_term_associations.create(subject_id: Feature::NEW_PLACE_HOLDER_SUBJECT_ID, branch_id: Feature::NEW_PHONEME_SUBJECT_ID)
                 puts "#{Time.now}: Created head #{head.prioritized_name(v).name} (#{head.fid}) under letter #{letter.prioritized_name(v).name}..."
               end
               letter_relation = FeatureRelation.where(parent_node: letter, child_node: f).first
               letter_relation.skip_update = true
               letter_relation.destroy if !letter_relation.nil?
-              FeatureRelation.create!(child_node: f, parent_node: head, perspective: @new_alpha, feature_relation_type: heads_type)
+              FeatureRelation.create(child_node: f, parent_node: head, perspective: @new_alpha, feature_relation_type: heads_type)
               f.skip_update = false
               f.queued_index(priority: 3)
               i += 1
@@ -138,6 +138,7 @@ module TermsEngine
             STDERR.puts e.to_s
           end
         end
+        GC.start
         Spawnling.wait([sid])
       end
       puts "#{Time.now}: Finished tree generation."
