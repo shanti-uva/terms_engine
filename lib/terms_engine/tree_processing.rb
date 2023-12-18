@@ -59,18 +59,17 @@ module TermsEngine
       relation_type = @relation_type
       Feature.current_roots_by_perspective(@tib_alpha).sort_by{|f| f.position}.each do |letter|
         puts "#{Time.now}: Deleting names under letter #{letter.prioritized_name(v).name}..."
-        destroy_features(get_tib_term_fids_under_letter_by_phoneme(letter.fid, Feature::BOD_NAME_SUBJECT_ID))
+        destroy_features(get_tib_terms_under_letter_by_phoneme(letter, Feature::BOD_NAME_SUBJECT_ID))
         puts "#{Time.now}: Deleting phrases under letter #{letter.prioritized_name(v).name}..."
-        destroy_features(get_tib_term_fids_under_letter_by_phoneme(letter.fid, Feature::BOD_PHRASE_SUBJECT_ID))
+        destroy_features(get_tib_terms_under_letter_by_phoneme(letter, Feature::BOD_PHRASE_SUBJECT_ID))
         # there should not be children if index was correct
         destroy_features(letter.children.order(:fid).collect(&:fid))
-        expressions = get_tib_term_fids_under_letter_by_phoneme(letter.fid, Feature::BOD_EXPRESSION_SUBJECT_ID)
+        expressions = get_tib_terms_under_letter_by_phoneme(letter, Feature::BOD_EXPRESSION_SUBJECT_ID)
         head = nil
         sid = Spawnling.new do
           begin
             puts "#{Time.now}: Spawning sub-process #{Process.pid} for processing of expressions under letter #{letter.prioritized_name(v).name}..."
-            expressions.each_index do |i|
-              f = Feature.get_by_fid(expressions[i])
+            expressions.each_index do |f|
               if i % @fixed_size == 0
                 head = f.clone_with_names
                 FeatureRelation.create!(child_node: head, parent_node: letter, perspective: @tib_alpha, feature_relation_type: relation_type)
@@ -103,14 +102,9 @@ module TermsEngine
           begin
             puts "#{Time.now}: Spawning sub-process #{Process.pid} for processing of expressions under letter #{letter.prioritized_name(v).name}..."
             letter.skip_update = true
+            expressions = get_new_terms_under_letter_by_phoneme(letter, Feature::NEW_EXPRESSION_SUBJECT_ID)
             puts "#{Time.now}: Deleting intermediate level under letter #{letter.prioritized_name(v).name}..."
-            expression_fids = get_new_term_fids_under_letter_by_phoneme(letter.fid, Feature::NEW_EXPRESSION_SUBJECT_ID)
-            if expression_fids.blank?
-              expressions = letter.children.order(:position)
-            else
-              expressions = expression_fids.collect{ |id| Feature.get_by_fid(id) }
-              destroy_features(get_new_term_fids_under_letter_by_phoneme(letter.fid, Feature::NEW_PLACE_HOLDER_SUBJECT_ID))
-            end
+            destroy_features(get_new_terms_under_letter_by_phoneme(letter, Feature::NEW_PLACE_HOLDER_SUBJECT_ID))
             head = nil
             i = 0
             expressions.each do |f|
@@ -142,7 +136,6 @@ module TermsEngine
             STDERR.puts e.to_s
           end
         end
-        GC.start
         Spawnling.wait([sid])
       end
       puts "#{Time.now}: Finished tree generation."
@@ -150,28 +143,29 @@ module TermsEngine
     
     private
     
-    def get_tib_term_fids_under_letter_by_phoneme(letter_fid, phoneme_sid)
-      query = "tree:terms AND ancestor_ids_tib.alpha:#{letter_fid} AND associated_subject_#{Feature::BOD_PHONEME_SUBJECT_ID}_ls:#{phoneme_sid}"
-      numFound = Feature.search_by(query)['numFound']
-      resp = Feature.search_by(query, fl: 'uid', rows: numFound, sort: 'position_i asc')['docs']
-      resp.collect{|f| f['uid'].split('-').last.to_i}
+    def get_tib_terms_under_letter_by_phoneme(letter, phoneme_sid)
+      letter.children.includes(:phoneme_term_associations).where('subject_term_associations.branch_id' => Feature::BOD_PHONEME_SUBJECT_ID, 'subject_term_associations.subject_id' => phoneme_sid).order(:position)
+      #letter_fid = letter.fid
+      #query = "tree:terms AND ancestor_ids_tib.alpha:#{letter_fid} AND associated_subject_#{Feature::BOD_PHONEME_SUBJECT_ID}_ls:#{phoneme_sid}"
+      #numFound = Feature.search_by(query)['numFound']
+      #resp = Feature.search_by(query, fl: 'uid', rows: numFound, sort: 'position_i asc')['docs']
+      #resp.collect{|f| f['uid'].split('-').last.to_i}
     end
     
-    def get_new_term_fids_under_letter_by_phoneme(letter_fid, phoneme_sid)
-      query = "tree:terms AND ancestor_ids_new.alpha:#{letter_fid} AND associated_subject_#{Feature::NEW_PHONEME_SUBJECT_ID}_ls:#{phoneme_sid}"
-      numFound = Feature.search_by(query)['numFound']
-      resp = Feature.search_by(query, fl: 'uid', rows: numFound, sort: 'position_i asc')['docs']
-      resp.collect{|f| f['uid'].split('-').last.to_i}
+    def get_new_terms_under_letter_by_phoneme(letter, phoneme_sid)
+      letter.children.includes(:phoneme_term_associations).where('subject_term_associations.branch_id' => Feature::NEW_PHONEME_SUBJECT_ID, 'subject_term_associations.subject_id' => phoneme_sid).order(:position)
+      #letter_fid = letter.fid
+      #query = "tree:terms AND ancestor_ids_new.alpha:#{letter_fid} AND associated_subject_#{Feature::NEW_PHONEME_SUBJECT_ID}_ls:#{phoneme_sid}"
+      #numFound = Feature.search_by(query)['numFound']
+      #resp = Feature.search_by(query, fl: 'uid', rows: numFound, sort: 'position_i asc')['docs']
+      #resp.collect{|f| f['uid'].split('-').last.to_i}
     end
     
-    def destroy_features(fids)
-      fids.each do |fid|
-        f = Feature.get_by_fid(fid)
-        if !f.nil?
-          f.remove!
-          f.destroy
-          puts "#{Time.now}: Deleted term #{fid}."
-        end
+    def destroy_features(terms)
+      terms.each do |f|
+        f.remove!
+        f.destroy
+        puts "#{Time.now}: Deleted term #{fid}."
       end
     end
   end
