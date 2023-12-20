@@ -24,9 +24,15 @@ zh:
             feature:
                 one: 'term'
                 other: 'terms'
+            feature_name:
+                one: 'representation'
+                other: 'representations'
             feature_geo_code:
                 one: 'term code'
                 other: 'term codes'
+            feature_name:
+                one: 'representation'
+                other: 'representations'
             feature_name_relation:
                 one: 'term name relation'
                 other: 'term name relations'

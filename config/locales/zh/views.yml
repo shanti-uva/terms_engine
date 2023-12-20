@@ -47,6 +47,8 @@ zh:
             help_text: 'The origin of the term.'
         feature_geo_code:
             help_text: 'Term codes are identifiers for the term as found in external print or digital publications. For example, the Wikidata entity ID. Contact THL if you want to add a new type of term code to the options.'
+        feature_name:
+            accordion_title: 'Transcriptions and Transliterations'
         illustration:
             help_text: "Featured images appear on the main overview page for the term. Add image files to Mandala Images first. For help, please see <a href=\"%{link}\" target=\"blank\">%{link_label}</a>."
         recording:
