@@ -50,7 +50,7 @@ en:
         feature_name:
             accordion_title: 'Transcriptions and Transliterations'
         illustration:
-            help_text: "Featured images appear on the main overview page for the term. Add image files to Mandala Images first. For help, please see <a href=\"%{link}\" target=\"blank\">%{link_label}</a>."
+            help_text: "Featured images appear on the main overview page for the term. Add image files to Mandala Images first. For help, please see %{link}."
         recording:
             help_text: 'Recordings let you add audio files of your term being spoken. Accepted files formats: mp3'
         summary:

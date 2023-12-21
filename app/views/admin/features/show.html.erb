@@ -100,7 +100,7 @@
       </div>
       <div id="collapseSix" class="panel-collapse collapse">
         <div class="panel-body">
-          <p><%=  ts 'accordion.illustration.help_text', link: "https://confluence.its.virginia.edu/display/KB/Create+Images", link_label: "this guide" %></p>
+          <p><%=  ts 'accordion.illustration.help_text', link: "<a href=\"https://confluence.its.virginia.edu/display/KB/Create+Images\">https://confluence.its.virginia.edu/display/KB/Create+Images</a>" %></p>
 <%=       highlighted_new_item_link [object, :illustration] %>
           <br class="clear"/>
 <%=       render partial: 'admin/illustrations/list', locals: { list: object.illustrations } %>
