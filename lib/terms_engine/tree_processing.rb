@@ -69,7 +69,8 @@ module TermsEngine
         sid = Spawnling.new do
           begin
             puts "#{Time.now}: Spawning sub-process #{Process.pid} for processing of expressions under letter #{letter.prioritized_name(v).name}..."
-            expressions.each_index do |f|
+            i = 0
+            expressions.each do |f|
               if i % @fixed_size == 0
                 head = f.clone_with_names
                 FeatureRelation.create!(child_node: head, parent_node: letter, perspective: @tib_alpha, feature_relation_type: relation_type)
@@ -78,6 +79,7 @@ module TermsEngine
                 puts "#{Time.now}: Created head #{head.prioritized_name(v).name} (#{head.fid}) under letter #{letter.prioritized_name(v).name}..."
               end
               FeatureRelation.create!(child_node: f, parent_node: head, perspective: @tib_alpha, feature_relation_type: relation_type)
+              i += 1
             end
             puts "#{Time.now}: Finishing sub-process #{Process.pid}."
           rescue Exception => e
@@ -98,45 +100,45 @@ module TermsEngine
       letters.select!{|f| f.fid <= options[:to].to_i} if !options[:to].nil?
       puts "#{Time.now}: Starting the processing of #{letters.size} letters..."
       letters.sort_by{|f| f.position}.each do |letter|
-        sid = Spawnling.new do
-          begin
-            puts "#{Time.now}: Spawning sub-process #{Process.pid} for processing of expressions under letter #{letter.prioritized_name(v).name}..."
-            letter.skip_update = true
-            expressions = get_new_terms_under_letter_by_phoneme(letter, Feature::NEW_EXPRESSION_SUBJECT_ID)
-            puts "#{Time.now}: Deleting intermediate level under letter #{letter.prioritized_name(v).name}..."
-            destroy_features(get_new_terms_under_letter_by_phoneme(letter, Feature::NEW_PLACE_HOLDER_SUBJECT_ID))
-            head = nil
-            i = 0
-            expressions.each do |f|
-              # f = expressions[i]
-              f.skip_update = true
-              if i % @fixed_size == 0
-                if !head.nil?
-                  head.skip_update = false
-                  head.queued_index(priority: 2)
-                end
-                head = f.clone_with_names
-                head.update(is_public: true, position: f.position, skip_update: true)
-                FeatureRelation.create(child_node: head, parent_node: letter, perspective: @new_alpha, feature_relation_type: starts_type)
-                head.subject_term_associations.create(subject_id: Feature::NEW_PLACE_HOLDER_SUBJECT_ID, branch_id: Feature::NEW_PHONEME_SUBJECT_ID)
-                puts "#{Time.now}: Created head #{head.prioritized_name(v).name} (#{head.fid}) under letter #{letter.prioritized_name(v).name}..."
+        letter.skip_update = true
+        expressions = get_new_terms_under_letter_by_phoneme(letter, Feature::NEW_EXPRESSION_SUBJECT_ID)
+        puts "#{Time.now}: Deleting intermediate level under letter #{letter.prioritized_name(v).name}..."
+        destroy_features(get_new_terms_under_letter_by_phoneme(letter, Feature::NEW_PLACE_HOLDER_SUBJECT_ID))
+        head = nil
+        i = 0
+        size = expressions.size
+        puts "#{Time.now}: Processing expressions under letter #{letter.prioritized_name(v).name}..."
+        while i<size
+          limit = i+@fixed_size
+          sid = Spawnling.new do
+            begin
+              expression_range = expressions[i...limit]
+              f = expression_range.first
+              head = f.clone_with_names
+              puts "#{Time.now}: Spawning sub-process #{Process.pid} for head #{head.prioritized_name(v).name} (#{head.fid})..."
+              head.update(is_public: true, position: f.position, skip_update: true)
+              FeatureRelation.create(child_node: head, parent_node: letter, perspective: @new_alpha, feature_relation_type: starts_type)
+              head.subject_term_associations.create(subject_id: Feature::NEW_PLACE_HOLDER_SUBJECT_ID, branch_id: Feature::NEW_PHONEME_SUBJECT_ID)
+              expression_range.each do |f|
+                letter_relation = FeatureRelation.where(parent_node: letter, child_node: f).first
+                letter_relation.skip_update = true
+                letter_relation.destroy if !letter_relation.nil?
+                FeatureRelation.create(child_node: f, parent_node: head, perspective: @new_alpha, feature_relation_type: heads_type)
+                f.skip_update = false
+                f.queued_index(priority: 3)
               end
-              letter_relation = FeatureRelation.where(parent_node: letter, child_node: f).first
-              letter_relation.skip_update = true
-              letter_relation.destroy if !letter_relation.nil?
-              FeatureRelation.create(child_node: f, parent_node: head, perspective: @new_alpha, feature_relation_type: heads_type)
-              f.skip_update = false
-              f.queued_index(priority: 3)
-              i += 1
+              head.skip_update = false
+              head.queued_index(priority: 2)
+              puts "#{Time.now}: Finishing sub-process #{Process.pid}."
+            rescue Exception => e
+              STDERR.puts e.to_s
             end
-            letter.skip_update = false
-            letter.queued_index(priority: 1)
-            puts "#{Time.now}: Finishing sub-process #{Process.pid}."
-          rescue Exception => e
-            STDERR.puts e.to_s
           end
+          Spawnling.wait([sid])
+          i = limit
         end
-        Spawnling.wait([sid])
+        letter.skip_update = false
+        letter.queued_index(priority: 1)
       end
       puts "#{Time.now}: Finished tree generation."
     end
@@ -144,7 +146,7 @@ module TermsEngine
     private
     
     def get_tib_terms_under_letter_by_phoneme(letter, phoneme_sid)
-      letter.children.includes(:phoneme_term_associations).where('subject_term_associations.branch_id' => Feature::BOD_PHONEME_SUBJECT_ID, 'subject_term_associations.subject_id' => phoneme_sid).order(:position)
+      letter.children.includes(:phoneme_term_associations).where('subject_term_associations.branch_id' => Feature::BOD_PHONEME_SUBJECT_ID, 'subject_term_associations.subject_id' => phoneme_sid).order(:position).to_a
       #letter_fid = letter.fid
       #query = "tree:terms AND ancestor_ids_tib.alpha:#{letter_fid} AND associated_subject_#{Feature::BOD_PHONEME_SUBJECT_ID}_ls:#{phoneme_sid}"
       #numFound = Feature.search_by(query)['numFound']
@@ -153,7 +155,7 @@ module TermsEngine
     end
     
     def get_new_terms_under_letter_by_phoneme(letter, phoneme_sid)
-      letter.children.includes(:phoneme_term_associations).where('subject_term_associations.branch_id' => Feature::NEW_PHONEME_SUBJECT_ID, 'subject_term_associations.subject_id' => phoneme_sid).order(:position)
+      letter.children.includes(:phoneme_term_associations).where('subject_term_associations.branch_id' => Feature::NEW_PHONEME_SUBJECT_ID, 'subject_term_associations.subject_id' => phoneme_sid).order(:position).to_a
       #letter_fid = letter.fid
       #query = "tree:terms AND ancestor_ids_new.alpha:#{letter_fid} AND associated_subject_#{Feature::NEW_PHONEME_SUBJECT_ID}_ls:#{phoneme_sid}"
       #numFound = Feature.search_by(query)['numFound']
