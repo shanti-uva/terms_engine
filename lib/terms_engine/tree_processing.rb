@@ -6,7 +6,6 @@ module TermsEngine
       @relation_type = FeatureRelationType.get_by_code('heads')
       @view = View.get_by_code('pri.orig.sec.roman')
       @fixed_size = 100
-      @spawn_size = 40
     end
     
     def fix_expression(f)
@@ -108,43 +107,35 @@ module TermsEngine
         head = nil
         i = 0
         size = expressions.size
-        puts "#{Time.now}: Processing heads under letter #{letter.prioritized_name(v).name}..."
+        puts "#{Time.now}: Processing expressions under letter #{letter.prioritized_name(v).name}..."
         while i<size
           limit = i+@fixed_size
-          head_children = expressions[i...limit]
-          f = head_children.first
-          head = f.clone_with_names
-          puts "#{Time.now}: Processing expressions under head #{head.prioritized_name(v).name} (#{head.fid})..."
-          head.update(is_public: true, position: f.position, skip_update: true)
-          FeatureRelation.create(child_node: head, parent_node: letter, perspective: @new_alpha, feature_relation_type: starts_type)
-          head.subject_term_associations.create(subject_id: Feature::NEW_PLACE_HOLDER_SUBJECT_ID, branch_id: Feature::NEW_PHONEME_SUBJECT_ID)
-          j = 0
-          head_size = head_children.size
-          while j<head_size
-            head_limit = j+@spawn_size
-            expression_range = head_children[j...head_limit]
-            sid = Spawnling.new do
+          pid = Process.fork do
+            Rails.application.reloader.wrap do
               begin
-                first = expression_range.first
-                puts "#{Time.now}: Spawning sub-process #{Process.pid} starting with expression #{first.prioritized_name(v).name} (#{first.fid})..."
-                expression_range.each do |f|
+                head_range = expressions[i...limit]
+                f = head_range.first
+                head = f.clone_with_names
+                puts "#{Time.now}: Spawning sub-process #{Process.pid} for head #{head.prioritized_name(v).name} (#{head.fid})..."
+                head.update(is_public: true, position: f.position, skip_update: true)
+                FeatureRelation.create(child_node: head, parent_node: letter, perspective: @new_alpha, feature_relation_type: starts_type)
+                head.subject_term_associations.create(subject_id: Feature::NEW_PLACE_HOLDER_SUBJECT_ID, branch_id: Feature::NEW_PHONEME_SUBJECT_ID)
+                head_range.each do |f|
                   letter_relation = FeatureRelation.where(parent_node: letter, child_node: f).first
-                  letter_relation.skip_update = true
-                  letter_relation.destroy if !letter_relation.nil?
+                  letter_relation.delete if !letter_relation.nil?
                   FeatureRelation.create(child_node: f, parent_node: head, perspective: @new_alpha, feature_relation_type: heads_type)
                   f.skip_update = false
                   f.queued_index(priority: 3)
                 end
+                head.skip_update = false
+                head.queued_index(priority: 2)
                 puts "#{Time.now}: Finishing sub-process #{Process.pid}."
               rescue Exception => e
                 STDERR.puts e.to_s
               end
             end
-            Spawnling.wait([sid])
-            j = head_limit
           end
-          head.skip_update = false
-          head.queued_index(priority: 2)
+          Process.wait(pid)
           i = limit
         end
         letter.skip_update = false
