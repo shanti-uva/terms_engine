@@ -60,7 +60,7 @@ module TermsEngine
       while current<total
         limit = current + interval
         limit = total if limit > total
-        sid = Spawnling.new do
+        sid = Spawnling.new(kill: true) do
           begin
             self.log.debug { "#{Time.now}: Spawning sub-process #{Process.pid}." }
             ipc_reader.close

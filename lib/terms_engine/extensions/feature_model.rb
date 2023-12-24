@@ -413,7 +413,7 @@ module TermsEngine
           limit = 100
           corrupted = []
           while i<n
-            sid = Spawnling.new do
+            sid = Spawnling.new(kill: true) do
               ipc_reader.close
               range = Feature.all.order(:fid).limit(limit).offset(i)
               new_corrupted = range.collect { |f| f.recordings.corrupted.collect{|r| r.id} }
