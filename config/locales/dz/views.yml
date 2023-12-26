@@ -40,3 +40,18 @@ dz:
                 drag_priority: 'Click a term type and drag to a new location to indicate the priority between the different term types. This priority sequencing of term types will be used to decide which term types to show on the navigational tree, and other contexts.'
         info_source_drag_priority: 'Click a dictionary row and drag to a new location to indicate the priority between the different dictionaries. This priority sequencing of dictionaries will be used to sort definitions.'
         search: 'Use the search field above to search for terms.'
+    accordion:
+        caption:
+            help_text: 'Captions describe the term in fewer than 140 characters, including spaces. They appear in term previews around Mandala.'
+        etymology:
+            help_text: 'The origin of the term.'
+        feature_geo_code:
+            help_text: 'Term codes are identifiers for the term as found in external print or digital publications. For example, the Wikidata entity ID. Contact THL if you want to add a new type of term code to the options.'
+        feature_name:
+            accordion_title: 'Transcriptions and Transliterations'
+        illustration:
+            help_text: "Featured images appear on the main overview page for the term. Add image files to Mandala Images first. For help, please see %{link}."
+        recording:
+            help_text: 'Recordings let you add audio files of your term being spoken. Accepted files formats: mp3'
+        summary:
+            help_text: 'Summaries describe the term in fewer than 750 characters, including spaces. They appear on the overview page for the term.'

@@ -49,7 +49,7 @@
 <% end %>
     <section class="panel panel-default">
       <div class="panel-heading">
-        <h6><a href="#collapseThree" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= FeatureName.model_name.human(count: :many).titleize.s %></a></h6>
+        <h6><a href="#collapseThree" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= ts 'accordion.feature_name.accordion_title' %></a></h6>
       </div>
       <div id="collapseThree" class="panel-collapse collapse">
         <div class="panel-body">
@@ -74,6 +74,7 @@
       </div>
       <div id="collapseFour" class="panel-collapse collapse">
         <div class="panel-body">
+          <p><%=  ts 'accordion.caption.help_text' %></p>
 <%=       highlighted_new_item_link [object, :caption] %>
           <br class="clear"/>
 <%=       render partial: 'admin/captions/list', locals: { list: object.captions } %>
@@ -86,6 +87,7 @@
       </div>
       <div id="collapseFive" class="panel-collapse collapse">
         <div class="panel-body">
+          <p><%=  ts 'accordion.summary.help_text' %></p>
 <%=       highlighted_new_item_link [object, :summary] %>
           <br class="clear"/>
 <%=       render partial: 'admin/summaries/list', locals: { list: object.summaries } %>
@@ -98,6 +100,7 @@
       </div>
       <div id="collapseSix" class="panel-collapse collapse">
         <div class="panel-body">
+          <p><%=  ts 'accordion.illustration.help_text', link: "<a href=\"https://confluence.its.virginia.edu/display/KB/Create+Images\">https://confluence.its.virginia.edu/display/KB/Create+Images</a>" %></p>
 <%=       highlighted_new_item_link [object, :illustration] %>
           <br class="clear"/>
 <%=       render partial: 'admin/illustrations/list', locals: { list: object.illustrations } %>
@@ -110,6 +113,7 @@
       </div>
       <div id="collapseSeven" class="panel-collapse collapse">
         <div class="panel-body">
+          <p><%=  ts 'accordion.feature_geo_code.help_text' %></p>
 <%=       highlighted_new_item_link [object, :feature_geo_code] %>
           <br class="clear"/>
 <%=       render partial: 'admin/feature_geo_codes/list', locals: { list: object.geo_codes } %>
@@ -198,6 +202,7 @@
       </div>
       <div id="collapseEleven" class="panel-collapse collapse">
         <div class="panel-body">
+          <p><%=  ts 'accordion.recording.help_text' %></p>
 <%=       highlighted_new_item_link [object, :recording] %>
           <br class="clear"/>
 <%=       render partial: 'admin/recordings/list', locals: { list: object.recordings } %>
@@ -225,6 +230,7 @@
       </div>
       <div id="collapseThirteen" class="panel-collapse collapse">
         <div class="panel-body">
+          <p><%=  ts 'accordion.etymology.help_text' %></p>
 <%=       highlighted_new_item_link [object, :etymology] %>
           <br>
           <br class="clear"/>

@@ -24,6 +24,9 @@ dz:
             feature:
                 one: 'term'
                 other: 'terms'
+            feature_name:
+                one: 'representation'
+                other: 'representations'
             feature_geo_code:
                 one: 'term code'
                 other: 'term codes'
