@@ -45,6 +45,9 @@ zh:
             geo_code_type:
                 one: 'term code type'
                 other: 'term code types'
+            illustration:
+                one: 'homepage image'
+                other: 'homepage images'
             info_source:
                 one: 'dictionary'
                 other: 'dictionaries'
