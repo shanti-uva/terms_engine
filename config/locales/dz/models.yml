@@ -28,8 +28,8 @@ dz:
                 one: 'representation'
                 other: 'representations'
             feature_geo_code:
-                one: 'term code'
-                other: 'term codes'
+                one: 'term id'
+                other: 'term ids'
             feature_name_relation:
                 one: 'term name relation'
                 other: 'term name relations'
