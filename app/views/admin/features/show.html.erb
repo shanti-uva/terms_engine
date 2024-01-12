@@ -140,7 +140,7 @@
         <div class="panel-body">
           <%=       highlighted_new_item_link [object, :subject_term_association], "New #{SubjectTermAssociation.model_name.human}" %>
           <br>
-          <h6>Create Specific Association:</h6>
+          <h6>Some common subject associations to start with:</h6>
 <%=       new_subject_term_associations_links object %>
           <br class="clear"/>
 <%=       render partial: 'admin/subject_term_associations/list', locals: { list: object.subject_term_associations } %>
