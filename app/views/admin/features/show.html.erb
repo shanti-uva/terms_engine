@@ -70,56 +70,34 @@
     </section>
     <section class="panel panel-default">
       <div class="panel-heading">
-        <h6><a href="#collapseFour" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= Caption.model_name.human(count: :many).titleize.s %></a></h6>
+        <h6><a href="#collapseThirteen" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= Etymology.model_name.human(count: :many).titleize.s %></a></h6>
       </div>
-      <div id="collapseFour" class="panel-collapse collapse">
+      <div id="collapseThirteen" class="panel-collapse collapse">
         <div class="panel-body">
-          <p><%=  ts 'accordion.caption.help_text' %></p>
-<%=       highlighted_new_item_link [object, :caption] %>
+          <p><%=  ts 'accordion.etymology.help_text' %></p>
+<%=       highlighted_new_item_link [object, :etymology] %>
+          <br>
           <br class="clear"/>
-<%=       render partial: 'admin/captions/list', locals: { list: object.captions } %>
+<%=       render partial: 'admin/etymologies/list', locals: { list: object.etymologies } %>
         </div> <!-- END panel-body -->
-      </div> <!-- END collapseFour -->
+      </div> <!-- END collapseTen -->
     </section>
-    <section class="panel panel-default">
+     <section class="panel panel-default">
       <div class="panel-heading">
-        <h6><a href="#collapseFive" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= Summary.model_name.human(count: :many).titleize.s %></a></h6>
+        <h6><a href="#collapseTen" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= Definition.model_name.human(count: :many).titleize.s %></a></h6>
       </div>
-      <div id="collapseFive" class="panel-collapse collapse">
+      <div id="collapseTen" class="panel-collapse collapse">
         <div class="panel-body">
-          <p><%=  ts 'accordion.summary.help_text' %></p>
-<%=       highlighted_new_item_link [object, :summary] %>
+<%=       highlighted_new_item_link [object, :definition] %>
           <br class="clear"/>
-<%=       render partial: 'admin/summaries/list', locals: { list: object.summaries } %>
+<%=       render partial: 'admin/definitions/list', locals: { list: object.definitions.standard_definitions } %>
+          <legend>
+            <br class="clear"/>Other Dictionaries
+          </legend>
+<%=       render partial: 'admin/definitions/list_legacy', locals: { list: object.definitions.legacy_definitions_by_info_source } %>
+<%=       association_note_list_fieldset(Description.name) %>
         </div> <!-- END panel-body -->
-      </div> <!-- END collapseFive -->
-    </section>
-    <section class="panel panel-default">
-      <div class="panel-heading">
-        <h6><a href="#collapseSix" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= Illustration.model_name.human(count: :many).titleize.s %></a></h6>
-      </div>
-      <div id="collapseSix" class="panel-collapse collapse">
-        <div class="panel-body">
-          <p><%=  ts 'accordion.illustration.help_text', link: "<a href=\"https://confluence.its.virginia.edu/display/KB/Create+Images\">https://confluence.its.virginia.edu/display/KB/Create+Images</a>" %></p>
-<%=       highlighted_new_item_link [object, :illustration], "New #{Illustration.model_name.human.s}" %>
-          <br class="clear"/>
-<%=       render partial: 'admin/illustrations/list', locals: { list: object.illustrations } %>
-        </div> <!-- END panel-body -->
-      </div> <!-- END collapseSix -->
-    </section>
-    <section class="panel panel-default">
-      <div class="panel-heading">
-        <h6><a href="#collapseSeven" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= FeatureGeoCode.model_name.human(count: :many).titleize.s %></a></h6>
-      </div>
-      <div id="collapseSeven" class="panel-collapse collapse">
-        <div class="panel-body">
-          <p><%=  ts 'accordion.feature_geo_code.help_text' %></p>
-<%=       highlighted_new_item_link [object, :feature_geo_code] %>
-          <br class="clear"/>
-<%=       render partial: 'admin/feature_geo_codes/list', locals: { list: object.geo_codes } %>
-<%=       association_note_list_fieldset(FeatureGeoCode.name) %>
-        </div> <!-- END panel-body -->
-      </div> <!-- END collapseSeven -->
+      </div> <!-- END collapseTen -->
     </section>
 <% if current_user.admin? || object.authorized_for_descendants?(current_user) %>
     <section class="panel panel-default">
@@ -156,61 +134,6 @@
 <% end %>
     <section class="panel panel-default">
       <div class="panel-heading">
-        <h6><a href="#collapseNine" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= Description.model_name.human(count: :many).titleize.s %></a></h6>
-      </div>
-      <div id="collapseNine" class="panel-collapse collapse">
-        <div class="panel-body">
-<%=       highlighted_new_item_link [object, :description] %>
-          <br class="clear"/>
-<%=       render partial: 'admin/descriptions/descriptions_list', locals: { list: object.descriptions.order('is_primary DESC, title') } %>
-<%=       association_note_list_fieldset(Description.name) %>
-        </div> <!-- END panel-body -->
-      </div> <!-- END collapseNine -->
-    </section>
-    <section class="panel panel-default">
-      <div class="panel-heading">
-        <h6><a href="#collapseTen" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= Definition.model_name.human(count: :many).titleize.s %></a></h6>
-      </div>
-      <div id="collapseTen" class="panel-collapse collapse">
-        <div class="panel-body">
-<%=       highlighted_new_item_link [object, :definition] %>
-          <br class="clear"/>
-<%=       render partial: 'admin/definitions/list', locals: { list: object.definitions.standard_definitions } %>
-          <legend>
-            <br class="clear"/>Other Dictionaries
-          </legend>
-<%=       render partial: 'admin/definitions/list_legacy', locals: { list: object.definitions.legacy_definitions_by_info_source } %>
-<%=       association_note_list_fieldset(Description.name) %>
-        </div> <!-- END panel-body -->
-      </div> <!-- END collapseTen -->
-    </section>
-    <section class="panel panel-default">
-      <div class="panel-heading">
-        <h6><a href="#collapsePassages" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= Passage.model_name.human(count: :many).titleize.s %></a></h6>
-      </div>
-      <div id="collapsePassages" class="panel-collapse collapse">
-        <div class="panel-body">
-<%=       highlighted_new_item_link [object, :passage] %>
-          <br class="clear"/>
-<%=       render partial: 'admin/passages/list', locals: { list: object.passages.order('id DESC') } %>
-        </div> <!-- END panel-body -->
-      </div> <!-- END collapseTen -->
-    </section>
-    <section class="panel panel-default">
-      <div class="panel-heading">
-        <h6><a href="#collapseEleven" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= Recording.model_name.human(count: :many).titleize.s %></a></h6>
-      </div>
-      <div id="collapseEleven" class="panel-collapse collapse">
-        <div class="panel-body">
-          <p><%=  ts 'accordion.recording.help_text' %></p>
-<%=       highlighted_new_item_link [object, :recording] %>
-          <br class="clear"/>
-<%=       render partial: 'admin/recordings/list', locals: { list: object.recordings } %>
-        </div> <!-- END panel-body -->
-      </div> <!-- END collapseTen -->
-    </section>
-    <section class="panel panel-default">
-      <div class="panel-heading">
         <h6><a href="#collapseTwelve" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= SubjectTermAssociation.model_name.human(count: :many).titleize.s %></a></h6>
       </div>
       <div id="collapseTwelve" class="panel-collapse collapse">
@@ -226,17 +149,97 @@
     </section>
     <section class="panel panel-default">
       <div class="panel-heading">
-        <h6><a href="#collapseThirteen" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= Etymology.model_name.human(count: :many).titleize.s %></a></h6>
+        <h6><a href="#collapseSeven" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= FeatureGeoCode.model_name.human(count: :many).titleize.s %></a></h6>
       </div>
-      <div id="collapseThirteen" class="panel-collapse collapse">
+      <div id="collapseSeven" class="panel-collapse collapse">
         <div class="panel-body">
-          <p><%=  ts 'accordion.etymology.help_text' %></p>
-<%=       highlighted_new_item_link [object, :etymology] %>
-          <br>
+          <p><%=  ts 'accordion.feature_geo_code.help_text' %></p>
+<%=       highlighted_new_item_link [object, :feature_geo_code] %>
           <br class="clear"/>
-<%=       render partial: 'admin/etymologies/list', locals: { list: object.etymologies } %>
+<%=       render partial: 'admin/feature_geo_codes/list', locals: { list: object.geo_codes } %>
+<%=       association_note_list_fieldset(FeatureGeoCode.name) %>
+        </div> <!-- END panel-body -->
+      </div> <!-- END collapseSeven -->
+    </section>
+    <section class="panel panel-default">
+      <div class="panel-heading">
+        <h6><a href="#collapsePassages" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= Passage.model_name.human(count: :many).titleize.s %></a></h6>
+      </div>
+      <div id="collapsePassages" class="panel-collapse collapse">
+        <div class="panel-body">
+<%=       highlighted_new_item_link [object, :passage] %>
+          <br class="clear"/>
+<%=       render partial: 'admin/passages/list', locals: { list: object.passages.order('id DESC') } %>
         </div> <!-- END panel-body -->
       </div> <!-- END collapseTen -->
     </section>
+    <section class="panel panel-default">
+      <div class="panel-heading">
+        <h6><a href="#collapseFour" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= Caption.model_name.human(count: :many).titleize.s %></a></h6>
+      </div>
+      <div id="collapseFour" class="panel-collapse collapse">
+        <div class="panel-body">
+          <p><%=  ts 'accordion.caption.help_text' %></p>
+<%=       highlighted_new_item_link [object, :caption] %>
+          <br class="clear"/>
+<%=       render partial: 'admin/captions/list', locals: { list: object.captions } %>
+        </div> <!-- END panel-body -->
+      </div> <!-- END collapseFour -->
+    </section>
+    <section class="panel panel-default">
+      <div class="panel-heading">
+        <h6><a href="#collapseFive" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= Summary.model_name.human(count: :many).titleize.s %></a></h6>
+      </div>
+      <div id="collapseFive" class="panel-collapse collapse">
+        <div class="panel-body">
+          <p><%=  ts 'accordion.summary.help_text' %></p>
+<%=       highlighted_new_item_link [object, :summary] %>
+          <br class="clear"/>
+<%=       render partial: 'admin/summaries/list', locals: { list: object.summaries } %>
+        </div> <!-- END panel-body -->
+      </div> <!-- END collapseFive -->
+    </section>
+    <section class="panel panel-default">
+      <div class="panel-heading">
+        <h6><a href="#collapseNine" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= Description.model_name.human(count: :many).titleize.s %></a></h6>
+      </div>
+      <div id="collapseNine" class="panel-collapse collapse">
+        <div class="panel-body">
+<%=       highlighted_new_item_link [object, :description] %>
+          <br class="clear"/>
+<%=       render partial: 'admin/descriptions/descriptions_list', locals: { list: object.descriptions.order('is_primary DESC, title') } %>
+<%=       association_note_list_fieldset(Description.name) %>
+        </div> <!-- END panel-body -->
+      </div> <!-- END collapseNine -->
+    </section>
+    <section class="panel panel-default">
+      <div class="panel-heading">
+        <h6><a href="#collapseSix" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= Illustration.model_name.human(count: :many).titleize.s %></a></h6>
+      </div>
+      <div id="collapseSix" class="panel-collapse collapse">
+        <div class="panel-body">
+          <p><%=  ts 'accordion.illustration.help_text', link: "<a href=\"https://confluence.its.virginia.edu/display/KB/Create+Images\">https://confluence.its.virginia.edu/display/KB/Create+Images</a>" %></p>
+<%=       highlighted_new_item_link [object, :illustration], "New #{Illustration.model_name.human.s}" %>
+          <br class="clear"/>
+<%=       render partial: 'admin/illustrations/list', locals: { list: object.illustrations } %>
+        </div> <!-- END panel-body -->
+      </div> <!-- END collapseSix -->
+    </section>
+
+    <section class="panel panel-default">
+      <div class="panel-heading">
+        <h6><a href="#collapseEleven" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= Recording.model_name.human(count: :many).titleize.s %></a></h6>
+      </div>
+      <div id="collapseEleven" class="panel-collapse collapse">
+        <div class="panel-body">
+          <p><%=  ts 'accordion.recording.help_text' %></p>
+<%=       highlighted_new_item_link [object, :recording] %>
+          <br class="clear"/>
+<%=       render partial: 'admin/recordings/list', locals: { list: object.recordings } %>
+        </div> <!-- END panel-body -->
+      </div> <!-- END collapseTen -->
+    </section>
+    
+    
   </div> <!-- END accordion -->
 </div> <!-- END featureShow -->
