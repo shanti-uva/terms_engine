@@ -134,11 +134,11 @@
 <% end %>
     <section class="panel panel-default">
       <div class="panel-heading">
-        <h6><a href="#collapseTwelve" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= SubjectTermAssociation.model_name.human(count: :many).titleize.s %></a></h6>
+        <h6><a href="#collapseTwelve" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= SubjectTermAssociation.model_name.human(count: :many).s %></a></h6>
       </div>
       <div id="collapseTwelve" class="panel-collapse collapse">
         <div class="panel-body">
-<%=       highlighted_new_item_link [object, :subject_term_association] %>
+          <%=       highlighted_new_item_link [object, :subject_term_association], "New #{SubjectTermAssociation.model_name.human}" %>
           <br>
           <h6>Create Specific Association:</h6>
 <%=       new_subject_term_associations_links object %>

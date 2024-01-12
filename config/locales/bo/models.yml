@@ -58,8 +58,8 @@ bo:
                 one: 'relation subject association'
                 other: 'relation subject associations'
             subject_term_association:
-                one: 'subject term association'
-                other: 'subject term associations'
+                one: 'term-subject association'
+                other: 'term-subject associations'
             view:
                 one: 'term script'
                 other: 'term scripts'
