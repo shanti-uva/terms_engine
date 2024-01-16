@@ -40,8 +40,8 @@ bo:
                 one: 'term relation type'
                 other: 'term relation types'
             geo_code_type:
-                one: 'term code type'
-                other: 'term code types'
+                one: 'term legacy id type'
+                other: 'term legacy id types'
             illustration:
                 one: 'homepage image'
                 other: 'homepage images'
