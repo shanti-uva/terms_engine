@@ -25,8 +25,8 @@ en:
                 one: 'term'
                 other: 'terms'
             feature_geo_code:
-                one: 'term id'
-                other: 'term ids'
+                one: 'term legacy id'
+                other: 'term legacy ids'
             feature_name:
                 one: 'representation'
                 other: 'representations'
