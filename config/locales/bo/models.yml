@@ -25,8 +25,8 @@ bo:
                 one: 'term'
                 other: 'terms'
             feature_geo_code:
-                one: 'term code'
-                other: 'term codes'
+                one: 'term legacy id'
+                other: 'term legacy ids'
             feature_name:
                 one: 'representation'
                 other: 'representations'
@@ -40,8 +40,11 @@ bo:
                 one: 'term relation type'
                 other: 'term relation types'
             geo_code_type:
-                one: 'term code type'
-                other: 'term code types'
+                one: 'term legacy id type'
+                other: 'term legacy id types'
+            illustration:
+                one: 'homepage image'
+                other: 'homepage images'
             info_source:
                 one: 'dictionary'
                 other: 'dictionaries'
@@ -55,8 +58,8 @@ bo:
                 one: 'relation subject association'
                 other: 'relation subject associations'
             subject_term_association:
-                one: 'subject term association'
-                other: 'subject term associations'
+                one: 'term-subject association'
+                other: 'term-subject associations'
             view:
                 one: 'term script'
                 other: 'term scripts'
