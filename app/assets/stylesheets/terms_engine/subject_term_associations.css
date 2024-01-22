@@ -3,6 +3,7 @@
 }
 .subject-term-associations-form-fields .row, .twitter-typeahead {
  margin: 0 0 0.2rem 1rem;
+ display: inline !important;
 }
 .subject-term-associations-form-fields .row {
   padding-top: 10px;
