@@ -96,5 +96,8 @@ dz:
                     other: 'Dialects'
             subject_term_association:
                 branch:
-                    one: 'Branch'
-                    other: 'Branches'
+                    one: 'root subject'
+                    other: 'root subjects'
+                subsidiary:
+                    one: 'subsidiary subject'
+                    other: 'subsidiary subjects'
