@@ -7,3 +7,6 @@
 .subject-term-associations-form-fields .row {
   padding-top: 10px;
 }
+ul.subject-term-associations-list li {
+  list-style: disc outside;
+}
