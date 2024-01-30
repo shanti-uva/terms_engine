@@ -11,7 +11,7 @@
   </div>
   <div class="panel-body">
       <%=  render partial: 'form_fields', locals: {form: form} %>
-      <%=  link_to ts('cancel.this'), admin_feature_path(object.feature) , class: 'btn btn-primary form-submit', id: 'edit-cancel' %> |
+      <%=  link_to ts('cancel.this'), admin_feature_path(object.feature)+'?section=subjectAssociations' , class: 'btn btn-primary form-submit', id: 'edit-cancel' %> |
       <%=  globalized_submit_tag 'creat.e.this', class: 'submit btn btn-primary form-submit' %>
   </div> <!-- END panel-body -->
  </section> <!-- END panel -->

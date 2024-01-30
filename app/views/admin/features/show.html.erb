@@ -3,7 +3,7 @@
   <h1><%= ts :for, what: t(:entry), whom: object.name %></h1>
 </div>
 <br class="clear"/>
-<div id="featureShow">
+<div id="featureShow" style="position:relative;">
   <div id="accordion" class="panel-group">
     <section class="panel panel-default">
       <div class="panel-heading">
@@ -245,3 +245,4 @@
     
   </div> <!-- END accordion -->
 </div> <!-- END featureShow -->
+<%= javascript_include_tag "terms_engine/features_admin.js" %>

@@ -11,3 +11,6 @@
 ul.subject-term-associations-list li {
   list-style: disc outside;
 }
+.subject-term-associations-form-fields p {
+  margin: 0.8rem;
+}

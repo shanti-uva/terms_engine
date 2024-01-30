@@ -16,8 +16,8 @@
     <%= form.label :branch_name, SubjectTermAssociation.human_attribute_name('branch').s %>
     <%= form.hidden_field :branch_id, id: :branch_id %>
     Search by name 
-    <%= text_field_tag :branch_name, :post, { placeholder: "Search by #{SubjectTermAssociation.model_name.human} name", value: object.branch.blank? ? '' : object.branch['header'] } %>
-    <a href="#" id="js-expand-branch-tree">Or click here to view root subject hierarchy</a>
+    <%= text_field_tag :branch_name, :post, { placeholder: "Search by #{SubjectTermAssociation.model_name.human} name", value: object.branch.blank? ? '' : object.branch['header'] } %><br/>
+    <p>If you want to view a different root subject, replace the text in the box above and search for it. Or, use the tree below to select the root subject.</p>
      <div id="branch_tree_container"></div>
   </div>
   <div class="row" id="subject_container">
@@ -25,7 +25,7 @@
     <%= form.hidden_field :subject_id, id: :subject_id %>
     Search by name 
     <%= text_field_tag :subject_name, :post, { placeholder: "Search by #{SubjectTermAssociation.human_attribute_name('subsidiary').s} name", value: object.subject.blank? ? '' : object.subject['header'] } %>
-    <a href="#" id="js-expand-subject-tree">Or click here to view subsidiary subject hierarchy</a>
+    <p>If you want to search for a specific subject node within the above ROOT SUBJECT and its descendants,  put the text in the box above and search for it.</p>
      <div id="subject_tree_container"></div>
   </div>
 </fieldset>

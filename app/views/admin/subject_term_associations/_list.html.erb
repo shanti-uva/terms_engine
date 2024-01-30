@@ -4,7 +4,7 @@
    <table class="listGrid">
      <tr>
        <th class="listActionsCol"></th>
-       <th><%= SubjectTermAssociation.human_attribute_name('branch').s %></th>
+       <th><%= SubjectTermAssociation.human_attribute_name('branch').titleize.s %></th>
        <th><%= SubjectsIntegration::Feature.human_name.titleize.s %></th>
      </tr>
 <%   list.each do |item| %>
