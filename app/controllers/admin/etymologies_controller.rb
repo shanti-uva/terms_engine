@@ -4,6 +4,9 @@ class Admin::EtymologiesController < AclController
 
   belongs_to :definition, :feature
 
+  create.wants.html { redirect_to admin_feature_path(object.feature_id, section: "etymologies") } 
+  update.wants.html { redirect_to admin_feature_path(object.feature_id, section: "etymologies") }
+
   new_action.before do
     object.build_etymology_type_association
   end

@@ -4,6 +4,9 @@ class Admin::RecordingsController < AclController
 
   belongs_to :feature
 
+  create.wants.html { redirect_to admin_feature_path(object.feature_id, section: "recordings") } 
+  update.wants.html { redirect_to admin_feature_path(object.feature_id, section: "recordings") }
+
   protected
 
   # Only allow a trusted parameter "white list" through.

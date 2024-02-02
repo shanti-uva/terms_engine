@@ -4,6 +4,9 @@ class Admin::PassagesController < AclController
 
   belongs_to :definition, :feature
 
+  create.wants.html { redirect_to admin_feature_path(object.feature_id, section: "passages") } 
+  update.wants.html { redirect_to admin_feature_path(object.feature_id, section: "passages") } 
+
   protected
 
   # Only allow a trusted parameter "white list" through.
