@@ -58,8 +58,8 @@ dz:
                 one: 'relation subject association'
                 other: 'relation subject associations'
             subject_term_association:
-                one: 'term-subject association'
-                other: 'term-subject associations'
+                one: 'related subject'
+                other: 'related subjects'
             view:
                 one: 'term script'
                 other: 'term scripts'
