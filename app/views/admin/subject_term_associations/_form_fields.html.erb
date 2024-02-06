@@ -14,22 +14,18 @@
   <legend><%= ts(:for, what: t('information.general'), whom: SubjectTermAssociation.model_name.human.titleize) %></legend>
   <div class="row">
     <%= form.label :branch_name, SubjectTermAssociation.human_attribute_name('branch').s %>
-    <br/>
-    <br/>
     <%= form.hidden_field :branch_id, id: :branch_id %>
-    <p>Search by name</p>
-    <%= text_field_tag :branch_name, :post, { placeholder: 'Search by branch name', value: object.branch.blank? ? '' : object.branch['header'] } %>
-    <a href="#" id="js-expand-branch-tree">Or click here to view branch hierarchy</a>
+    Search by name 
+    <%= text_field_tag :branch_name, :post, { placeholder: "Search by #{SubjectTermAssociation.model_name.human} name", value: object.branch.blank? ? '' : object.branch['header'] } %><br/>
+    <p>If you want to view a different root subject, replace the text in the box above and search for it. Or, use the tree below to select the root subject.</p>
      <div id="branch_tree_container"></div>
   </div>
   <div class="row" id="subject_container">
-    <%= form.label :subject_name, SubjectsIntegration::Feature.human_name(count: 1).titleize %>
-    <br/>
-    <br/>
+    <%= form.label :subject_name, SubjectTermAssociation.human_attribute_name('subsidiary').s %> 
     <%= form.hidden_field :subject_id, id: :subject_id %>
-    <p>Search by name</p>
-    <%= text_field_tag :subject_name, :post, { placeholder: 'Search by subject name', value: object.subject.blank? ? '' : object.subject['header'] } %>
-    <a href="#" id="js-expand-subject-tree">Or click here to view subject hierarchy</a>
+    Search by name 
+    <%= text_field_tag :subject_name, :post, { placeholder: "Search by #{SubjectTermAssociation.human_attribute_name('subsidiary').s} name", value: object.subject.blank? ? '' : object.subject['header'] } %>
+    <p>If you want to search for a specific subject node within the above ROOT SUBJECT and its descendants,  put the text in the box above and search for it.</p>
      <div id="subject_tree_container"></div>
   </div>
 </fieldset>

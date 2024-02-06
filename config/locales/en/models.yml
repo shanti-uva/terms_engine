@@ -61,8 +61,8 @@ en:
                 one: 'relation subject association'
                 other: 'relation subject associations'
             subject_term_association:
-                one: 'term-subject association'
-                other: 'term-subject associations'
+                one: 'related subject'
+                other: 'related subjects'
             view:
                 one: 'term script'
                 other: 'term scripts'
@@ -99,5 +99,8 @@ en:
                     other: 'Dialects'
             subject_term_association:
                 branch:
-                    one: 'Branch'
-                    other: 'Branches'
+                    one: 'root subject'
+                    other: 'root subjects'
+                subsidiary:
+                    one: 'subsidiary subject'
+                    other: 'subsidiary subjects'

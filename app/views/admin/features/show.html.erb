@@ -3,7 +3,7 @@
   <h1><%= ts :for, what: t(:entry), whom: object.name %></h1>
 </div>
 <br class="clear"/>
-<div id="featureShow">
+<div id="featureShow" style="position:relative;">
   <div id="accordion" class="panel-group">
     <section class="panel panel-default">
       <div class="panel-heading">
@@ -49,7 +49,7 @@
 <% end %>
     <section class="panel panel-default">
       <div class="panel-heading">
-        <h6><a href="#collapseThree" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= ts 'accordion.feature_name.accordion_title' %></a></h6>
+        <h6><a href="#collapseThree" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= ts FeatureName.model_name.human(count: :many).titleize.s %></a></h6>
       </div>
       <div id="collapseThree" class="panel-collapse collapse">
         <div class="panel-body">
@@ -141,7 +141,9 @@
           <%=       highlighted_new_item_link [object, :subject_term_association], "New #{SubjectTermAssociation.model_name.human}" %>
           <br>
           <h6>Some common subject associations to start with:</h6>
+          <ul class="subject-term-associations-list">
 <%=       new_subject_term_associations_links object %>
+          </ul>
           <br class="clear"/>
 <%=       render partial: 'admin/subject_term_associations/list', locals: { list: object.subject_term_associations } %>
         </div> <!-- END panel-body -->
@@ -243,3 +245,4 @@
     
   </div> <!-- END accordion -->
 </div> <!-- END featureShow -->
+<%= javascript_include_tag "terms_engine/features_admin_accordion.js" %>

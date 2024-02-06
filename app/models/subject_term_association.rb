@@ -22,6 +22,9 @@ class SubjectTermAssociation < ApplicationRecord
   
   belongs_to :feature, touch: true
   has_many :imports, :as => 'item', :dependent => :destroy
+
+  LANGUAGE_DETAIL_SUBJECTS = [184, 185, 301, 186, 5809, 187, 10358, 190, 286, 119]
+  EXTRA_HIDDEN_SUBJECS     = [638, 9310, 9666, 10522]
   
   def subject
     SubjectsIntegration::Feature.search(self.subject_id)

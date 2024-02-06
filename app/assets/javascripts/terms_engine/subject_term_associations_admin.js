@@ -126,5 +126,7 @@ $(document).ready(function() {
     }
     $("#subject_tree_container").toggle();
   });
-
+  // instead of having the toggle, we're just going to show these fancy lists onload. MANU-7840
+  $("#branch_tree_container").show();
+  $("#subject_tree_container").show();
 });

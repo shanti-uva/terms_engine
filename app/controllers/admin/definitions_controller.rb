@@ -4,6 +4,9 @@ class Admin::DefinitionsController < AclController
 
   belongs_to :feature
   before_action :collection, :only=>:locate_for_relation
+
+  create.wants.html { redirect_to admin_feature_path(object.feature_id, section: "definitions") } 
+  update.wants.html { redirect_to admin_feature_path(object.feature_id, section: "definitions") }
   
   new_action.before do
     @languages = Language.order('name')
