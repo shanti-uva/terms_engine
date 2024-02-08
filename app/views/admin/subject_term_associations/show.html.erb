@@ -1,5 +1,5 @@
 <% add_breadcrumb_item feature_link(object.feature)
-   add_breadcrumb_item link_to ts(SubjectTermAssociation.model_name.human(count: :many).titleize.s), admin_feature_subject_term_associations_path
+   add_breadcrumb_item link_to SubjectTermAssociation.model_name.human(count: :many).titleize.s, admin_feature_subject_term_associations_path
    add_breadcrumb_item object.id %>
  <section class="panel panel-content">
    <div class="panel-heading">
