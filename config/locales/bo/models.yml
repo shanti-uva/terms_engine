@@ -31,8 +31,8 @@ bo:
                 one: 'representation'
                 other: 'representations'
             feature_name_relation:
-                one: 'term name relation'
-                other: 'term name relations'
+                one: 'term representation relation'
+                other: 'term representation relations'
             feature_relation:
                 one: 'term relation'
                 other: 'term relations'
