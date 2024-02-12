@@ -8,6 +8,7 @@ module TermsEngine
       begin
         CSV.foreach(filename, headers: true, col_sep: "\t") do |row|
           self.fields = row.to_hash.delete_if{ |key, value| value.blank? }
+          self.feature = nil
           self.infer_feature
           if self.feature.nil?
             puts ''

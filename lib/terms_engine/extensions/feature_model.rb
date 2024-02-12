@@ -450,9 +450,10 @@ module TermsEngine
         end
 
         def search_by_phoneme(name, phoneme_id)
-          names = FeatureName.where(name: name).includes(feature: :subject_term_associations)
-          name_position = names.find_index{ |n| n.feature.subject_term_associations.collect(&:subject_id).include? phoneme_id }
-          name_position.nil? ? nil : names[name_position].feature
+          name = FeatureName.includes(feature: :subject_term_associations).where(name: name, 'subject_term_associations.subject_id' => Feature::BOD_EXPRESSION_SUBJECT_ID).first
+          name.nil? ? nil : name.feature
+          #name_position = names.find_index{ |n| n.feature.subject_term_associations.collect(&:subject_id).include? phoneme_id }
+          #name_position.nil? ? nil : names[name_position].feature
         end
 
         def search_by_eng_phoneme(name, phoneme_id)
@@ -473,8 +474,27 @@ module TermsEngine
           Feature.search_by_excluding_phoneme(name, ENG_PHONEME_SUBJECT_ID, ENG_LETTER_SUBJECT_ID)
         end
 
-        def search_bod_expression(name)
-          Feature.search_by_phoneme(name, BOD_EXPRESSION_SUBJECT_ID)
+        def search_bod_expression(name_str)
+          if name_str.is_tibetan_word?
+            script = WritingSystem.get_by_code('tibt')
+            name = FeatureName.includes(feature: :subject_term_associations).where(name: name_str, writing_system_id: script.id, 'subject_term_associations.branch_id' => Feature::BOD_PHONEME_SUBJECT_ID, 'subject_term_associations.subject_id' => Feature::BOD_EXPRESSION_SUBJECT_ID).first
+          else
+            script = WritingSystem.get_by_code('latin')
+            o = OrthographicSystem.get_by_code('thl.ext.wyl.translit')
+            name = FeatureName.includes(:parent_relations, feature: :subject_term_associations).where(name: name_str, writing_system_id: script.id, 'subject_term_associations.branch_id' => Feature::BOD_PHONEME_SUBJECT_ID, 'subject_term_associations.subject_id' => Feature::BOD_EXPRESSION_SUBJECT_ID, 'feature_name_relations.orthographic_system_id' => o.id).first
+            if name.nil?
+              last_char = name_str[name_str.size-1]
+              if last_char != '/'
+                if name_str.end_with?('ng')
+                  name = FeatureName.includes(:parent_relations, feature: :subject_term_associations).where(name: "#{name_str} /", writing_system_id: script.id, 'subject_term_associations.branch_id' => Feature::BOD_PHONEME_SUBJECT_ID, 'subject_term_associations.subject_id' => Feature::BOD_EXPRESSION_SUBJECT_ID, 'feature_name_relations.orthographic_system_id' => o.id).first
+                  name = FeatureName.includes(:parent_relations, feature: :subject_term_associations).where(name: "#{name_str}/", writing_system_id: script.id, 'subject_term_associations.branch_id' => Feature::BOD_PHONEME_SUBJECT_ID, 'subject_term_associations.subject_id' => Feature::BOD_EXPRESSION_SUBJECT_ID, 'feature_name_relations.orthographic_system_id' => o.id).first if name.nil?
+                else
+                  name = FeatureName.includes(:parent_relations, feature: :subject_term_associations).where(name: "#{name_str}/", writing_system_id: script.id, 'subject_term_associations.branch_id' => Feature::BOD_PHONEME_SUBJECT_ID, 'subject_term_associations.subject_id' => Feature::BOD_EXPRESSION_SUBJECT_ID, 'feature_name_relations.orthographic_system_id' => o.id).first if name.nil?
+                end
+              end
+            end
+          end
+          name.nil? ? nil : name.feature
         end
 
       end
