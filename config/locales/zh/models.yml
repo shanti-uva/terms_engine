@@ -28,8 +28,8 @@ zh:
                 one: 'representation'
                 other: 'representations'
             feature_geo_code:
-                one: 'term legacy id'
-                other: 'term legacy ids'
+                one: 'other dictionary id'
+                other: 'other dictionary ids'
             feature_name:
                 one: 'representation'
                 other: 'representations'
@@ -43,8 +43,8 @@ zh:
                 one: 'term relation type'
                 other: 'term relation types'
             geo_code_type:
-                one: 'term legacy id type'
-                other: 'term legacy id types'
+                one: 'other dictionary id type'
+                other: 'other dictionary id types'
             illustration:
                 one: 'homepage image'
                 other: 'homepage images'
