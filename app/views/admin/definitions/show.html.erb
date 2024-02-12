@@ -127,7 +127,9 @@
 <%=          highlighted_new_item_link [object, :definition_subject_association] %>
              <br>
              <h6>Create Specific Association:</h6>
+             <ul>
 <%=          new_definition_subject_associations_links object %>
+             </ul>
              <br class="clear"/>
 <%=          render partial: 'admin/definition_subject_associations/list', locals: { list: object.definition_subject_associations } %>
            </div> <!-- END panel-body -->
