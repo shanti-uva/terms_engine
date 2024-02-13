@@ -10,8 +10,8 @@ bo:
                 one: 'definition relation'
                 other: 'definition relations'
             definition_subject_association:
-                one: 'definition subject association'
-                other: 'definition subject associations'
+                one: 'definition related subject'
+                other: 'definition related subjects'
             etymology:
                 one: 'etymology'
                 other: 'etymologies'
@@ -67,8 +67,11 @@ bo:
         attributes:
             definition_subject_association:
                 branch:
-                    one: 'Branch'
-                    other: 'Branches'
+                    one: 'root subject'
+                    other: 'root subjects'
+                subsidiary:
+                    one: 'subsidiary subject'
+                    other: 'subsidiary subjects'
             etymology:
                 content: 'Content'
                 etymology_type_association:

@@ -1,9 +1,16 @@
 .definition-subject-associations-form-fields input#branch_name, input#subject_name {
-    padding-left: 0;
+  padding-left: 0;
 }
 .definition-subject-associations-form-fields .row, .twitter-typeahead {
- margin: 0 0 0.2rem 1rem;
+  margin: 0 0 0.2rem 1rem;
+  display: inline !important;
+}
+.definition-subject-associations-form-fields .row, .twitter-typeahead {
+  margin: 0 0 0.2rem 1rem;
 }
 .definition-subject-associations-form-fields .row {
   padding-top: 10px;
+}
+.definition-subject-associations-form-fields p {
+  margin: 0.8rem;
 }
