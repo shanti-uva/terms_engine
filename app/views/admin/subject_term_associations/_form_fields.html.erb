@@ -12,21 +12,23 @@
 <% end %>
 <fieldset>
   <legend><%= ts(:for, what: t('information.general'), whom: SubjectTermAssociation.model_name.human.titleize) %></legend>
-  <div class="row">
-    <%= form.label :branch_name, SubjectTermAssociation.human_attribute_name('branch').s %>
-    <%= form.hidden_field :branch_id, id: :branch_id %>
-    Search by name 
-    <%= text_field_tag :branch_name, :post, { placeholder: "Search by #{SubjectTermAssociation.model_name.human} name", value: object.branch.blank? ? '' : object.branch['header'] } %><br/>
-    <p>If you want to view a different root subject, replace the text in the box above and search for it. Or, use the tree below to select the root subject.</p>
-     <div id="branch_tree_container"></div>
-  </div>
-  <div class="row" id="subject_container">
-    <%= form.label :subject_name, SubjectTermAssociation.human_attribute_name('subsidiary').s %> 
-    <%= form.hidden_field :subject_id, id: :subject_id %>
-    Search by name 
-    <%= text_field_tag :subject_name, :post, { placeholder: "Search by #{SubjectTermAssociation.human_attribute_name('subsidiary').s} name", value: object.subject.blank? ? '' : object.subject['header'] } %>
-    <p>If you want to search for a specific subject node within the above ROOT SUBJECT and its descendants,  put the text in the box above and search for it.</p>
-     <div id="subject_tree_container"></div>
+  <div class="flexContainer">
+    <div class="sidePanel">
+      <%= form.label :branch_name, SubjectTermAssociation.human_attribute_name('branch').s %>
+      <%= form.hidden_field :branch_id, id: :branch_id %>
+    
+      <%= text_field_tag :branch_name, :post, { placeholder: "Search by #{SubjectTermAssociation.model_name.human} name", value: object.branch.blank? ? '' : object.branch['header'] } %><br/>
+      <p>If you want to view a different root subject, replace the text in the box above and search for it. Or, use the tree below to select the root subject.</p>
+      <div id="branch_tree_container"></div>
+    </div>
+    <div class="sidePanel" id="subject_container">
+      <%= form.label :subject_name, SubjectTermAssociation.human_attribute_name('subject').s %> 
+      <%= form.hidden_field :subject_id, id: :subject_id %>
+    
+      <%= text_field_tag :subject_name, :post, { placeholder: "Search by #{SubjectTermAssociation.human_attribute_name('subsidiary').s} name", value: object.subject.blank? ? '' : object.subject['header'] } %>
+      <p>If you want to search for a specific subject node within the above ROOT SUBJECT and its descendants,  put the text in the box above and search for it.</p>
+      <div id="subject_tree_container"></div>
+    </div>
   </div>
 </fieldset>
 </div> <!-- END - subject-term-associations-form-fields -->

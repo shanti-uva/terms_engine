@@ -10,8 +10,8 @@ en:
                 one: 'definition relation'
                 other: 'definition relations'
             definition_subject_association:
-                one: 'definition subject association'
-                other: 'definition subject associations'
+                one: 'definition related subject'
+                other: 'definition related subjects'
             etymology:
                 one: 'etymology'
                 other: 'etymologies'
@@ -25,14 +25,14 @@ en:
                 one: 'term'
                 other: 'terms'
             feature_geo_code:
-                one: 'term legacy id'
-                other: 'term legacy ids'
+                one: 'other dictionary id'
+                other: 'other dictionary ids'
             feature_name:
                 one: 'representation'
                 other: 'representations'
             feature_name_relation:
-                one: 'term name relation'
-                other: 'term name relations'
+                one: 'term representation relation'
+                other: 'term representation relations'
             feature_relation:
                 one: 'term relation'
                 other: 'term relations'
@@ -40,8 +40,8 @@ en:
                 one: 'term relation type'
                 other: 'term relation types'
             geo_code_type:
-                one: 'term legacy id type'
-                other: 'term legacy id types'
+                one: 'other dictionary id type'
+                other: 'other dictionary id types'
             illustration:
                 one: 'homepage image'
                 other: 'homepage images'
@@ -70,8 +70,11 @@ en:
         attributes:
             definition_subject_association:
                 branch:
-                    one: 'Branch'
-                    other: 'Branches'
+                    one: 'root subject'
+                    other: 'root subjects'
+                subject:
+                    one: 'subsidiary subject'
+                    other: 'subsidiary subjects'
             etymology:
                 content: 'Content'
                 etymology_type_association:
@@ -101,6 +104,6 @@ en:
                 branch:
                     one: 'root subject'
                     other: 'root subjects'
-                subsidiary:
+                subject:
                     one: 'subsidiary subject'
                     other: 'subsidiary subjects'

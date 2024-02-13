@@ -127,4 +127,6 @@ $(document).ready(function() {
     $("#subject_tree_container").toggle();
   });
 
+  // just show this by default now
+  $("#branch_tree_container").toggle();
 });

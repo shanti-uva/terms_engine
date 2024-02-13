@@ -124,10 +124,12 @@
          </div>
          <div id="collapseFour" class="panel-collapse collapse">
            <div class="panel-body">
-<%=          highlighted_new_item_link [object, :definition_subject_association] %>
+<%=          highlighted_new_item_link [object, :definition_subject_association], ts('new.record', what: DefinitionSubjectAssociation.model_name.human.titleize) %>
              <br>
              <h6>Create Specific Association:</h6>
+             <ul>
 <%=          new_definition_subject_associations_links object %>
+             </ul>
              <br class="clear"/>
 <%=          render partial: 'admin/definition_subject_associations/list', locals: { list: object.definition_subject_associations } %>
            </div> <!-- END panel-body -->
