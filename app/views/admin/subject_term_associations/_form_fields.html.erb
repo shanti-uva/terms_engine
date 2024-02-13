@@ -22,7 +22,7 @@
       <div id="branch_tree_container"></div>
     </div>
     <div class="sidePanel" id="subject_container">
-      <%= form.label :subject_name, SubjectTermAssociation.human_attribute_name('subsidiary').s %> 
+      <%= form.label :subject_name, SubjectTermAssociation.human_attribute_name('subject').s %> 
       <%= form.hidden_field :subject_id, id: :subject_id %>
     
       <%= text_field_tag :subject_name, :post, { placeholder: "Search by #{SubjectTermAssociation.human_attribute_name('subsidiary').s} name", value: object.subject.blank? ? '' : object.subject['header'] } %>

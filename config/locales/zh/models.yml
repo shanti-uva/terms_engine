@@ -72,7 +72,7 @@ zh:
                 branch:
                     one: 'root subject'
                     other: 'root subjects'
-                subsidiary:
+                subject:
                     one: 'subsidiary subject'
                     other: 'subsidiary subjects'
             etymology:
@@ -104,6 +104,6 @@ zh:
                 branch:
                     one: 'root subject'
                     other: 'root subjects'
-                subsidiary:
+                subject:
                     one: 'subsidiary subject'
                     other: 'subsidiary subjects'

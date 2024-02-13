@@ -23,7 +23,7 @@
     </div>
 	
     <div class="sidePanel" id="subject_container">
-      <%= form.label :subject_name, DefinitionSubjectAssociation.human_attribute_name('subsidiary').s %>
+      <%= form.label :subject_name, DefinitionSubjectAssociation.human_attribute_name('subject').s %>
       <%= info_popup_link_for('Subject', "<p>The <i>subsidiary subject</i> refers to the specific instance such as <i>The Vehicle of the Yoga Tantras</i> under the general category specified above as <i>root subject</i>.</p>", 100) %>
       <%= form.hidden_field :subject_id, id: :subject_id %>
       <%= text_field_tag :subject_name, :post, { placeholder: 'Search by subject name', value: object.subject.blank? ? '' : object.subject['header'] } %>

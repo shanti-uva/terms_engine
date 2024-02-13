@@ -72,7 +72,7 @@ en:
                 branch:
                     one: 'root subject'
                     other: 'root subjects'
-                subsidiary:
+                subject:
                     one: 'subsidiary subject'
                     other: 'subsidiary subjects'
             etymology:
@@ -104,6 +104,6 @@ en:
                 branch:
                     one: 'root subject'
                     other: 'root subjects'
-                subsidiary:
+                subject:
                     one: 'subsidiary subject'
                     other: 'subsidiary subjects'
