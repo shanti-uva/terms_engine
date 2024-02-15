@@ -43,6 +43,8 @@ en:
     accordion:
         caption:
             help_text: 'Captions describe the term in fewer than 140 characters, including spaces. They appear in term previews around Mandala.'
+        definition_etymology:
+            help_text: 'An etymology can be a basic explanation of each syllable’s meaning, a linguistic historical etymology, or a creative-interpretative etymology. The current interface is for creating etymologies specific to one definition of a term. To instead add an etymology for the entire term, regardless of definitions, go to the Etymology module at the root level of the editing interface (not the Definitions module in which you are currently), and you can do so there.'
         etymology:
             help_text: 'An etymology can  be a basic explanation of each syllable’s meaning, a linguistic historical etymology, or a creative-interpretative etymology. The current interface is specifically for creating etymologies pertaining to the entire term. To instead add an etymology limited to just one specific definition of the term, go to the Definitions module and there click on the magnifying glass for the definition in question, which can then be modified.'
         feature_geo_code:
