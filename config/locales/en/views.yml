@@ -43,8 +43,8 @@ en:
     accordion:
         caption:
             help_text: 'Captions describe the term in fewer than 140 characters, including spaces. They appear in term previews around Mandala.'
-        etymology:
-            help_text: 'This is for etymologies pertaining to the entire term. If one wants to add a definition-specific etymology, go the Definitions  module and there click on the magnifying glass on the definition in question. An etymology can just be a basic explanation of each syllable’s meaning, a linguistic historical etymology, or a creative-interpretative etymology.'
+        tymology:
+            help_text: 'This is for etymologies pertaining to the entire term. If one wants to add a definition-specific etymology, go to the Definitions module and click on the magnifying glass on the definition in question. An etymology can just be a basic explanation of each syllable’s meaning, a linguistic historical etymology, or a creative-interpretative etymology.'
         feature_geo_code:
             help_text: 'Term legacy ids are identifiers for the term as found in external print or digital publications. For example, the Wikidata entity ID. Contact THL if you want to add a new type of term code to the options.'
         illustration:
