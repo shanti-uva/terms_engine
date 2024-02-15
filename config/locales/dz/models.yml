@@ -33,6 +33,9 @@ dz:
             feature_name_relation:
                 one: 'term representation relation'
                 other: 'term representation relations'
+            feature_name_type:
+                one: 'representation type'
+                other: 'representation types'
             feature_relation:
                 one: 'term relation'
                 other: 'term relations'
