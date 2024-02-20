@@ -75,7 +75,7 @@ module TermsEngine
     end
     
     def get_definition(term)
-      definition = term.definitions.includes(:citations).where('citations.info_source' => self.info_source).first
+      definition = term.definitions.joins(:citations).where('citations.info_source' => self.info_source).first
       if definition.nil?
         @english_language ||= Language.get_by_code('eng')
         begin

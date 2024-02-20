@@ -50,8 +50,8 @@ module TermsEngine
       from_i = from.blank? ? nil : from.to_i
       to_i = to.blank? ? nil : to.to_i
       fids = []
-      english_letters = Feature.roots.includes(:phoneme_term_associations).where('subject_term_associations.subject_id' => Feature::ENG_LETTER_SUBJECT_ID)
-      tibetan_letters = Feature.roots.includes(:phoneme_term_associations).where('subject_term_associations.subject_id' => Feature::BOD_LETTER_SUBJECT_ID)
+      english_letters = Feature.roots.joins(:phoneme_term_associations).where('subject_term_associations.subject_id' => Feature::ENG_LETTER_SUBJECT_ID)
+      tibetan_letters = Feature.roots.joins(:phoneme_term_associations).where('subject_term_associations.subject_id' => Feature::BOD_LETTER_SUBJECT_ID)
       fids = english_letters.collect do |letter|
         letter.children.collect(&:fid)
       end.flatten + tibetan_letters.collect do |letter|

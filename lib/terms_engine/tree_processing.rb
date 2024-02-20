@@ -150,7 +150,7 @@ module TermsEngine
     private
     
     def get_tib_terms_under_letter_by_phoneme(letter, phoneme_sid)
-      letter.children.includes(:phoneme_term_associations).where('subject_term_associations.branch_id' => Feature::BOD_PHONEME_SUBJECT_ID, 'subject_term_associations.subject_id' => phoneme_sid).order(:position).to_a
+      letter.children.joins(:phoneme_term_associations).where('subject_term_associations.branch_id' => Feature::BOD_PHONEME_SUBJECT_ID, 'subject_term_associations.subject_id' => phoneme_sid).order(:position).to_a
       #letter_fid = letter.fid
       #query = "tree:terms AND ancestor_ids_tib.alpha:#{letter_fid} AND associated_subject_#{Feature::BOD_PHONEME_SUBJECT_ID}_ls:#{phoneme_sid}"
       #numFound = Feature.search_by(query)['numFound']
@@ -159,7 +159,7 @@ module TermsEngine
     end
     
     def get_new_terms_under_letter_by_phoneme(letter, phoneme_sid)
-      letter.children.includes(:phoneme_term_associations).where('subject_term_associations.branch_id' => Feature::NEW_PHONEME_SUBJECT_ID, 'subject_term_associations.subject_id' => phoneme_sid).order(:position).to_a
+      letter.children.joins(:phoneme_term_associations).where('subject_term_associations.branch_id' => Feature::NEW_PHONEME_SUBJECT_ID, 'subject_term_associations.subject_id' => phoneme_sid).order(:position).to_a
       #letter_fid = letter.fid
       #query = "tree:terms AND ancestor_ids_new.alpha:#{letter_fid} AND associated_subject_#{Feature::NEW_PHONEME_SUBJECT_ID}_ls:#{phoneme_sid}"
       #numFound = Feature.search_by(query)['numFound']

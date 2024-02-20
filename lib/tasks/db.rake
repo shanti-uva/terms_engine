@@ -1,5 +1,6 @@
 # desc "Explaining what the task does"
 require 'terms_engine/name_utils'
+require 'terms_engine/definition_utils'
 require 'terms_engine/import/feature_importation'
 require 'terms_engine/import/filter'
 require 'terms_engine/import/xml_importation'
@@ -15,22 +16,34 @@ namespace :terms_engine do
     end
 
     namespace :export do
-      desc "Export names"
+      desc_str = "Export names.\n" +
+            "Syntax: rake terms_engine:db:export:names FID=fid | [FROM=fid] [TO=fid]"
+      desc desc_str
       task names: :environment do
-        from = ENV['FROM']
-        to = ENV['TO']
-        fid = ENV['FID']
-        if fid.blank?
-          TermsEngine::NameUtils.export(from, to)
+        options = { from: ENV['FROM'], to: ENV['TO'], fid: ENV['FID'] }
+        if options.values.any?
+          TermsEngine::NameUtils.export(**options)
         else
-          TermsEngine::NameUtils.export(fid, fid)
+          puts desc_str
+        end
+      end
+      
+      desc_str = "Export definitions.\n" +
+            "Syntax: rake terms_engine:db:export:definitions DICTIONARY_CODE=dict_code"
+      desc desc_str
+      task definitions: :environment do
+        options = { dictionary_code: ENV['DICTIONARY_CODE'] }
+        if options.values.any?
+          TermsEngine::DefinitionUtils.export(**options)
+        else
+          puts desc_str
         end
       end
     end
     
     namespace :import do
       csv_desc = "Use to import CSV containing terms into DB.\n" +
-                  "Syntax: rake db:import:features SOURCE=csv-file-name TASK=task_code LOG_LEVEL=log-level DAYLIGHT=value PERSPECTIVE=perspective-code"
+                  "Syntax: rake terms_engine:db:import:features SOURCE=csv-file-name TASK=task_code LOG_LEVEL=log-level DAYLIGHT=value PERSPECTIVE=perspective-code"
       desc csv_desc
       task features: :environment do
         source = ENV['SOURCE']
@@ -46,7 +59,7 @@ namespace :terms_engine do
       end
       
       xml_desc = "Use to import XML containing terms into DB.\n" +
-                  "Syntax: rake db:import:xml SOURCE_FILE=xml-file-name TASK=task_code LOG_LEVEL=log-level SOURCE=source-name SOURCE_ID=source-id AUTHOR=fullname COLLECTION=collection-name"
+                  "Syntax: rake terms_engine:db:import:xml SOURCE_FILE=xml-file-name TASK=task_code LOG_LEVEL=log-level SOURCE=source-name SOURCE_ID=source-id AUTHOR=fullname COLLECTION=collection-name"
       desc xml_desc
       task xml: :environment do
         source_file = ENV['SOURCE_FILE']
@@ -66,7 +79,7 @@ namespace :terms_engine do
     
     namespace :filter do
       csv_desc = "Use to infer fids from CSV containing terms in tibetan and wylie.\n" +
-                  "Syntax: rake db:filter:get_features SOURCE=csv-file-name"
+                  "Syntax: rake terms_engine:db:filter:get_features SOURCE=csv-file-name"
       desc csv_desc
       task get_features: :environment do
         source = ENV['SOURCE']
@@ -78,7 +91,7 @@ namespace :terms_engine do
       end
       
       csv_desc = "Use to infer parents from CSV containing term in tibetan.\n" +
-                  "Syntax: rake db:filter:get_parents SOURCE=csv-file-name"
+                  "Syntax: rake terms_engine:db:filter:get_parents SOURCE=csv-file-name"
       desc csv_desc
       task get_parents: :environment do
         source = ENV['SOURCE']
