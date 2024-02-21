@@ -1,6 +1,5 @@
 <% if parent?
-     add_breadcrumb_item feature_link(parent_object.feature)
-     add_breadcrumb_item link_to Definition.model_name.human(count: :many).titleize.s, admin_feature_path(parent_object.feature, section: "definitions")
+     add_breadcrumb_item feature_link(parent_object.feature, section: "definitions")
      add_breadcrumb_item link_to(parent_object.content.strip_tags.truncate(25).s, admin_feature_definition_path(parent_object.feature,parent_object))
    end
    add_breadcrumb_item DefinitionRelation.model_name.human.pluralize.s %>
