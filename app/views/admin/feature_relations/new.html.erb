@@ -1,6 +1,8 @@
-<%  add_breadcrumb_item feature_link(parent_object)
-    add_breadcrumb_item feature_relations_link(parent_object)
-    add_breadcrumb_item ts('new.record', what: t('relat.ion.ship.to', what: feature_label(object.parent_node))) %>
+<%
+add_breadcrumb_item feature_link(parent_object)
+add_breadcrumb_item link_to FeatureRelation.model_name.human(count: :many).s, admin_feature_path(parent_object.fid, section: "relations")
+add_breadcrumb_item ts('new.record', what: t('relat.ion.ship.to', what: feature_label(object.parent_node))) 
+%>
 <%= form_for object, url: admin_feature_relations_path do |f| %>
 <%    if object.errors.any? %>
       <div id="error_explanation">
