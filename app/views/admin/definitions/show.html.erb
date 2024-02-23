@@ -3,7 +3,8 @@
   add_breadcrumb_item link_to Definition.model_name.human(count: :many).titleize.s, admin_feature_path(parent_object.fid, section: "definitions")
   add_breadcrumb_item @definition.content.strip_tags.truncate(25).s 
 %>
- <section class="panel panel-content">
+<div id="definitionShow" style="position:relative;">
+ <section class="panel panel-content ">
    <div class="panel-heading">
      <h6><%= Definition.model_name.human.titleize.s %></h6>
    </div>
@@ -156,3 +157,5 @@
 <%= link_to ts('edit.this'), edit_admin_feature_definition_path(parent_object, object), class: 'btn btn-primary form-submit' %>
    </div> <!-- END panel-body -->
  </section> <!-- END panel -->
+</div>
+<%= javascript_include_tag "terms_engine/definitions_admin_accordion.js" %>
