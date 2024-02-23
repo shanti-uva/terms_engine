@@ -8,14 +8,14 @@ class Admin::PassagesController < AclController
     if object.context.instance_of? Feature
        redirect_to admin_feature_url(object.context.fid, section: 'passages')
     else
-      redirect_to polymorphic_path([:admin, object.context], section: 'passages') 
+      redirect_to polymorphic_url([:admin, object.context.feature, object.context], section: 'passages') 
     end
   end
   update.wants.html do
     if object.context.instance_of? Feature
        redirect_to admin_feature_url(object.context.fid, section: 'passages')
     else
-      redirect_to polymorphic_path([:admin, object.context], section: 'passages') 
+      redirect_to polymorphic_url([:admin, object.context.feature, object.context], section: 'passages') 
     end
   end
 
