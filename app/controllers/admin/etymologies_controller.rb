@@ -4,8 +4,13 @@ class Admin::EtymologiesController < AclController
 
   belongs_to :definition, :feature
 
-  create.wants.html { redirect_to admin_feature_path(object.feature_id, section: "etymologies") } 
-  update.wants.html { redirect_to admin_feature_path(object.feature_id, section: "etymologies") }
+  update.wants.html do
+    if object.context.instance_of? Feature
+       redirect_to admin_feature_url(object.context.fid, section: 'etymologies')
+    else
+      redirect_to polymorphic_url([:admin, object.context.feature, object.context], section: 'etymologies') 
+    end
+  end
 
   new_action.before do
     object.build_etymology_type_association
@@ -33,7 +38,11 @@ class Admin::EtymologiesController < AclController
   create do
     wants.html do
       if object.valid? #failure.wants.html does not seem to work
-        redirect_to(polymorphic_url([:admin, object.context, object]))
+        if object.context.instance_of? Feature
+          redirect_to admin_feature_url(object.context.fid, section: 'etymologies')
+        else
+          redirect_to polymorphic_url([:admin, object.context.feature, object.context], section: 'etymologies') 
+        end
       else
         flash[:notice] = 'Etymology type associations failed to save.'
         render :new
