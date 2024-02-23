@@ -20,9 +20,9 @@ add_breadcrumb_item ts('new.this')
   <div class="panel-body">
       <%=  render partial: 'form_fields', locals: {form: form} %>
       <% if object.context.instance_of? Feature %>
-        <%=  link_to ts('cancel.this'), polymorphic_path([:admin, object.context], section: "etymologies") , class: 'btn btn-primary form-submit', id: 'edit-cancel' %> |
+        <%=  link_to ts('cancel.this'), polymorphic_path([:admin, object.context], section: 'etymologies') , class: 'btn btn-primary form-submit', id: 'edit-cancel' %> |
       <% else %>
-        <%=  link_to ts('cancel.this'), polymorphic_path([:admin, object.context.feature, object.context]) , class: 'btn btn-primary form-submit', id: 'edit-cancel' %> |
+        <%=  link_to ts('cancel.this'), polymorphic_path([:admin, object.context.feature, object.context], section: 'etymologies') , class: 'btn btn-primary form-submit', id: 'edit-cancel' %> |
       <% end %>
       <%=  globalized_submit_tag 'creat.e.this', class: 'submit btn btn-primary form-submit' %>
   </div> <!-- END panel-body -->

@@ -15,7 +15,7 @@ add_breadcrumb_item object.id
   <div class="panel-body">
 <%= form_with(model: [:admin, object.etymology, object], local: true) do |form| %>
       <%=  render partial: 'form_fields', locals: {form: form} %>
-      <%=  link_to ts('cancel.this'), polymorphic_path([:admin, object.etymology.context,object.etymology]) , class: 'btn btn-primary form-submit', id: 'edit-cancel' %> |
+      <%=  link_to ts('cancel.this'), polymorphic_path([:admin, object.etymology.context,object.etymology], section: 'etymologies') , class: 'btn btn-primary form-submit', id: 'edit-cancel' %> |
       <%=  globalized_submit_tag 'update.this', class: 'btn btn-primary form-submit' %>
 <% end %>
   </div> <!-- END panel-body -->
