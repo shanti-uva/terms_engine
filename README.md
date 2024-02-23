@@ -52,21 +52,23 @@ Locate the line for the engine you're working on in the gemfile of the correspon
 
 `gem 'terms_engine', '1.3.0', path: '../engines/terms_engine'` (check the version number in the terms_engine_repo)
 
-Then run `bundle install` to load the gem from your local filesystem.
-
 Copy any yml.sample files located in the config/ directory, eg 
 
 `cp config/storage.yml.sample config/storage.yml`
 
+In the directory for the parent app (eg if you're working on terms_engine, cd to where you have the "terms" repo) and then
 
 Run `bundle install`
 
 Run `rake webpacker:install`
 
 to precompile assets:
+
 `export NODE_OPTIONS=--openssl-legacy-provider`
+
 `rake assets:precompile RAILS_ENV=development`
 
+and then start the server.
 
 # TermsEngine
 Short description and motivation.
