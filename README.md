@@ -24,12 +24,17 @@ To get latest places db running locally, you should fetch
 `~/kmaps-apps-infrastructure/database-backups/places_production_daily.backup`, into a local file called `places-2023-11-13.dump`.
 Run the following:
 
-`createdb -U postgres places_development
-psql -U postgres -d places_development
-CREATE EXTENSION postgis;
-CREATE EXTENSION postgis_topology;
-psql -U postgres -d places_development -f /opt/local/share/postgresql15/contrib/postgis-3.4/legacy.sql
-perl /opt/local/share/postgresql15/contrib/postgis-3.4/postgis_restore.pl places-2023-11-13.dump | psql -U postgres places_development 2> error.txt`
+`createdb -U postgres places_development`
+
+`psql -U postgres -d places_development`
+
+`CREATE EXTENSION postgis;`
+
+`CREATE EXTENSION postgis_topology;`
+
+`psql -U postgres -d places_development -f /opt/local/share/postgresql15/contrib/postgis-3.4/legacy.sql`
+
+`perl /opt/local/share/postgresql15/contrib/postgis-3.4/postgis_restore.pl places-2023-11-13.dump | psql -U postgres places_development 2> error.txt`
 
 
 
