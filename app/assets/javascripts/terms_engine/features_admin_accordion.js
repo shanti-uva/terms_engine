@@ -3,6 +3,7 @@
     if( $('.logged-in #featureShow #accordion').length ) { // only run this on the admin feature accordion
 
       const section = window.location.href.split('=')[1];
+      if( section == null || section === undefined ) { return; } // exit if we didn't get a section
 
       switch(section) {
      
