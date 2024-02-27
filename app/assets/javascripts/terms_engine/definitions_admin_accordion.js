@@ -1,8 +1,9 @@
-  $(document).ready(function() {
+$(document).ready(function() {
 
     if( $('.logged-in #definitionShow #accordion').length ) { // only run this on the admin definition accordion
 
       const section = window.location.href.split('=')[1];
+      if( section == null || section === undefined ) { return; } // exit if we didn't get a section
 
       switch(section) {
      
@@ -40,4 +41,3 @@
       }
     }
 });
-
