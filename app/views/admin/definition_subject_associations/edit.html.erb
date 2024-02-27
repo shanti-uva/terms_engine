@@ -13,7 +13,7 @@
     <%= form_with(model: [:admin, object.definition, object], local: true) do |form| %>
       <%=  render partial: 'form_fields', locals: {form: form} %>
       <div class="actions">
-      <%=  link_to ts('cancel.this'), admin_feature_definition_path(object.definition.feature,object.definition) , class: 'btn btn-primary form-submit', id: 'edit-cancel' %> |
+      <%=  link_to ts('cancel.this'), admin_feature_definition_path(object.definition.feature,object.definition, section: 'related_subjects'), class: 'btn btn-primary form-submit', id: 'edit-cancel' %> |
       <%= globalized_submit_tag 'update.this', class: 'btn btn-primary form-submit' %>
       </div>
     <% end %>
