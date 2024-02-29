@@ -17,7 +17,7 @@
           handleFeatureAccordion('collapseTen');
           break;
         case('descriptions'):
-          handleFeatureAccordion('#collapseNine');
+          handleFeatureAccordion('collapseNine');
           break;
         case('etymologies'):
           handleFeatureAccordion('collapseThirteen');
