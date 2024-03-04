@@ -56,7 +56,7 @@
   </div>
 <%=   render partial: 'form_fields', locals: {f: f, object: object} %>
 <%    feature = contextual_feature %>
-<%=   link_to ts('cancel.this'), feature.nil? ? collection_path : admin_feature_path(feature.fid, section: 'citations'), class: 'btn btn-primary form-submit', id: 'edit-cancel' %> | <%= globalized_submit_tag 'creat.e.this', class: 'btn btn-primary form-submit' %>
+<%=   link_to ts('cancel.this'), feature.nil? ? collection_path : polymorphic_path(stacked_parents, section: 'citations'), class: 'btn btn-primary form-submit', id: 'edit-cancel' %> | <%= globalized_submit_tag 'creat.e.this', class: 'btn btn-primary form-submit' %>
 <%  end %>
 </fieldset>
 <%= javascript_on_load do %>
