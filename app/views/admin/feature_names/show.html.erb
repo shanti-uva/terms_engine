@@ -12,6 +12,7 @@
   <h1><%= FeatureName.model_name.human.titleize.s %>: <%= object %></h1>
 </div>
 <br class="clear"/>
+<div id="featureNameShow" style="position:relative;">
   <div id="accordion" class="panel-group">
 <section class="panel panel-default">
     <div class="panel-heading">
@@ -99,5 +100,7 @@
   </div> <!-- END collapseFour -->
 </section> <!-- END panel -->
   </div> <!-- END accordion -->
+</div> <!-- END featureNameShow -->
   </div> <!-- END panel-body -->
 </section> <!-- END panel -->
+<%= javascript_include_tag "terms_engine/feature_names_admin_accordion.js" %>
