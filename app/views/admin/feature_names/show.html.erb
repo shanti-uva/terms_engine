@@ -70,7 +70,7 @@
 </section> <!-- END panel -->
 <section class="panel panel-default">
     <div class="panel-heading">
-      <h6><a href="#collapseTwo" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= ts 'Citations' %></a></h6>
+      <h6><a href="#collapseTwo" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= Citation.model_name.human(count: :many).titleize.s %></a></h6>
     </div>
     <div id="collapseTwo" class="panel-collapse collapse">
       <div class="panel-body">
@@ -80,7 +80,7 @@
 </section> <!-- END panel -->
 <section class="panel panel-default">
     <div class="panel-heading">
-      <h6><a href="#collapseThree" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= ts 'Notes' %></a></h6>
+      <h6><a href="#collapseThree" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= Note.model_name.human(count: :many).titleize.s %></a></h6>
     </div>
     <div id="collapseThree" class="panel-collapse collapse">
       <div class="panel-body">
@@ -90,7 +90,7 @@
 </section> <!-- END panel -->
 <section class="panel panel-default">
     <div class="panel-heading">
-      <h6><a href="#collapseFour" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= ts 'Dates' %></a></h6>
+      <h6><a href="#collapseFour" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= TimeUnit.model_name.human(count: :many).titleize.s %></a></h6>
     </div>
     <div id="collapseFour" class="panel-collapse collapse">
       <div class="panel-body">
