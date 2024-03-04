@@ -3,7 +3,7 @@ if object.context.instance_of? Feature
   add_breadcrumb_item feature_link(object.feature, section: 'etymologies')
 else
   add_breadcrumb_item feature_link(object.feature)
-  add_breadcrumb_item link_to Definition.model_name.human(count: :many).titleize.s, polymorphic_path([:admin, object.feature], section: "definitions")
+  add_breadcrumb_item link_to Definition.model_name.human(count: :many).titleize.s, polymorphic_path([:admin, object.feature], section: 'definitions')
   add_breadcrumb_item link_to object.context.content.strip_tags.truncate(25).s, polymorphic_path([:admin, object.feature, object.context])
 end
 add_breadcrumb_item link_to Etymology.model_name.human(count: :many).titleize.s , polymorphic_path([:admin, object.context, object])
