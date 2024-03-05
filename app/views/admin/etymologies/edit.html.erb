@@ -5,9 +5,10 @@ else
   add_breadcrumb_item feature_link(object.feature)
   add_breadcrumb_item link_to Definition.model_name.human(count: :many).titleize.s, polymorphic_path([:admin, object.feature], section: 'definitions')
   add_breadcrumb_item link_to object.context.content.strip_tags.truncate(25).s, polymorphic_path([:admin, object.feature, object.context])
-  add_breadcrumb_item link_to Etymology.model_name.human(count: :many).titleize.s, polymorphic_path([:admin, object.context], section: 'etymologies')
+  add_breadcrumb_item link_to Etymology.model_name.human(count: :many).titleize.s, polymorphic_path([:admin, object.feature, object.context], section: 'etymologies')
 end
-add_breadcrumb_item object.content.strip_tags.truncate(25).s
+add_breadcrumb_item link_to object.content.strip_tags.truncate(25).s, polymorphic_path([:admin, object.feature, object.context ], section: 'etymologies') 
+add_breadcrumb_item ts 'edit.this'
 %>
 <section class="panel panel-content">
   <div class="panel-heading">

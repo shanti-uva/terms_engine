@@ -9,6 +9,7 @@ else # it's a definition
   add_breadcrumb_item link_to Etymology.model_name.human(count: :many).titleize.s, polymorphic_path([:admin, object.etymology.context.feature, object.etymology.context], section: 'etymologies')
 end
 add_breadcrumb_item link_to object.etymology.content.strip_tags.truncate(25).s, polymorphic_path([:admin, object.etymology.context, object.etymology])
+add_breadcrumb_item link_to object.model_name.human(count: :many).titleize.s, polymorphic_path([:admin, object.etymology.context, object.etymology], section: 'etymology_subject_associations')
 add_breadcrumb_item ts('new.this')
 %>
 <div>
