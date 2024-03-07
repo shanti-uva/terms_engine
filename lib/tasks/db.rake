@@ -2,8 +2,10 @@
 require 'terms_engine/name_utils'
 require 'terms_engine/definition_utils'
 require 'terms_engine/import/feature_importation'
+require 'terms_engine/import/feature_name_match'
 require 'terms_engine/import/filter'
 require 'terms_engine/import/xml_importation'
+
 
 namespace :terms_engine do
   namespace :db do
@@ -73,6 +75,21 @@ namespace :terms_engine do
           puts xml_desc
         else
           TermsEngine::XmlImportation.new("log/import_#{task}_#{Rails.env}.log", log_level.nil? ? Rails.logger.level : log_level.to_i).do_feature_import(filename: source_file, task_code: task, source: source, source_id: source_id, author_name: author_name, collection: collection_name)
+        end
+      end
+      
+      csv_desc = "Matches rows in CSV input1 with input2 based on column matching_column and produces third CSV output.\n"+
+        "Syntax: rake terms_engine:db:import:match INPUT1=csv-file-name INPUT2=csv-file-name OUTPUT=csv-file-name MATCHING_COL=col-name"
+      desc csv_desc
+      task match: :environment do
+        input1 = ENV['INPUT1']
+        input2 = ENV['INPUT2']
+        output = ENV['OUTPUT']
+        matching_column = ENV['MATCHING_COL']
+        if input1.blank? || input2.blank? || output.blank? || matching_column.blank?
+          puts csv_desc
+        else
+          TermsEngine::FeatureNameMatch.match(input1: input1, input2: input2, output: output, matching_column: matching_column)
         end
       end
     end
