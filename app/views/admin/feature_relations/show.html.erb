@@ -1,6 +1,10 @@
-<% parent = parent_object
-   parent = object.parent_node if parent.nil?
-   add_breadcrumb_items( feature_link(parent), feature_relations_link(parent), object.id) %>
+<% 
+parent = parent_object
+parent = object.parent_node if parent.nil?
+add_breadcrumb_item feature_link(parent)
+add_breadcrumb_item link_to FeatureRelation.model_name.human(count: :many).s, admin_feature_path(parent_object.fid, section: "relations")
+add_breadcrumb_item object.id # not sure what to replace this ID with...
+%>
 <section class="panel panel-content">
   <div class="panel-heading">
     <h6><%= FeatureRelation.model_name.human.pluralize.s %></h6>

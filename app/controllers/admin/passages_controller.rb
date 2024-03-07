@@ -4,8 +4,22 @@ class Admin::PassagesController < AclController
 
   belongs_to :definition, :feature
 
-  create.wants.html { redirect_to admin_feature_path(object.feature_id, section: "passages") } 
-  update.wants.html { redirect_to admin_feature_path(object.feature_id, section: "passages") } 
+  create.wants.html do
+    if object.context.instance_of? Feature
+       redirect_to admin_feature_url(object.context.fid, section: 'passages')
+    else
+      redirect_to polymorphic_url([:admin, object.context.feature, object.context], section: 'passages') 
+    end
+  end
+  update.wants.html do
+    if object.context.instance_of? Feature
+       redirect_to admin_feature_url(object.context.fid, section: 'passages')
+    else
+      redirect_to polymorphic_url([:admin, object.context.feature, object.context], section: 'passages') 
+    end
+  end
+
+  # admin_feature_path(feature.fid)  
 
   protected
 

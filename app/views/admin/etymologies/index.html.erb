@@ -1,5 +1,5 @@
 <%
-add_breadcrumb_item link_to parent_object.model_name.human.titleize.s, polymorphic_url([:admin, parent_object])
+add_breadcrumb_item link_to parent_object.model_name.human.titleize.s, polymorphic_path([:admin, parent_object])
 %>
 <section class="panel panel-content">
   <div class="panel-heading">

@@ -1,6 +1,8 @@
-<% add_breadcrumb_item feature_link(object.feature)
-   add_breadcrumb_item feature_names_link(object.feature)
-   add_breadcrumb_item object.id %>
+<% 
+  add_breadcrumb_item feature_link(object.feature)
+  add_breadcrumb_item link_to FeatureName.model_name.human(count: :many).titleize.s, admin_feature_path(object.feature, section: 'names')
+  add_breadcrumb_item object.name.s 
+%>
 <section class="panel panel-content">
   <div class="panel-heading">
     <h6><%= FeatureName.model_name.human.titleize.s %></h6>
@@ -10,6 +12,7 @@
   <h1><%= FeatureName.model_name.human.titleize.s %>: <%= object %></h1>
 </div>
 <br class="clear"/>
+<div id="featureNameShow" style="position:relative;">
   <div id="accordion" class="panel-group">
 <section class="panel panel-default">
     <div class="panel-heading">
@@ -68,7 +71,7 @@
 </section> <!-- END panel -->
 <section class="panel panel-default">
     <div class="panel-heading">
-      <h6><a href="#collapseTwo" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= ts 'Citations' %></a></h6>
+      <h6><a href="#collapseTwo" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= Citation.model_name.human(count: :many).titleize.s %></a></h6>
     </div>
     <div id="collapseTwo" class="panel-collapse collapse">
       <div class="panel-body">
@@ -78,7 +81,7 @@
 </section> <!-- END panel -->
 <section class="panel panel-default">
     <div class="panel-heading">
-      <h6><a href="#collapseThree" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= ts 'Notes' %></a></h6>
+      <h6><a href="#collapseThree" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= Note.model_name.human(count: :many).titleize.s %></a></h6>
     </div>
     <div id="collapseThree" class="panel-collapse collapse">
       <div class="panel-body">
@@ -88,7 +91,7 @@
 </section> <!-- END panel -->
 <section class="panel panel-default">
     <div class="panel-heading">
-      <h6><a href="#collapseFour" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= ts 'Dates' %></a></h6>
+      <h6><a href="#collapseFour" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= ts 'Dates' %><</a></h6>
     </div>
     <div id="collapseFour" class="panel-collapse collapse">
       <div class="panel-body">
@@ -97,5 +100,7 @@
   </div> <!-- END collapseFour -->
 </section> <!-- END panel -->
   </div> <!-- END accordion -->
+</div> <!-- END featureNameShow -->
   </div> <!-- END panel-body -->
 </section> <!-- END panel -->
+<%= javascript_include_tag "terms_engine/feature_names_admin_accordion.js" %>

@@ -1,6 +1,10 @@
-<% add_breadcrumb_item feature_link(object.definition.feature)
-   add_breadcrumb_item link_to 'definition', admin_definition_path(object.definition)
-   add_breadcrumb_item object.id %>
+<%
+  add_breadcrumb_item feature_link(object.definition.feature)
+  add_breadcrumb_item link_to Definition.model_name.human(count: :many).titleize.s, polymorphic_path([:admin, object.definition.feature], section: 'definitions')
+  add_breadcrumb_item link_to object.definition.content.strip_tags.truncate(25).titleize.s, polymorphic_path([:admin, object.feature, object.definition], section: 'related_subjects')
+  add_breadcrumb_item link_to DefinitionSubjectAssociation.model_name.human(count: :many).titleize.s, polymorphic_path([:admin, object.feature, object.definition], section: 'related_subjects')
+  add_breadcrumb_item ts('edit.this')
+%>
 <section class="panel panel-content">
   <div class="panel-heading">
     <h6>Editing <%= DefinitionSubjectAssociation.model_name.human.titleize.s %></h6>
@@ -9,7 +13,7 @@
     <%= form_with(model: [:admin, object.definition, object], local: true) do |form| %>
       <%=  render partial: 'form_fields', locals: {form: form} %>
       <div class="actions">
-      <%=  link_to ts('cancel.this'), admin_feature_definition_path(object.definition.feature,object.definition) , class: 'btn btn-primary form-submit', id: 'edit-cancel' %> |
+      <%=  link_to ts('cancel.this'), admin_feature_definition_path(object.definition.feature,object.definition, section: 'related_subjects'), class: 'btn btn-primary form-submit', id: 'edit-cancel' %> |
       <%= globalized_submit_tag 'update.this', class: 'btn btn-primary form-submit' %>
       </div>
     <% end %>

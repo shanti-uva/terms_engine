@@ -1,5 +1,7 @@
-<% add_breadcrumb_item feature_link(object.feature)
-   add_breadcrumb_item link_to Recording.model_name.human(count: :many).titleize.s, admin_feature_recordings_path(object.feature)
+<% 
+  add_breadcrumb_item feature_link(object.feature)
+  add_breadcrumb_item link_to Recording.model_name.human(count: :many).titleize.s, admin_feature_path(parent_object.fid, section: "recordings")
+  add_breadcrumb_item ts('new.this')
 %>
 <div>
   <h1><%= ts :for, what: t('creat.ing', what: t('new.record', what: Recording.model_name.human.titleize)), whom: "#{Feature.model_name.human.titleize} #{parent_object}" %></h1>

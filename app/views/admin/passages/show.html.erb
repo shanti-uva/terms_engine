@@ -1,12 +1,13 @@
 <%
 if object.context.instance_of? Feature
   add_breadcrumb_item feature_link(object.context)
-else
+elsif object.context.instance_of? Definition
   add_breadcrumb_item feature_link(object.context.feature)
-  add_breadcrumb_item link_to object.context.model_name.human.titleize.s, polymorphic_path([:admin, object.context.feature, object.context])
+  add_breadcrumb_item link_to Definition.model_name.human(count: :many).titleize.s, polymorphic_path([:admin, object.context.feature], section: 'definitions')
+  add_breadcrumb_item link_to object.context.content.strip_tags.truncate(25).titleize.s, polymorphic_path([:admin, object.feature, object.context], section: 'passages')
+  add_breadcrumb_item link_to Passage.model_name.human(count: :many).titleize.s, polymorphic_path([:admin, object.feature, object.context], section: 'passages')
 end
-add_breadcrumb_item link_to Passage.model_name.human(count: :many).titleize.s, polymorphic_path([:admin, object.context, object])
-add_breadcrumb_item object.id
+add_breadcrumb_item object.content.strip_tags.truncate(25).s
 %>
  <section class="panel panel-content">
    <div class="panel-heading">
@@ -23,7 +24,7 @@ add_breadcrumb_item object.id
      <div id="accordion" class="panel-group">
        <section class="panel panel-default">
            <div class="panel-heading">
-             <h6><a href="#collapseCitations" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= ts 'Citations' %></a></h6>
+             <h6><a href="#collapseCitations" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= Citation.model_name.human(count: :many).titleize.s %></a></h6>
            </div>
            <div id="collapseCitations" class="panel-collapse collapse">
              <div class="panel-body">

@@ -1,8 +1,9 @@
   $(document).ready(function() {
 
-    if( $('.logged-in #featureShow #accordion').length ) { // only run this on the admin feature accordion
+    if( $('.logged-in.page-terms #featureShow #accordion').length ) { // only run this on the admin feature accordion in terms_engine
 
       const section = window.location.href.split('=')[1];
+      if( section == null || section === undefined ) { return; } // exit if we didn't get a section
 
       switch(section) {
      
@@ -16,7 +17,7 @@
           handleFeatureAccordion('collapseTen');
           break;
         case('descriptions'):
-          handleFeatureAccordion('#collapseNine');
+          handleFeatureAccordion('collapseNine');
           break;
         case('etymologies'):
           handleFeatureAccordion('collapseThirteen');
