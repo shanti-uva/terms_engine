@@ -1,7 +1,7 @@
 <%
 if object.context.instance_of? Feature
   add_breadcrumb_item feature_link(object.feature)
-  add_breadcrumb_item link_to Etymology.model_name.human(count: :many).titleize.s, admin_feature_path(object.feature, section: 'etymologies')
+  add_breadcrumb_item link_to Etymology.model_name.human(count: :many).titleize.s, admin_feature_path(object.feature.fid, section: 'etymologies')
   add_breadcrumb_item link_to object.content.strip_tags.truncate(25).s, polymorphic_path([:admin, object.feature], section: 'etymologies')
 else
   add_breadcrumb_item feature_link(object.feature)
