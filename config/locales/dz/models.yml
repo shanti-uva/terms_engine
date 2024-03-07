@@ -63,9 +63,6 @@ dz:
             subject_term_association:
                 one: 'related subject'
                 other: 'related subjects'
-            time_unit:
-                one: 'date'
-                other: 'dates'
             view:
                 one: 'term script'
                 other: 'term scripts'
