@@ -6,7 +6,9 @@ class Admin::EtymologySubjectAssociationsController < AclController
 
   new_action.before { object.branch_id = params[:branch_id] if params[:branch_id] }
 
-  destroy.wants.html { redirect_to polymorphic_url([:admin,object.etymology]) }
+  create.wants.html  { redirect_to polymorphic_url(helpers.stacked_parents) }
+  update.wants.html  { redirect_to polymorphic_url(helpers.stacked_parents) }
+  destroy.wants.html { redirect_to polymorphic_url(helpers.stacked_parents) }
 
   protected
 
