@@ -1,0 +1,23 @@
+   <table class="listGrid">
+<%   list.each do |row|
+       source = InfoSource.find(row.first)
+       definitions = row.last
+       size = definitions.size
+       definitions.each do |item| %>
+       <tr>
+<%       if !source.nil? %>
+           <td rowspan="<%= size %>"><%= source.title %></td>
+<%         source = nil
+         end %>
+         <td class="centerText">
+<%=        list_actions_for_item(item, delete_path: admin_feature_definition_path(item.feature, item),
+           edit_path: edit_admin_feature_definition_path(item.feature, item),
+           view_path: admin_feature_definition_path(item.feature, item), 
+           hide_edit: true) %>
+         </td>
+         <td><%= item.language.name %></td>
+         <td><%= item.snippet.s %></td>
+     </tr>
+<%     end
+     end %>
+   </table>
