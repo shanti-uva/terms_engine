@@ -4,7 +4,8 @@ if object.context.instance_of? Feature
 elsif object.context.instance_of? Definition
   add_breadcrumb_item feature_link(object.context.feature)
   add_breadcrumb_item link_to Definition.model_name.human(count: :many).titleize.s, polymorphic_path([:admin, object.context.feature], section: 'definitions')
-  add_breadcrumb_item link_to object.context.content.strip_tags.truncate(25).titleize.s, polymorphic_path([:admin, object.feature, object.context], section: 'passages')
+  # higgins definitions are blank, so output the id in the breadcrumbs instead of the content
+  add_breadcrumb_item link_to object.context.content.strip_tags.blank? ? object.context.id : object.context.content.strip_tags.truncate(25).titleize.s, polymorphic_path([:admin, object.feature, object.context], section: 'passages')
   add_breadcrumb_item link_to Passage.model_name.human(count: :many).titleize.s, polymorphic_path([:admin, object.feature, object.context], section: 'passages')
 end
 add_breadcrumb_item object.content.strip_tags.truncate(25).s
@@ -28,20 +29,11 @@ add_breadcrumb_item object.content.strip_tags.truncate(25).s
            </div>
            <div id="collapseCitations" class="panel-collapse collapse">
              <div class="panel-body">
-       <% #= citation_list_fieldset %>
+       <%= citation_list_fieldset %>
            </div> <!-- END panel-body -->
          </div> <!-- END collapseTwo -->
        </section> <!-- END panel -->
-       <section class="panel panel-default">
-           <div class="panel-heading">
-             <h6><a href="#collapsePassageTranslations" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= PassageTranslation.model_name.human.titleize.s %></a></h6>
-           </div>
-           <div id="collapsePassageTranslations" class="panel-collapse collapse">
-             <div class="panel-body">
-       <%= "list passage translation here" %>
-           </div> <!-- END panel-body -->
-         </div> <!-- END collapseTwo -->
-       </section> <!-- END passage translations panel -->
+       
      </div> <!-- END accordion -->
 
      <%= link_to ts('edit.this'), polymorphic_path([:admin, object.context, object], {action: :edit}), class: 'btn btn-primary form-submit' %> |

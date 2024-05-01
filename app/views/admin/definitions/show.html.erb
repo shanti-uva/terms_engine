@@ -122,6 +122,17 @@
          </div> <!-- END collapseTen -->
        </section>
        <section class="panel panel-default">
+           <div class="panel-heading">
+             <h6><a href="#collapsePassageTranslations" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= PassageTranslation.model_name.human(count: :many).titleize.s %></a></h6>
+           </div>
+           <div id="collapsePassageTranslations" class="panel-collapse collapse">
+             <div class="panel-body">
+               <%=       highlighted_new_item_link [object, :passage_translation] %>
+               <%= render :partial => 'admin/passage_translations/list', :locals => { :list => object.passage_translations } %>
+           </div> <!-- END panel-body -->
+         </div> <!-- END collapseTwo -->
+       </section> <!-- END passage translations panel -->
+       <section class="panel panel-default">
          <div class="panel-heading">
            <h6><a href="#collapseFour" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= DefinitionSubjectAssociation.model_name.human(count: :many).titleize.s %></a></h6>
          </div>

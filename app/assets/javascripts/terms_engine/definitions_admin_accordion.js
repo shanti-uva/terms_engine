@@ -19,6 +19,9 @@ $(document).ready(function() {
         case('passages'):
           handleFeatureAccordion('collapsePassages');
           break;
+        case('passage_translations'):
+          handleFeatureAccordion('collapsePassageTranslations');
+          break;
         case('related_subjects'):
           handleFeatureAccordion('collapseFour');
           break;
