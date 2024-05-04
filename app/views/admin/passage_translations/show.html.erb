@@ -7,6 +7,7 @@ add_breadcrumb_item link_to Definition.model_name.human(count: :many).titleize.s
   elsif object.context.instance_of? Passage
     add_breadcrumb_item link_to Passage.model_name.human(count: :many).titleize.s, polymorphic_path([:admin, object.context], section: 'passages')
   end
+  add_breadcrumb_item link_to PassageTranslation.model_name.human(count: :many).titleize.s, polymorphic_path([:admin, object.context.feature, object.context], section: 'passage_translations')
   add_breadcrumb_item object.content.strip_tags.truncate(25).s
 %>
  <section class="panel panel-content">
