@@ -4,6 +4,14 @@ class Admin::PassageTranslationsController < AclController
 
   belongs_to :definition, :passage
 
+  new_action.before do
+    @languages = Language.order('name')
+  end
+
+  edit.before do
+    @languages = Language.order('name')
+  end
+
   protected
 
   # Only allow a trusted parameter "white list" through.
