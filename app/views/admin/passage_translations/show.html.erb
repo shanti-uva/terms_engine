@@ -1,0 +1,46 @@
+<%
+  add_breadcrumb_item feature_link(object.context.feature)
+add_breadcrumb_item link_to Definition.model_name.human(count: :many).titleize.s, polymorphic_path([:admin, object.context.feature], section: 'definitions')
+  if object.context.instance_of? Definition
+    # higgins definitions are blank, so output the id in the breadcrumbs instead of the content
+    add_breadcrumb_item link_to object.context.content.strip_tags.blank? ? object.context.id : object.context.content.strip_tags.truncate(25).titleize.s, polymorphic_path([:admin, object.context])
+  elsif object.context.instance_of? Passage
+    add_breadcrumb_item link_to Passage.model_name.human(count: :many).titleize.s, polymorphic_path([:admin, object.context], section: 'passages')
+  end
+  add_breadcrumb_item object.content.strip_tags.truncate(25).s
+%>
+ <section class="panel panel-content">
+   <div class="panel-heading">
+     <h6><%= PassageTranslation.model_name.human.titleize.s %></h6>
+   </div>
+   <div class="panel-body">
+     <div>
+       <h1><%= PassageTranslation.model_name.human.titleize.s %>:</h1>
+       <p>
+       <%= object.content.s %>
+       </p>
+     </div>
+     <br class="clear"/>
+     <div id="accordion" class="panel-group">
+       <section class="panel panel-default">
+           <div class="panel-heading">
+             <h6><a href="#collapseCitations" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= Citation.model_name.human(count: :many).titleize.s %></a></h6>
+           </div>
+           <div id="collapseCitations" class="panel-collapse collapse">
+             <div class="panel-body">
+       <%= citation_list_fieldset %>
+           </div> <!-- END panel-body -->
+         </div> <!-- END collapseTwo -->
+       </section> <!-- END panel -->
+       
+     </div> <!-- END accordion -->
+
+     <%= link_to ts('edit.this'), polymorphic_path([:admin, object.context, object], {action: :edit}), class: 'btn btn-primary form-submit' %> |
+     <% if object.context.instance_of? Feature %>
+       <%= link_to ts('cancel.this'), admin_feature_path(object.context.fid), class: 'btn btn-primary form-submit', id: 'edit-cancel' %>
+     <% else %>
+       <%= link_to ts('cancel.this'), polymorphic_path([:admin, object.context.feature, object.context]), class: 'btn btn-primary form-submit', id: 'edit-cancel' %>
+     <% end %>
+   </div> <!-- END panel-body -->
+ </section> <!-- END panel -->
+

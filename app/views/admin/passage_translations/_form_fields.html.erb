@@ -1,0 +1,24 @@
+<%= tinymce_assets %>
+<%= tinymce %>
+<% if object.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(object.errors.count, "error") %> prohibited this passage translation from being saved:</h2>
+
+      <ul>
+        <% object.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+<% end %>
+<fieldset>
+  <legend><%= ts(:for, what: t('information.general'), whom: PassageTranslation.model_name.human.titleize) %></legend>
+
+  <div class="row">
+    <%= form.label(:content).s %>
+  </div>
+  <div class="row">
+    <%= form.text_area :content, rows: 4, class: 'tinymce' %>
+  </div>
+
+</fieldset>
