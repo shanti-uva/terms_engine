@@ -1,4 +1,5 @@
 <%
+    # passage can belong to a feature or a definition
 if object.context.instance_of? Feature
   add_breadcrumb_item feature_link(object.context)
 elsif object.context.instance_of? Definition
@@ -33,7 +34,18 @@ add_breadcrumb_item object.content.strip_tags.truncate(25).s
            </div> <!-- END panel-body -->
          </div> <!-- END collapseTwo -->
        </section> <!-- END panel -->
-       
+       <section class="panel panel-default">
+           <div class="panel-heading">
+             <h6><a href="#collapsePassageTranslations" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= PassageTranslation.model_name.human(count: :many).titleize.s %></a></h6>
+           </div>
+           <div id="collapsePassageTranslations" class="panel-collapse collapse">
+             <div class="panel-body">
+               <%=       highlighted_new_item_link [object, :passage_translation] %>
+               <br class="clear" />
+               <%= render :partial => 'admin/passage_translations/list', :locals => { :list => object.passage_translations } %>
+           </div> <!-- END panel-body -->
+         </div> <!-- END collapseTwo -->
+       </section> <!-- END passage translations panel --> 
      </div> <!-- END accordion -->
 
      <%= link_to ts('edit.this'), polymorphic_path([:admin, object.context, object], {action: :edit}), class: 'btn btn-primary form-submit' %> |

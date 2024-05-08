@@ -29,7 +29,7 @@ Rails.application.routes.draw do
       resources :etymologies, :passages, :recordings, :subject_term_associations
     end
     resources :passages, only: [:show] do
-      resources :citations
+      resources :citations, :passage_translations
     end
     resources :passage_translations, only: [:show] do
       resources :citations
