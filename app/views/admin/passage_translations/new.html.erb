@@ -1,12 +1,27 @@
 <%
+  # can belong to a definition or a passage
+  # feature > definition > passage_translation
+  # feature > definition > passage > passage_translation
+  # feature > passage > passage_translation
+  #
   add_breadcrumb_item feature_link(object.context.feature)
-add_breadcrumb_item link_to Definition.model_name.human(count: :many).titleize.s, polymorphic_path([:admin, object.context.feature], section: 'definitions')
+
   if object.context.instance_of? Definition
+    add_breadcrumb_item link_to Definition.model_name.human(count: :many).titleize.s, polymorphic_path([:admin, object.context.feature], section: 'definitions')
     # higgins definitions are blank, so output the id in the breadcrumbs instead of the content
     add_breadcrumb_item link_to object.context.content.strip_tags.blank? ? object.context.id : object.context.content.strip_tags.truncate(25).titleize.s, polymorphic_path([:admin, object.context])
-  elsif object.context.instance_of? Passage
-    add_breadcrumb_item link_to Passage.model_name.human(count: :many).titleize.s, polymorphic_path([:admin, object.context], section: 'passages')
   end
+
+  if object.context.instance_of? Passage
+    if object.context.context.instance_of? Definition
+      add_breadcrumb_item link_to Definition.model_name.human(count: :many).titleize.s, polymorphic_path([:admin, object.context.context.feature], section: 'definitions')
+      add_breadcrumb_item link_to object.context.context.content.strip_tags.blank? ? object.context.context.id : object.context.context.content.strip_tags.truncate(25).titleize.s, polymorphic_path([:admin, object.context.context])
+    end
+
+    add_breadcrumb_item link_to Passage.model_name.human(count: :many).titleize.s, polymorphic_path([:admin, object.context], section: 'passages')
+    add_breadcrumb_item link_to object.context.content.strip_tags.truncate(25), polymorphic_path([:admin, object.context], section: 'passages')
+  end
+  
   add_breadcrumb_item link_to PassageTranslation.model_name.human(count: :many).titleize.s, polymorphic_path([:admin, object.context.feature, object.context], section: 'passage_translations')
 add_breadcrumb_item ts('new.this')
 %>

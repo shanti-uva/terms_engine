@@ -12,11 +12,15 @@ class Admin::PassageTranslationsController < AclController
     @languages = Language.order('name')
   end
 
+  create.before do
+    @languages = Language.order('name')
+  end
+
   protected
 
   # Only allow a trusted parameter "white list" through.
   def passage_translation_params
-    params.require(:passage_translation).permit(:context_id, :context_type, :content)
+    params.require(:passage_translation).permit(:context_id, :context_type, :content, :language)
   end
   
 end
