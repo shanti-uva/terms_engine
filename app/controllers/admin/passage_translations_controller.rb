@@ -20,7 +20,7 @@ class Admin::PassageTranslationsController < AclController
 
   # Only allow a trusted parameter "white list" through.
   def passage_translation_params
-    params.require(:passage_translation).permit(:context_id, :context_type, :content, :language)
+    params.require(:passage_translation).permit(:context_id, :context_type, :content, :language_id)
   end
   
 end
