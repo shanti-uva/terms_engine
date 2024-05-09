@@ -14,10 +14,10 @@ Rails.application.routes.draw do
       post :prioritize, on: :collection, to: 'info_sources#set_priorities'
     end
     resources :definitions do
-      resources :citations, :etymologies, :definition_relations, :definition_subject_associations, :passage_translations
-      resources :passages do
-        resources :passage_translations
-      end
+      resources :citations, :etymologies, :definition_relations, :definition_subject_associations, :passages, :passage_translations
+      #resources :passages do
+      #  resources :passage_translations
+      #end
       resources :definition_associations, except: [:new, :index]
     end
     resources :etymologies do
@@ -32,7 +32,10 @@ Rails.application.routes.draw do
       resources :etymologies, :passages, :recordings, :subject_term_associations
     end
     resources :passages, only: [:show] do
-      resources :citations, :passage_translations
+      resources :citations
+    end
+    resources :passages do
+      resources :passage_translations
     end
     resources :passage_translations, only: [:show] do
       resources :citations
