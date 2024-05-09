@@ -50,9 +50,9 @@ add_breadcrumb_item object.content.strip_tags.truncate(25).s
 
      <%= link_to ts('edit.this'), polymorphic_path([:admin, object.context, object], {action: :edit}), class: 'btn btn-primary form-submit' %> |
      <% if object.context.instance_of? Feature %>
-       <%= link_to ts('cancel.this'), admin_feature_path(object.context.fid), class: 'btn btn-primary form-submit', id: 'edit-cancel' %>
+       <%= link_to ts('cancel.this'), admin_feature_path(object.context.fid, section: 'passages'), class: 'btn btn-primary form-submit', id: 'edit-cancel' %>
      <% else %>
-       <%= link_to ts('cancel.this'), polymorphic_path([:admin, object.context.feature, object.context]), class: 'btn btn-primary form-submit', id: 'edit-cancel' %>
+       <%= link_to ts('cancel.this'), polymorphic_path([:admin, object.context.feature, object.context], section: 'passages'), class: 'btn btn-primary form-submit', id: 'edit-cancel' %>
      <% end %>
    </div> <!-- END panel-body -->
  </section> <!-- END panel -->
