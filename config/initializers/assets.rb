@@ -12,5 +12,6 @@ Rails.application.config.assets.precompile.concat(['terms_engine/recordings.js',
                                                    'terms_engine/related-section-initializer.js',
                                                    'terms_engine/features_admin_accordion.js',
                                                    'terms_engine/definitions_admin_accordion.js',
+                                                   'terms_engine/passages_admin_accordion.js',
                                                    'terms_engine/feature_names_admin_accordion.js'
                                                    ])

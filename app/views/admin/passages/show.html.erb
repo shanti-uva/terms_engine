@@ -11,6 +11,7 @@ elsif object.context.instance_of? Definition
 end
 add_breadcrumb_item object.content.strip_tags.truncate(25).s
 %>
+<div id="passageShow" style="position:relative;">
  <section class="panel panel-content">
    <div class="panel-heading">
      <h6><%= Passage.model_name.human.titleize.s %></h6>
@@ -56,3 +57,5 @@ add_breadcrumb_item object.content.strip_tags.truncate(25).s
      <% end %>
    </div> <!-- END panel-body -->
  </section> <!-- END panel -->
+</div>
+<%= javascript_include_tag "terms_engine/passages_admin_accordion.js" %>
