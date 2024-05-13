@@ -13,7 +13,7 @@
      <div>
        <h1><%= Definition.model_name.human.titleize.s %>:</h1>
        <p>
-<%=      @definition.content.s %>
+<%=      object.content.s %>
        </p>
      </div>
      <br class="clear"/>
@@ -29,19 +29,19 @@
                  <label><%= FeatureName.model_name.human.titleize.s %>:</label> <span><%= parent_object.name %></span>
                </div>
                <div class="row">
-                 <label><%= Definition.human_attribute_name(:is_public).s %>:</label> <span><%= @definition.is_public %></span>
+                 <label><%= Definition.human_attribute_name(:is_public).s %>:</label> <span><%= object.is_public %></span>
                </div>
                <div class="row">
-                 <label><%= Definition.human_attribute_name(:is_primary).s %>:</label> <span><%= @definition.is_primary %></span>
+                 <label><%= Definition.human_attribute_name(:is_primary).s %>:</label> <span><%= object.is_primary %></span>
                </div>
                <div class="row">
                  <label><%= Definition.human_attribute_name(:author)%>:</label> <span><%= def_if_blank object, :author, :fullname %></span>
                </div>
                <div class="row">
-                 <label><%= Definition.human_attribute_name(:numerology)%>:</label> <span><%= @definition.numerology%></span>
+                 <label><%= Definition.human_attribute_name(:numerology)%>:</label> <span><%= object.numerology%></span>
                </div>
                <div class="row">
-                 <label><%= Definition.human_attribute_name(:tense)%>:</label> <span><%= @definition.tense%></span>
+                 <label><%= Definition.human_attribute_name(:tense)%>:</label> <span><%= object.tense%></span>
                </div>
                <div class="row">
                  <label><%= ts 'creat.e.d' %>:</label> <span><%= object.created_at.to_formatted_s(:us_datetime) %></span>
