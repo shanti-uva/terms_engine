@@ -1,7 +1,8 @@
 <% 
   add_breadcrumb_item feature_link(object.feature)
   add_breadcrumb_item link_to Definition.model_name.human(count: :many).titleize.s, admin_feature_path(object.feature.fid, section: 'definitions')
-  add_breadcrumb_item @definition.content.strip_tags.truncate(25).s 
+
+  add_breadcrumb_item object.content.strip_tags.blank? ? object.id : object.content.strip_tags.truncate(25).s 
 %>
 <div id="definitionShow" style="position:relative;">
  <section class="panel panel-content ">
@@ -12,7 +13,7 @@
      <div>
        <h1><%= Definition.model_name.human.titleize.s %>:</h1>
        <p>
-<%=      @definition.content.s %>
+<%=      object.content.s %>
        </p>
      </div>
      <br class="clear"/>
@@ -28,19 +29,19 @@
                  <label><%= FeatureName.model_name.human.titleize.s %>:</label> <span><%= parent_object.name %></span>
                </div>
                <div class="row">
-                 <label><%= Definition.human_attribute_name(:is_public).s %>:</label> <span><%= @definition.is_public %></span>
+                 <label><%= Definition.human_attribute_name(:is_public).s %>:</label> <span><%= object.is_public %></span>
                </div>
                <div class="row">
-                 <label><%= Definition.human_attribute_name(:is_primary).s %>:</label> <span><%= @definition.is_primary %></span>
+                 <label><%= Definition.human_attribute_name(:is_primary).s %>:</label> <span><%= object.is_primary %></span>
                </div>
                <div class="row">
                  <label><%= Definition.human_attribute_name(:author)%>:</label> <span><%= def_if_blank object, :author, :fullname %></span>
                </div>
                <div class="row">
-                 <label><%= Definition.human_attribute_name(:numerology)%>:</label> <span><%= @definition.numerology%></span>
+                 <label><%= Definition.human_attribute_name(:numerology)%>:</label> <span><%= object.numerology%></span>
                </div>
                <div class="row">
-                 <label><%= Definition.human_attribute_name(:tense)%>:</label> <span><%= @definition.tense%></span>
+                 <label><%= Definition.human_attribute_name(:tense)%>:</label> <span><%= object.tense%></span>
                </div>
                <div class="row">
                  <label><%= ts 'creat.e.d' %>:</label> <span><%= object.created_at.to_formatted_s(:us_datetime) %></span>
@@ -121,6 +122,18 @@
            </div> <!-- END panel-body -->
          </div> <!-- END collapseTen -->
        </section>
+       <section class="panel panel-default">
+           <div class="panel-heading">
+             <h6><a href="#collapsePassageTranslations" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= PassageTranslation.model_name.human(count: :many).titleize.s %></a></h6>
+           </div>
+           <div id="collapsePassageTranslations" class="panel-collapse collapse">
+             <div class="panel-body">
+               <%=       highlighted_new_item_link [object, :passage_translation] %>
+               <br class="clear" />
+               <%= render :partial => 'admin/passage_translations/list', :locals => { :list => object.passage_translations } %>
+           </div> <!-- END panel-body -->
+         </div> <!-- END collapseTwo -->
+       </section> <!-- END passage translations panel -->
        <section class="panel panel-default">
          <div class="panel-heading">
            <h6><a href="#collapseFour" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= DefinitionSubjectAssociation.model_name.human(count: :many).titleize.s %></a></h6>

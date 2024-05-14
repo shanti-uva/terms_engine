@@ -1,0 +1,28 @@
+<% if list.empty? %>
+  <%=  empty_collection_message("No #{PassageTranslation.model_name.human(count: :many).s} found.") %>
+<% else %>
+  <table class="listGrid">
+     <tr>
+       <th class="listActionsCol"></th>
+       <th><%= Language.model_name.human.titleize.s %></th>
+       <th><%= PassageTranslation.model_name.human.titleize.s %></th>
+       <th><%= Citation.model_name.human(count: :many).titleize.s %></th>
+     </tr>
+
+  <% list.each do |item| %>
+     <tr>
+       <td class="centerText">
+         <%= list_actions_for_item(item, 
+            delete_path: polymorphic_path([:admin, item.context, item]),
+            edit_path: edit_polymorphic_path([:admin, item.context, item]), 
+            view_path: polymorphic_path([:admin, item.context, item])) 
+        %>
+       </td>
+       <td><%= item.language.name %></td>
+       <td><%= item.content.strip_tags.truncate(300).s %></td>
+       <td></td>
+     </tr>
+  <% end %>
+  </table>
+<% end %>
+

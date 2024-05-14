@@ -1,0 +1,46 @@
+<%
+  # can belong to a definition or a passage
+  # feature > definition > passage_translation
+  # feature > definition > passage > passage_translation
+  # feature > passage > passage_translation
+  #
+  add_breadcrumb_item feature_link(object.context.feature)
+
+  if object.context.instance_of? Definition
+    add_breadcrumb_item link_to Definition.model_name.human(count: :many).titleize.s, polymorphic_path([:admin, object.context.feature], section: 'definitions')
+    # higgins definitions are blank, so output the id in the breadcrumbs instead of the content
+    add_breadcrumb_item link_to object.context.content.strip_tags.blank? ? object.context.id : object.context.content.strip_tags.truncate(25).titleize.s, polymorphic_path([:admin, object.context])
+  end
+
+  if object.context.instance_of? Passage
+    if object.context.context.instance_of? Definition
+      add_breadcrumb_item link_to Definition.model_name.human(count: :many).titleize.s, polymorphic_path([:admin, object.context.context.feature], section: 'definitions')
+      add_breadcrumb_item link_to object.context.context.content.strip_tags.blank? ? object.context.context.id : object.context.context.content.strip_tags.truncate(25).titleize.s, polymorphic_path([:admin, object.context.context])
+    end
+
+    add_breadcrumb_item link_to Passage.model_name.human(count: :many).titleize.s, polymorphic_path([:admin, object.context], section: 'passages')
+    add_breadcrumb_item link_to object.context.content.strip_tags.truncate(25), polymorphic_path([:admin, object.context], section: 'passages')
+  end
+  
+  add_breadcrumb_item link_to PassageTranslation.model_name.human(count: :many).titleize.s, polymorphic_path([:admin, object.context.feature, object.context], section: 'passage_translations')
+add_breadcrumb_item ts('new.this')
+%>
+<div>
+  <h1><%= ts :for, what: t('creat.ing', what: t('new.record', what: PassageTranslation.model_name.human.titleize)), whom: "#{object.context.model_name.human.titleize} #{object.context}" %></h1>
+</div>
+<%= form_with(model: [:admin, object.context, object], local: true) do |form| %>
+<section class="panel panel-content">
+  <div class="panel-heading">
+     <h6><%= PassageTranslation.model_name.human.titleize.s %></h6>
+  </div>
+  <div class="panel-body">
+      <%=  render partial: 'form_fields', locals: {form: form} %>
+      <% if object.context.instance_of? Feature %>
+        <%=  link_to ts('cancel.this'), admin_feature_path(feature.fid, section: 'passages') , class: 'btn btn-primary form-submit', id: 'edit-cancel' %> |
+      <% else %>
+        <%=  link_to ts('cancel.this'), polymorphic_path([:admin, object.context.feature, object.context], section: 'passage_translations') , class: 'btn btn-primary form-submit', id: 'edit-cancel' %> |
+      <% end %>
+      <%=  globalized_submit_tag 'creat.e.this', class: 'submit btn btn-primary form-submit' %>
+  </div> <!-- END panel-body -->
+ </section> <!-- END panel -->
+<% end %>

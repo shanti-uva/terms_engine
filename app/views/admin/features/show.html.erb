@@ -1,4 +1,4 @@
-<% add_breadcrumb_items object.fid %>
+<% add_breadcrumb_item feature_link(object) %>
 <div>
   <h1><%= ts :for, what: t(:entry), whom: object.name %></h1>
 </div>
@@ -95,7 +95,8 @@
             <br class="clear"/>Other Dictionaries
           </legend>
 <%=       render partial: 'admin/definitions/list_legacy', locals: { list: object.definitions.legacy_definitions_by_info_source } %>
-<%=       association_note_list_fieldset(Description.name) %>
+<%=       render partial: 'admin/definitions/list_in_house', locals: { list: object.definitions.in_house_definitions_by_info_source } unless object.definitions.in_house_definitions_by_info_source.empty? %>
+<%=       association_note_list_fieldset(Definition.name) %>
         </div> <!-- END panel-body -->
       </div> <!-- END collapseTen -->
     </section>

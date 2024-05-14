@@ -1,38 +1,23 @@
 $(document).ready(function() {
 
-    if( $('.logged-in.page-terms #definitionShow #accordion').length ) { // only run this on the admin definition accordion in terms_engine
+    if( $('.logged-in.page-terms #passageShow #accordion').length ) { // only run this on the admin passage accordion in terms_engine
 
       const section = window.location.href.split('=')[1];
       if( section == null || section === undefined ) { return; } // exit if we didn't get a section
 
       switch(section) {
-     
-        case('general'):
-          handleFeatureAccordion('collapseOne');
-          break;
-        case('relations'):
-          handleFeatureAccordion('collapseTwo');
-          break;
+        // TODO add notes section
         case('citations'):
-          handleFeatureAccordion('collapseThree');
-          break;
-        case('passages'):
-          handleFeatureAccordion('collapsePassages');
+          handleFeatureAccordion('collapseCitations');
           break;
         case('passage_translations'):
           handleFeatureAccordion('collapsePassageTranslations');
           break;
-        case('related_subjects'):
-          handleFeatureAccordion('collapseFour');
-          break;
-        case('etymologies'):
-          handleFeatureAccordion('collapseFive');
-          break;
         default:
-          handleFeatureAccordion('collapseOne');
+          //handleFeatureAccordion('collapseOne');
           break;
       }
-    
+      
       function handleFeatureAccordion(el){
         // General Information is shown by default so hide it
         $('#collapseOne').collapse('hide');

@@ -1,14 +1,17 @@
 <%
+    # passage can belong to a feature or a definition
 if object.context.instance_of? Feature
   add_breadcrumb_item feature_link(object.context)
 elsif object.context.instance_of? Definition
   add_breadcrumb_item feature_link(object.context.feature)
   add_breadcrumb_item link_to Definition.model_name.human(count: :many).titleize.s, polymorphic_path([:admin, object.context.feature], section: 'definitions')
-  add_breadcrumb_item link_to object.context.content.strip_tags.truncate(25).titleize.s, polymorphic_path([:admin, object.feature, object.context], section: 'passages')
+  # higgins definitions are blank, so output the id in the breadcrumbs instead of the content
+  add_breadcrumb_item link_to object.context.content.strip_tags.blank? ? object.context.id : object.context.content.strip_tags.truncate(25).titleize.s, polymorphic_path([:admin, object.feature, object.context], section: 'passages')
   add_breadcrumb_item link_to Passage.model_name.human(count: :many).titleize.s, polymorphic_path([:admin, object.feature, object.context], section: 'passages')
 end
 add_breadcrumb_item object.content.strip_tags.truncate(25).s
 %>
+<div id="passageShow" style="position:relative;">
  <section class="panel panel-content">
    <div class="panel-heading">
      <h6><%= Passage.model_name.human.titleize.s %></h6>
@@ -32,13 +35,27 @@ add_breadcrumb_item object.content.strip_tags.truncate(25).s
            </div> <!-- END panel-body -->
          </div> <!-- END collapseTwo -->
        </section> <!-- END panel -->
+       <section class="panel panel-default">
+           <div class="panel-heading">
+             <h6><a href="#collapsePassageTranslations" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= PassageTranslation.model_name.human(count: :many).titleize.s %></a></h6>
+           </div>
+           <div id="collapsePassageTranslations" class="panel-collapse collapse">
+             <div class="panel-body">
+               <%=       highlighted_new_item_link [object, :passage_translation] %>
+               <br class="clear" />
+               <%= render :partial => 'admin/passage_translations/list', :locals => { :list => object.passage_translations } %>
+           </div> <!-- END panel-body -->
+         </div> <!-- END collapseTwo -->
+       </section> <!-- END passage translations panel --> 
      </div> <!-- END accordion -->
 
      <%= link_to ts('edit.this'), polymorphic_path([:admin, object.context, object], {action: :edit}), class: 'btn btn-primary form-submit' %> |
      <% if object.context.instance_of? Feature %>
-       <%= link_to ts('cancel.this'), admin_feature_path(object.context.fid), class: 'btn btn-primary form-submit', id: 'edit-cancel' %>
+       <%= link_to ts('cancel.this'), admin_feature_path(object.context.fid, section: 'passages'), class: 'btn btn-primary form-submit', id: 'edit-cancel' %>
      <% else %>
-       <%= link_to ts('cancel.this'), polymorphic_path([:admin, object.context.feature, object.context]), class: 'btn btn-primary form-submit', id: 'edit-cancel' %>
+       <%= link_to ts('cancel.this'), polymorphic_path([:admin, object.context.feature, object.context], section: 'passages'), class: 'btn btn-primary form-submit', id: 'edit-cancel' %>
      <% end %>
    </div> <!-- END panel-body -->
  </section> <!-- END panel -->
+</div>
+<%= javascript_include_tag "terms_engine/passages_admin_accordion.js" %>

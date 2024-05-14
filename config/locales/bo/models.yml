@@ -54,6 +54,12 @@ bo:
             model_sentence:
                 one: 'model sentence'
                 other: 'model sentences'
+            passage:
+                one: 'passage'
+                other: 'passages'
+            passage_translation:
+                one: 'passage translation'
+                other: 'passage translations'
             recording:
                 one: 'recording'
                 other: 'recordings'
