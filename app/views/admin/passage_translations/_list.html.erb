@@ -7,6 +7,7 @@
        <th><%= Language.model_name.human.titleize.s %></th>
        <th><%= PassageTranslation.model_name.human.titleize.s %></th>
        <th><%= Citation.model_name.human(count: :many).titleize.s %></th>
+       <th><%= Note.model_name.human(count: :many).titleize.s %></th>
      </tr>
 
   <% list.each do |item| %>
@@ -20,7 +21,8 @@
        </td>
        <td><%= item.language.name %></td>
        <td><%= item.content.strip_tags.truncate(300).s %></td>
-       <td></td>
+       <td><%= accordion_citation_list_fieldset(object: item) %></td>
+       <td>tbd notes</td>
      </tr>
   <% end %>
   </table>
