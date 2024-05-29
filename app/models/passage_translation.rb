@@ -9,7 +9,7 @@
 #  updated_at   :datetime         not null
 #  context_id   :bigint           not null
 #  language_id  :integer          not null
-#
+# 
 # Indexes
 #
 #  index_passage_translations_on_context_type_and_context_id  (context_type,context_id)
@@ -18,8 +18,12 @@ class PassageTranslation < ApplicationRecord
   include KmapsEngine::IsCitable
   include KmapsEngine::IsNotable
   
-  belongs_to :context, polymorphic: true
+  belongs_to :context, polymorphic: true, touch: true
   belongs_to :language
+  
+  def feature
+    self.context.feature
+  end
   
   def rsolr_document_tags(document, prefix = '')
     prefix_ = prefix.blank? ? '' : "#{prefix}_"
@@ -31,4 +35,5 @@ class PassageTranslation < ApplicationRecord
     document["#{passage_translation_prefix}_citation_references_ss"] = citation_references if !citation_references.blank?
     self.notes.each { |n| n.rsolr_document_tags(document, passage_translation_prefix) }
   end
+
 end
