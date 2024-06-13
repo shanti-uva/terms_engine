@@ -6,6 +6,7 @@
        <th class="listActionsCol"></th>
        <th><%= Passage.human_attribute_name('content').s %></th>
        <th><%= Citation.model_name.human(count: :many).titleize.s %></th>
+       <th><%= Note.model_name.human(count: :many).titleize.s %></th>
      </tr>
 <%   list.each do |item| %>
      <tr>
@@ -16,6 +17,7 @@
        </td>
        <td><%= item.content.s %></td>
        <td><%= accordion_citation_list_fieldset(object: item) %></td>
+       <td><%= accordion_note_list_fieldset(item) %></td>
      </tr>
 <%   end %>
    </table>

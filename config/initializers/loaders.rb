@@ -57,3 +57,8 @@ ActiveSupport.on_load(:admin_feature_relation_types_controller) do
   require 'terms_engine/extensions/admin_feature_relation_types_controller'
   include TermsEngine::Extension::AdminFeatureRelationTypesController
 end
+
+ActiveSupport.on_load(:admin_notes_controller) do
+  require 'terms_engine/extensions/admin_notes_controller'
+  include TermsEngine::Extension::AdminNotesController
+end

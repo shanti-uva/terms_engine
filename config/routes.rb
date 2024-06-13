@@ -8,6 +8,9 @@ Rails.application.routes.draw do
   end
   resources :recordings, only: [:show]
   namespace :admin do
+    concern :add_author do
+      get :add_author, on: :collection
+    end
     resources :definition_relations
     resources :info_sources do
       get :prioritize, on: :collection, to: 'info_sources#prioritize'
@@ -33,6 +36,7 @@ Rails.application.routes.draw do
     end
     resources :passages, only: [:show] do
       resources :citations
+      resources :notes, concerns: :add_author
     end
     resources :passages do
       resources :passage_translations

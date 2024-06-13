@@ -19,7 +19,7 @@ module ExtendedAdminHelper
     if !parent_object.instance_of?(Feature)
       if parent_object.instance_of?(FeatureNameRelation)
         array << parent_object.child_node
-      elsif parent_object.instance_of?(Passage)
+      elsif parent_object.instance_of?(Passage) || parent_object.instance_of?(PassageTranslation)
         array << parent_object.context
       elsif parent_object.respond_to?(:feature)
         array << parent_object.feature
