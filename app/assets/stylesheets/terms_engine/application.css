@@ -79,3 +79,8 @@ body.page-terms .main-col {
  /* box-shadow:none; */
 }
 /* END - fancytree */
+
+.breadcrumb li:first-child a {
+  display: none;
+}
+/* this hides the HOME item in the breadcrumbs for terms app only */
