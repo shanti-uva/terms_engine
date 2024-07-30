@@ -43,6 +43,7 @@ Rails.application.routes.draw do
     end
     resources :passage_translations, only: [:show] do
       resources :citations
+      resources :notes, concerns: :add_author
     end
   end
   resources :definitions, concerns: :notable_citable, only: ['show', 'index']
