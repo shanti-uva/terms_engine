@@ -26,6 +26,7 @@ Rails.application.routes.draw do
     end
     resources :etymologies do
       resources :etymology_type_associations, :etymology_subject_associations
+      resources :notes, concerns: :add_author
     end
     resources :features do
       post :create_tibetan_term, on: :collection
@@ -49,6 +50,7 @@ Rails.application.routes.draw do
   end
   resources :definitions, concerns: :notable_citable, only: ['show', 'index']
   resources :definition_associations, concerns: :notable_citable, only: ['show', 'index']
+  resources :etymologies, concerns: :notable_citable, only: ['show', 'index']
   resources :passages, concerns: :notable_citable, only: ['show', 'index']
   resources :passage_translations, concerns: :notable_citable, only: ['show', 'index']
   resources :translation_equivalents, concerns: :notable_citable, only: ['show', 'index']
