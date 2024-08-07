@@ -36,6 +36,16 @@ add_breadcrumb_item object.content.strip_tags.truncate(25).s
          </div> <!-- END collapseTwo -->
        </section> <!-- END panel -->
        <section class="panel panel-default">
+        <div class="panel-heading">
+          <h6><a href="#collapseNotes" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= ts 'Notes' %></a></h6>
+        </div>
+        <div id="collapseNotes" class="panel-collapse collapse">
+          <div class="panel-body">
+            <%= note_list_fieldset %>
+          </div> <!-- END panel-body -->
+        </div> <!-- END collapseThree -->
+       </section> <!-- END panel NOTES -->
+       <section class="panel panel-default">
            <div class="panel-heading">
              <h6><a href="#collapsePassageTranslations" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-plus"></span><%= PassageTranslation.model_name.human(count: :many).titleize.s %></a></h6>
            </div>
