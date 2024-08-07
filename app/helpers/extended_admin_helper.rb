@@ -46,7 +46,7 @@ module ExtendedAdminHelper
       end
     when :definition # in terms_engine
       add_breadcrumb_item link_to(Definition.model_name.human(:count => :many).s, admin_feature_path(object.feature.fid, section: 'definitions'))
-      add_breadcrumb_item link_to(parent_object.content.strip_tags.truncate(25).s, admin_feature_definition_path(object.feature, parent_object, section: 'citations'))
+      add_breadcrumb_item link_to( (parent_object.content.blank? ? parent_object.id : parent_object.content.strip_tags.truncate(25).s), admin_feature_definition_path(object.feature, parent_object, section: 'citations'))
     when :description
       add_breadcrumb_item feature_descriptions_link(parent_object.feature)
       add_breadcrumb_item link_to(parent_object.title.strip_tags.truncate(25).titleize.s, admin_feature_description_path(parent_object.feature, parent_object))
