@@ -18,6 +18,7 @@ Rails.application.routes.draw do
     end
     resources :definitions do
       resources :citations, :etymologies, :definition_relations, :definition_subject_associations, :passages, :passage_translations
+      resources :notes, concerns: :add_author
       #resources :passages do
       #  resources :passage_translations
       #end
