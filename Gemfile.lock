@@ -129,7 +129,7 @@ GIT
 PATH
   remote: .
   specs:
-    terms_engine (1.6.0)
+    terms_engine (1.6.2)
 
 GEM
   remote: https://rubygems.org/
@@ -292,8 +292,8 @@ GEM
       stringio
     puma (6.4.2)
       nio4r (~> 2.0)
-    racc (1.8.0)
-    rack (3.1.4)
+    racc (1.8.1)
+    rack (3.1.7)
     rack-session (2.0.0)
       rack (>= 3.0.0)
     rack-test (2.1.0)
