@@ -30,7 +30,7 @@ add_breadcrumb_item object.id # not sure what to replace this ID with...
   <% if !object.relation_subject_association.nil? %>
     <div class="row">
       <label><%= RelationSubjectAssociation.model_name.human.titleize.s %></label>:
-      <span><%= object.relation_subject_association.branch['header'] %></span>
+      <span><%= object.relation_subject_association.branch['header'] %></span> -
       <span><%= object.relation_subject_association.subject['header'] %></span>
     </div>
   <% end %>

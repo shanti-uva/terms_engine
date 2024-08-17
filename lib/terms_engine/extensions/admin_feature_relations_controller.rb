@@ -40,7 +40,7 @@ module TermsEngine
       def create
         term_str = Feature.model_name.to_s
         definition_str = Definition.model_name.to_s
-        relation_params = params.require(:feature_relation).permit(:perspective_id, :parent_node_id, :child_node_id, :feature_relation_type_id)
+        relation_params = feature_relation_params #params.require(:feature_relation).permit(:perspective_id, :parent_node_id, :child_node_id, :feature_relation_type_id)
         relation_source = params['relation_source']
         relation_dest = params['relation_dest']
         if relation_source==term_str && relation_dest==term_str
@@ -72,6 +72,11 @@ module TermsEngine
       end
       
       protected
+      
+      def get_perspectives
+        @perspectives = parent_object.affiliations_by_user(current_user, descendants: true).collect(&:perspective).reject(&:is_public)
+        @perspectives = Perspective.where(is_public: false).order(:name) if current_user.admin? || @perspectives.blank?
+      end
 
       # Only allow a trusted parameter "white list" through.
       def feature_relation_params

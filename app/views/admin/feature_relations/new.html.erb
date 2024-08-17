@@ -37,7 +37,7 @@ add_breadcrumb_item ts('new.record', what: t('relat.ion.ship.to', what: feature_
           </div>
         </div>
         <div class="row">
-<%=       f.select :feature_relation_type_id, FeatureRelationType.marked_options(parent_object.id == object.parent_node_id), {}, class: 'form-control form-select ss-select selectpicker' %>
+<%=       f.select :feature_relation_type_id, FeatureRelationType.marked_options(mark_asymmetric: parent_object.id == object.parent_node_id, include_hierarchical: false), {}, class: 'form-control form-select ss-select selectpicker' %>
         </div>
         <div class="row">
           <div>
@@ -66,7 +66,6 @@ add_breadcrumb_item ts('new.record', what: t('relat.ion.ship.to', what: feature_
 <%=           relation_subject_association_form.hidden_field :id %>
 <%          end %>
 <%=         relation_subject_association_form.hidden_field :branch_id, id: :branch_id %>
-<%=         relation_subject_association_form.hidden_field :_destroy %>
             <p>Search by name</p>
 <%          subject_name = ''
             if !object.relation_subject_association.nil? && !object.relation_subject_association.subject.blank?

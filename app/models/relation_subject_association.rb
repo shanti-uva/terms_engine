@@ -20,8 +20,8 @@
 class RelationSubjectAssociation < ApplicationRecord
 
   belongs_to :feature_relation, touch: true
-  
-  validates_presence_of :feature_relation_id
+  # Had to comment this out for nested attributes from form to not break.
+  #validates_presence_of :feature_relation_id
   validates_presence_of :subject_id
   validates_presence_of :branch_id
   
