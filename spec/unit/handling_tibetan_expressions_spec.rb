@@ -11,7 +11,7 @@ RSpec.describe TibetanTermsService do
       # Needed to populate perspective
       Rake::Task['terms_engine:db:seed'].invoke
       # Preparing letters
-      ComplexScripts::TibetanLetter.all.each { |letter| TibetanTermsService.add_term(Feature::BOD_LETTER_SUBJECT_ID, letter.unicode, "#{letter.wylie}a") }
+      ComplexScripts::TibetanLetter.all.each { |letter| TibetanTermsService.add_term(level_subject_id: Feature::BOD_LETTER_SUBJECT_ID, tibetan: letter.unicode, wylie: "#{letter.wylie}a") }
       ts = TibetanTermsService.new
       ts.reposition
       second_level_seed_data = ['ཀ', 'ཀི་ཅུ་རམ', 'ཀྱེ་མ', 'དཀའ་བརྩོན', 'རྐྱེན་ངན', 'བརྐྱངས']
@@ -20,7 +20,7 @@ RSpec.describe TibetanTermsService do
       ka = Feature.current_roots_by_perspective(tib_alpha).first
       r = Random.new
       second_level_seed_data.each do |word|
-        term = TibetanTermsService.add_term(Feature::BOD_PHRASE_SUBJECT_ID, word, nil)
+        term = TibetanTermsService.add_term(level_subject_id: Feature::BOD_PHRASE_SUBJECT_ID, tibetan: word)
         FeatureRelation.create!(child_node: term, parent_node: ka, perspective: tib_alpha, feature_relation_type: relation_type) if FeatureRelation.where(child_node: term, parent_node: ka).first.nil?
       end
       ts = TibetanTermsService.new(ka)
@@ -43,7 +43,7 @@ RSpec.describe TibetanTermsService do
       it "Identifies right parent" do
         expression_to_be_added = 'བཀྲ་ཤིས་'
         parent = TibetanTermsService.recursive_trunk_for(expression_to_be_added)
-        term = TibetanTermsService.add_term(Feature::BOD_EXPRESSION_SUBJECT_ID, expression_to_be_added, nil)
+        term = TibetanTermsService.add_term(level_subject_id: Feature::BOD_EXPRESSION_SUBJECT_ID, wylie: expression_to_be_added)
         tib_alpha = Perspective.get_by_code('tib.alpha')
         relation_type = FeatureRelationType.get_by_code('is.beginning.of')
         FeatureRelation.create!(child_node: term, parent_node: parent, perspective: tib_alpha, feature_relation_type: relation_type)

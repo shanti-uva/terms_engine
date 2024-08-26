@@ -91,10 +91,17 @@ class TibetanTermsService
     end
   end
   
-  def self.add_term(level_subject_id, tibetan = nil, wylie = nil, phonetic = nil)
+  def self.add_term(level_subject_id:, tibetan: nil, wylie: nil, phonetic: nil, fid: nil)
     f = Feature.search_by_phoneme(tibetan || wylie, level_subject_id)
     return f if !f.nil?
-    f = Feature.create!(fid: Feature.generate_pid, is_public: 1, skip_update: true)
+    attrs = { is_public: 1, skip_update: true }
+    if fid.nil?
+      f = Feature.create!(attrs.merge({ fid: Feature.generate_pid }))
+    else
+      f = Feature.get_by_fid(fid)
+      return f if f.nil? || !f.is_blank?
+      f.update(attrs)
+    end
     @@tibetan_script ||= WritingSystem.get_by_code('tibt')
     @@tibetan_language ||= Language.get_by_code('bod')
     @@latin_script ||= WritingSystem.get_by_code('latin')

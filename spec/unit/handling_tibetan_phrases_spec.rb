@@ -11,7 +11,7 @@ RSpec.describe TibetanTermsService do
       # Needed to populate perspective
       Rake::Task['terms_engine:db:seed'].invoke
       # Preparing letters
-      ComplexScripts::TibetanLetter.all.each { |letter| TibetanTermsService.add_term(Feature::BOD_LETTER_SUBJECT_ID, letter.unicode, "#{letter.wylie}a") }
+      ComplexScripts::TibetanLetter.all.each { |letter| TibetanTermsService.add_term(level_subject_id: Feature::BOD_LETTER_SUBJECT_ID, tibetan: letter.unicode, wylie: "#{letter.wylie}a") }
       ts = TibetanTermsService.new
       ts.reposition
       second_level_seed_data = ['ཀ', 'ཀི་ཅུ་རམ', 'ཀྱེ་མ', 'དཀའ་བརྩོན', 'རྐྱེན་ངན', 'བརྐྱངས']
@@ -20,7 +20,7 @@ RSpec.describe TibetanTermsService do
       ka = Feature.current_roots_by_perspective(tib_alpha).first
       r = Random.new
       second_level_seed_data.sort_by{ |w| r.rand(10) }.each do |word|
-        term = TibetanTermsService.add_term(Feature::BOD_PHRASE_SUBJECT_ID, word, nil)
+        term = TibetanTermsService.add_term(level_subject_id: Feature::BOD_PHRASE_SUBJECT_ID, tibetan: word)
         FeatureRelation.create!(child_node: term, parent_node: ka, perspective: tib_alpha, feature_relation_type: relation_type) if FeatureRelation.where(child_node: term, parent_node: ka).first.nil?
       end
       

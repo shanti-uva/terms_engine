@@ -46,9 +46,7 @@ module TermsEngine
             object.errors.add :base, "There is a problem for term: #{current_entry} with calculated parent: #{parent.pid} in herarchy. Skipping term creation."
             @name = current_entry
           else
-            wylie = TibetanTermsService.get_wylie(current_entry)
-            phonetic = TibetanTermsService.get_phonetic(current_entry)
-            @current_term = TibetanTermsService.add_term(Feature::BOD_EXPRESSION_SUBJECT_ID, current_entry, wylie, phonetic)
+            @current_term = TibetanTermsService.add_term(level_subject_id: Feature::BOD_EXPRESSION_SUBJECT_ID, tibetan: current_entry, wylie: TibetanTermsService.get_wylie(current_entry), phonetic: TibetanTermsService.get_phonetic(current_entry))
             @object = @current_term
             FeatureRelation.create!(child_node: @current_term, parent_node: parent, perspective: tib_alpha, feature_relation_type: relation_type, skip_update: true)
             ts = TibetanTermsService.new(parent)

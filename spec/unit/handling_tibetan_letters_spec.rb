@@ -12,7 +12,7 @@ RSpec.describe TibetanTermsService do
       Rake::Task['terms_engine:db:seed'].invoke
       # Adding letters randomly in order to test sorting in DB
       r = Random.new
-      ComplexScripts::TibetanLetter.all.sort_by{ |l| r.rand(100) }.each { |letter| TibetanTermsService.add_term(Feature::BOD_LETTER_SUBJECT_ID, letter.unicode, "#{letter.wylie}a") }
+      ComplexScripts::TibetanLetter.all.sort_by{ |l| r.rand(100) }.each { |letter| TibetanTermsService.add_term(level_subject_id: Feature::BOD_LETTER_SUBJECT_ID, tibetan: letter.unicode, wylie: "#{letter.wylie}a") }
     end
     
     context "Sorting" do
@@ -26,7 +26,7 @@ RSpec.describe TibetanTermsService do
       
       it "Updates position for letters" do
         # TODO: check with Andres if this is needed, it is already being added in the before(:all)
-        ComplexScripts::TibetanLetter.all.each { |letter| TibetanTermsService.add_term(Feature::BOD_LETTER_SUBJECT_ID, letter.unicode, "#{letter.wylie}a") }
+        ComplexScripts::TibetanLetter.all.each { |letter| TibetanTermsService.add_term(level_subject_id: Feature::BOD_LETTER_SUBJECT_ID, tibetan: letter.unicode, wylie: "#{letter.wylie}a") }
         ts = TibetanTermsService.new
         ts.reposition
         expected = ComplexScripts::TibetanLetter.all.collect{|w| w[:unicode] }

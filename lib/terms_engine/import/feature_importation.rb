@@ -4,6 +4,7 @@ module TermsEngine
   class FeatureImportation < KmapsEngine::FeatureImportation
     attr_accessor :last_parent
     attr_accessor :perspective
+    attr_accessor :main_names
     
     # Currently supported fields:
     # features.fid, features.old_pid, features.position, feature_names.delete, feature_names.is_primary.delete
@@ -68,13 +69,17 @@ module TermsEngine
             for i in current...limit
               row = rows[i]
               self.fields = row.to_hash.delete_if{ |key, value| value.blank? }
+              self.get_main_names
               if self.fields['features.fid'].blank?
-                self.infer_or_create_feature
+                self.infer_feature
+                self.set_up_main_names_for_new_or_blank_feature if self.feature.nil?
                 self.process_feature
               else
                 next unless self.get_feature(current)
+                is_blank = self.feature.is_blank?
+                self.set_up_main_names_for_new_or_blank_feature if is_blank
                 self.process_feature
-                self.process_names(44)
+                self.process_names(44) if !is_blank
               end
               feature_ids_with_changes << self.feature.id
               self.process_kmaps(5)
@@ -160,9 +165,7 @@ module TermsEngine
       return info_source
     end
     
-    def infer_or_create_feature
-      @relation_type ||= FeatureRelationType.get_by_code('heads')
-      
+    def get_main_names
       case self.perspective.code
       when 'tib.alpha'
         tibetan_str = nil
@@ -181,24 +184,7 @@ module TermsEngine
             phonetic_str = name_str if phonetic_str.blank?
           end
         end
-        self.feature = Feature.search_bod_expression(tibetan_str)
-        if self.feature.nil?
-          self.log.debug "Adding new term #{tibetan_str}"
-          Rails.cache.delete("features/current_roots/#{self.perspective.id}")
-          parent = TibetanTermsService.recursive_trunk_for(tibetan_str)
-          if parent.ancestors_by_perspective(self.perspective).count != 2
-            self.say "There is a problem for term: #{current_entry} with calculated parent: #{parent.pid} in herarchy. Skipping term creation."
-            return
-          end
-          self.feature = TibetanTermsService.add_term(Feature::BOD_EXPRESSION_SUBJECT_ID, tibetan_str, wylie_str, phonetic_str)
-          FeatureRelation.create!(child_node: self.feature, parent_node: parent, perspective: self.perspective, feature_relation_type: @relation_type)
-          if self.last_parent.nil?
-            self.last_parent = parent
-          elsif self.last_parent != parent
-            reposition_parent
-            self.last_parent = parent
-          end
-        end
+        self.main_names = { tibetan: tibetan_str, wylie: wylie_str, phonetic: phonetic_str }
       when 'new.alpha'
         deva_str = nil
         latin_str = nil
@@ -213,24 +199,44 @@ module TermsEngine
             latin_str = name_str.trim if latin_str.blank?
           end
         end
-        self.feature = Feature.search_bod_expression(tibetan_str)
+        self.main_names = { deva: deva_str, latin: latin_str }
+      end
+    end
+    
+    def set_up_main_names_for_new_or_blank_feature
+      @relation_type ||= FeatureRelationType.get_by_code('heads')
+      Rails.cache.delete("features/current_roots/#{self.perspective.id}")
+      names_hash = self.main_names
+      parent = TibetanTermsService.recursive_trunk_for(names_hash[:tibetan])
+      if parent.ancestors_by_perspective(self.perspective).count != 2
+        self.say "There is a problem for term: #{current_entry} with calculated parent: #{parent.pid} in herarchy. Skipping term creation."
+        return
+      end
+      attrs = { level_subject_id: Feature::BOD_EXPRESSION_SUBJECT_ID, tibetan: names_hash[:tibetan], wylie: names_hash[:wylie], phonetic: names_hash[:phonetic] }
+      if self.feature.nil?
+        self.feature = TibetanTermsService.add_term(**attrs)
+      else
+        attrs[:fid] = self.feature.fid
+        TibetanTermsService.add_term(**attrs)
+      end
+      FeatureRelation.create!(child_node: self.feature, parent_node: parent, perspective: self.perspective, feature_relation_type: @relation_type)
+      if self.last_parent.nil?
+        self.last_parent = parent
+      elsif self.last_parent != parent
+        reposition_parent
+        self.last_parent = parent
+      end
+    end
+    
+    def infer_feature
+      names_hash = self.main_names
+      case self.perspective.code
+      when 'tib.alpha'
+        self.feature = Feature.search_bod_expression(names_hash[:tibetan])
         if self.feature.nil?
-          self.log.debug "Adding new term #{tibetan_str}"
-          Rails.cache.delete("features/current_roots/#{self.perspective.id}")
-          parent = TibetanTermsService.recursive_trunk_for(tibetan_str)
-          if parent.ancestors_by_perspective(self.perspective).count != 2
-            self.say "There is a problem for term: #{current_entry} with calculated parent: #{parent.pid} in herarchy. Skipping term creation."
-            return
-          end
-          self.feature = TibetanTermsService.add_term(Feature::BOD_EXPRESSION_SUBJECT_ID, tibetan_str, wylie_str, phonetic_str)
-          FeatureRelation.create!(child_node: self.feature, parent_node: parent, perspective: self.perspective, feature_relation_type: @relation_type)
-          if self.last_parent.nil?
-            self.last_parent = parent
-          elsif self.last_parent != parent
-            reposition_parent
-            self.last_parent = parent
-          end
+          self.log.debug "Adding new term #{names_hash[:tibetan]}"
         end
+      when 'new.alpha' # pending!
       end
     end
     
@@ -241,7 +247,7 @@ module TermsEngine
     end
     
     # [i.]definitions:
-    # content, language.code/name
+    # delete, content, language.code/name
     # Additionally, optional column "i.definition_relations.parent_node" can be
     # used to establish name i as child of name j by simply specifying the name number.
     # The parent name has to precede the child name. If a parent column is specified,
@@ -252,16 +258,34 @@ module TermsEngine
         prefix = i>0 ? "#{i}.definitions" : 'definitions'
         definition_content = self.fields.delete("#{prefix}.content")
         if !definition_content.blank?
-          info_sources = {}
-          0.upto(4) do |j|
-            info_prefix = j==0 ? prefix : "#{prefix}.#{j}"
-            info_source = self.get_info_source(info_prefix)
-            info_sources[info_prefix] = info_source if !info_source.nil?
-          end
-          definition[i] = definitions.find_by(['LEFT(content, 200) = ?', definition_content[0...200]]) # find_by(content: definition_content)
+          # I am unclear about support of adding several citations to a single definition.
+          #info_sources = {}
+          #0.upto(4) do |j|
+          #  info_prefix = j==0 ? prefix : "#{prefix}.#{j}"
+          #  info_source = self.get_info_source(info_prefix)
+          #  info_sources[info_prefix] = info_source if !info_source.nil?
+          #end
+          info_source = self.get_info_source(prefix)
+          delete_definitions_str = self.fields.delete("#{prefix}.delete")
+          delete_definitions = !delete_definitions_str.blank? && delete_definitions_str.downcase == 'yes'
+          def_begining = definition_content[0...200]
+          def_begining = def_begining.split("\n").first
+          def_with_tags = '<p>' + def_begining
+          definition[i] = definitions.find_by(["LEFT(content, #{def_begining.size}) = ? OR LEFT(content, #{def_with_tags.size}) = ?", def_begining, def_with_tags]) # find_by(content: definition_content)
           if !definition[i].nil?
             citation = definition[i].citations.order(:created_at).first
-            definition[i] = nil if !citation.nil? && !info_sources.values.include?(citation.info_source)
+            if !citation.nil? && info_source==citation.info_source
+              if delete_definitions
+                definition[i].destroy
+                next
+              end
+            else #!info_sources.values.include?(citation.info_source)
+              definition[i] = nil
+            end
+          else
+            if delete_definitions
+              self.say "Did not find definition for feature #{self.feature.pid} marked for deletion."
+            end
           end
           language = Language.get_by_code_or_name(self.fields.delete("#{prefix}.languages.code"), self.fields.delete("#{prefix}.languages.name"))
           position = definitions.maximum(:position)
@@ -284,7 +308,8 @@ module TermsEngine
               info_prefix = j==0 ? prefix : "#{prefix}.#{j}"
               self.add_note(info_prefix, definition[i])
             end
-            info_sources.each{ |prefix, info_source| self.process_info_source(prefix, definition[i], info_source) }
+            self.process_info_source(prefix, definition[i], info_source)
+            #info_sources.each{ |prefix, info_source| self.process_info_source(prefix, definition[i], info_source) }
             parent_node_str = self.fields.delete("#{i}.definition_relations.parent_node")
             if !parent_node_str.blank?
               parent_position = parent_node_str.to_i
