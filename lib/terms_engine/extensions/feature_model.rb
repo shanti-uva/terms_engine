@@ -388,10 +388,6 @@ module TermsEngine
         doc
       end
       
-      def solr_url
-        URI.join(TermsResource.get_url, "solr/#{self.fid}.json")
-      end
-      
       def calculate_prioritized_name(current_view)
         all_names = prioritized_names
         case current_view.code
@@ -499,6 +495,10 @@ module TermsEngine
             end
           end
           name.nil? ? nil : name.feature
+        end
+        
+        def solr_url
+          URI.join(TermsResource.get_url, "solr/")
         end
       end
     end

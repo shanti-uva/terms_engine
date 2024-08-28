@@ -169,7 +169,11 @@ module TermsEngine
     
     def destroy_features(terms)
       terms.each do |f|
-        f.remove!
+        if Feature.post_to_index?
+          f.remove!
+        else
+          f.fs_remove
+        end
         f.destroy
         puts "#{Time.now}: Deleted term #{fid}."
       end
