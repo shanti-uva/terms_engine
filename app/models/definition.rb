@@ -7,7 +7,6 @@
 #  content      :text             not null
 #  is_primary   :boolean
 #  is_public    :boolean          default(FALSE), not null
-#  numerology   :integer
 #  position     :integer          default(0)
 #  tense        :string
 #  created_at   :datetime         not null
