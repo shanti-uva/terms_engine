@@ -33,6 +33,7 @@ module TermsEngine
         end
         has_many :subject_term_associations, dependent: :destroy
         has_many :translation_equivalents, dependent: :destroy
+        has_one  :enumeration, dependent: :destroy
         
         # This fetches root *Definitions* (definitions that don't have parents),
         # within the scope of the current feature
