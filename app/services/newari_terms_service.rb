@@ -17,7 +17,7 @@ class NewariTermsService
     if @sorted_terms.nil?
       @view ||= View.get_by_code('pri.orig.sec.roman')
       terms_with_name = terms.collect{|t| [t, t.prioritized_name(@view).name] }
-      sorted_terms_with_name = terms_with_name.sort{ |a,b| a[1]<=>(b[1]) }
+      sorted_terms_with_name = terms_with_name.sort{ |a,b| a[1].new_compare(b[1]) }
       @sorted_terms = sorted_terms_with_name.collect(&:first)
     end
     @sorted_terms
@@ -37,13 +37,13 @@ class NewariTermsService
   end
     
   def position_for(name)
-    pos = names.find_index { |n| n>name }
+    pos = names.find_index { |n| n.new_compare(name)>0 }
     pos.nil? || pos==0 ? nil : pos - 1
   end
   
   def self.recursive_trunk_for(name)
     if name.instance_of? String
-      letters = TibetanTermsService.new
+      letters = NewariTermsService.new
       letter = letters.trunk_for(name)
       return letter.nil? ? nil : NewariTermsService.new(letter).trunk_for(name)
     elsif name.instance_of? Feature
@@ -74,10 +74,17 @@ class NewariTermsService
     end
   end
   
-  def self.add_term(level_subject_id, deva = nil, latin = nil)
+  def self.add_term(level_subject_id:, deva: nil, latin: nil, fid: nil)
     f = Feature.search_by_phoneme(deva || latin, level_subject_id)
     return f if !f.nil?
-    f = Feature.create!(fid: Feature.generate_pid, is_public: 1, skip_update: true)
+    attrs = { is_public: 1, skip_update: true }
+    if fid.nil?
+      f = Feature.create!(attrs.merge({ fid: Feature.generate_pid }))
+    else
+      f = Feature.get_by_fid(fid)
+      return f if f.nil? || !f.is_blank?
+      f.update(attrs)
+    end
     @@deva_script ||= WritingSystem.get_by_code('deva')
     @@newari_language ||= Language.get_by_code('new')
     @@latin_script ||= WritingSystem.get_by_code('latin')

@@ -53,19 +53,31 @@ module TermsEngine
     def infer_feature
       tibetan_str = nil
       wylie_str = nil
+      newar_str = nil
+      latin_str = nil
       1.upto(2) do |i|
         name_tag = "#{i}.feature_names"
         name_str = self.fields.delete("#{name_tag}.name")
         writing_system_str = self.fields.delete("#{i}.writing_systems.code")
         relationship_system_str = self.fields.delete("#{i}.feature_name_relations.relationship.code")
-        if writing_system_str=='tibt'
+        case writing_system_str
+        when 'tibt'
           tibetan_str = name_str.tibetan_cleanup if tibetan_str.blank?
-        elsif relationship_system_str=='thl.ext.wyl.translit'
-          wylie_str = name_str.strip if wylie_str.blank?
+        when 'deva'
+          newar_str = name_str.strip
+        else
+          case relationship_system_str
+          when 'thl.ext.wyl.translit'
+            wylie_str = name_str.strip if wylie_str.blank?
+          when 'indo.standard.translit'
+            latin_str = name_str.strip if wylie_str.blank?
+          end
         end
       end
       self.feature = Feature.search_bod_expression(tibetan_str) if !tibetan_str.blank?
       self.feature = Feature.search_bod_expression(wylie_str) if self.feature.nil? &&  !wylie_str.blank?
+      self.feature = Feature.search_new_expression(newar_str) if self.feature.nil? &&  !newar_str.blank?
+      self.feature = Feature.search_new_expression(latin_str) if self.feature.nil? &&  !latin_str.blank?
     end
   end
 end

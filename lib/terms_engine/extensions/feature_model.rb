@@ -497,6 +497,18 @@ module TermsEngine
           name.nil? ? nil : name.feature
         end
         
+        def search_new_expression(name_str)
+          if name_str.is_devanagari_word?
+            script = WritingSystem.get_by_code('deva')
+            name = FeatureName.joins(feature: :subject_term_associations).where(name: name_str, writing_system_id: script.id, 'subject_term_associations.branch_id' => Feature::NEW_PHONEME_SUBJECT_ID, 'subject_term_associations.subject_id' => Feature::NEW_EXPRESSION_SUBJECT_ID).first
+          else
+            script = WritingSystem.get_by_code('latin')
+            o = OrthographicSystem.get_by_code('indo.standard.translit')
+            name = FeatureName.joins(:parent_relations, feature: :subject_term_associations).where(name: name_str, writing_system_id: script.id, 'subject_term_associations.branch_id' => Feature::NEW_PHONEME_SUBJECT_ID, 'subject_term_associations.subject_id' => Feature::NEW_EXPRESSION_SUBJECT_ID, 'feature_name_relations.orthographic_system_id' => o.id).first
+          end
+          name.nil? ? nil : name.feature
+        end
+        
         def solr_url
           URI.join(TermsResource.get_url, "solr/")
         end

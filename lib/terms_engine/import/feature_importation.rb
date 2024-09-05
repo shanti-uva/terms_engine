@@ -194,9 +194,9 @@ module TermsEngine
           writing_system_str = self.fields.delete("#{i}.writing_systems.code")
           relationship_system_str = self.fields.delete("#{i}.feature_name_relations.relationship.code")
           if writing_system_str=='deva'
-            deva_str = name_str.trim if deva_str.blank?
+            deva_str = name_str.strip if deva_str.blank?
           elsif relationship_system_str=='indo.standard.translit'
-            latin_str = name_str.trim if latin_str.blank?
+            latin_str = name_str.strip if latin_str.blank?
           end
         end
         self.main_names = { deva: deva_str, latin: latin_str }
@@ -207,24 +207,47 @@ module TermsEngine
       @relation_type ||= FeatureRelationType.get_by_code('heads')
       Rails.cache.delete("features/current_roots/#{self.perspective.id}")
       names_hash = self.main_names
-      parent = TibetanTermsService.recursive_trunk_for(names_hash[:tibetan])
-      if parent.ancestors_by_perspective(self.perspective).count != 2
-        self.say "There is a problem for term: #{current_entry} with calculated parent: #{parent.pid} in herarchy. Skipping term creation."
-        return
-      end
-      attrs = { level_subject_id: Feature::BOD_EXPRESSION_SUBJECT_ID, tibetan: names_hash[:tibetan], wylie: names_hash[:wylie], phonetic: names_hash[:phonetic] }
-      if self.feature.nil?
-        self.feature = TibetanTermsService.add_term(**attrs)
-      else
-        attrs[:fid] = self.feature.fid
-        TibetanTermsService.add_term(**attrs)
-      end
-      FeatureRelation.create!(child_node: self.feature, parent_node: parent, perspective: self.perspective, feature_relation_type: @relation_type)
-      if self.last_parent.nil?
-        self.last_parent = parent
-      elsif self.last_parent != parent
-        reposition_parent
-        self.last_parent = parent
+      case self.perspective.code
+      when 'tib.alpha'
+        parent = TibetanTermsService.recursive_trunk_for(names_hash[:tibetan])
+        if parent.ancestors_by_perspective(self.perspective).count != 2
+          self.say "There is a problem for term: #{names_hash[:tibetan]} with calculated parent: #{parent.pid} in herarchy. Skipping term creation."
+          return
+        end
+        attrs = { level_subject_id: Feature::BOD_EXPRESSION_SUBJECT_ID, tibetan: names_hash[:tibetan], wylie: names_hash[:wylie], phonetic: names_hash[:phonetic] }
+        if self.feature.nil?
+          self.feature = TibetanTermsService.add_term(**attrs)
+        else
+          attrs[:fid] = self.feature.fid
+          TibetanTermsService.add_term(**attrs)
+        end
+        FeatureRelation.create!(child_node: self.feature, parent_node: parent, perspective: self.perspective, feature_relation_type: @relation_type)
+        if self.last_parent.nil?
+          self.last_parent = parent
+        elsif self.last_parent != parent
+          reposition_parent
+          self.last_parent = parent
+        end
+      when 'new.alpha'
+        parent = NewariTermsService.recursive_trunk_for(names_hash[:deva])
+        if parent.ancestors_by_perspective(self.perspective).count != 2
+          self.say "There is a problem for term: #{names_hash[:deva]} with calculated parent: #{parent.pid} in herarchy. Skipping term creation."
+          return
+        end
+        attrs = { level_subject_id: Feature::NEW_EXPRESSION_SUBJECT_ID, deva: names_hash[:deva], latin: names_hash[:latin] }
+        if self.feature.nil?
+          self.feature = NewariTermsService.add_term(**attrs)
+        else
+          attrs[:fid] = self.feature.fid
+          NewariTermsService.add_term(**attrs)
+        end
+        FeatureRelation.create!(child_node: self.feature, parent_node: parent, perspective: self.perspective, feature_relation_type: @relation_type)
+        if self.last_parent.nil?
+          self.last_parent = parent
+        elsif self.last_parent != parent
+          reposition_parent
+          self.last_parent = parent
+        end
       end
     end
     
@@ -236,7 +259,11 @@ module TermsEngine
         if self.feature.nil?
           self.log.debug "Adding new term #{names_hash[:tibetan]}"
         end
-      when 'new.alpha' # pending!
+      when 'new.alpha'
+        self.feature = Feature.search_new_expression(names_hash[:deva])
+        if self.feature.nil?
+          self.log.debug "Adding new term #{names_hash[:deva]}"
+        end
       end
     end
     
