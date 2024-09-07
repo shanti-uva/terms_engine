@@ -102,6 +102,8 @@ module TermsEngine
       letters.sort_by{|f| f.position}.each do |letter|
         letter.skip_update = true
         expressions = get_new_terms_under_letter_by_phoneme(letter, Feature::NEW_EXPRESSION_SUBJECT_ID)
+        ns = NewariTermsService.new(expressions)
+        sorted_expressions = ns.reposition
         puts "#{Time.now}: Deleting intermediate level under letter #{letter.prioritized_name(v).name}..."
         destroy_features(get_new_terms_under_letter_by_phoneme(letter, Feature::NEW_PLACE_HOLDER_SUBJECT_ID))
         head = nil
@@ -120,11 +122,6 @@ module TermsEngine
               FeatureRelation.create(child_node: head, parent_node: letter, perspective: @new_alpha, feature_relation_type: starts_type, skip_update: true)
               head.subject_term_associations.create(subject_id: Feature::NEW_PLACE_HOLDER_SUBJECT_ID, branch_id: Feature::NEW_PHONEME_SUBJECT_ID)
               head_range.each do |f|
-                letter_relation = FeatureRelation.where(parent_node: letter, child_node: f).first
-                if !letter_relation.nil?
-                  letter_relation.skip_update = true
-                  letter_relation.destroy
-                end
                 FeatureRelation.create(child_node: f, parent_node: head, perspective: @new_alpha, feature_relation_type: heads_type, skip_update: true)
                 f.skip_update = false
                 f.update_hierarchy
@@ -159,7 +156,14 @@ module TermsEngine
     end
     
     def get_new_terms_under_letter_by_phoneme(letter, phoneme_sid)
-      letter.children.joins(:phoneme_term_associations).where('subject_term_associations.branch_id' => Feature::NEW_PHONEME_SUBJECT_ID, 'subject_term_associations.subject_id' => phoneme_sid).order(:position).to_a
+      children = letter.children.order(:position)
+      case phoneme_sid
+      when Feature::NEW_PLACE_HOLDER_SUBJECT_ID
+        return children.to_a
+      when Feature::NEW_EXPRESSION_SUBJECT_ID
+        return children.collect{ |c| c.children.order(:position) }.flatten(1)
+      end
+      #letter.children.joins(:phoneme_term_associations).where('subject_term_associations.branch_id' => Feature::NEW_PHONEME_SUBJECT_ID, 'subject_term_associations.subject_id' => phoneme_sid).order(:position).to_a
       #letter_fid = letter.fid
       #query = "tree:terms AND ancestor_ids_new.alpha:#{letter_fid} AND associated_subject_#{Feature::NEW_PHONEME_SUBJECT_ID}_ls:#{phoneme_sid}"
       #numFound = Feature.search_by(query)['numFound']
@@ -174,6 +178,7 @@ module TermsEngine
         else
           f.fs_remove
         end
+        fid = f.fid
         f.destroy
         puts "#{Time.now}: Deleted term #{fid}."
       end
