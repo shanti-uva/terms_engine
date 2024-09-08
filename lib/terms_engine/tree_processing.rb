@@ -173,6 +173,7 @@ module TermsEngine
     
     def destroy_features(terms)
       terms.each do |f|
+        f.skip_update
         if Feature.post_to_index?
           f.remove!
         else
