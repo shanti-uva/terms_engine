@@ -24,7 +24,7 @@ class Admin::EnumerationsController < AclController
   protected
 
   def enumeration_params
-    params.require(:enumerations).permit(:context_id, :context_type, :value)
+    params.require(:enumeration).permit(:context_id, :context_type, :value)
   end
   
 end
