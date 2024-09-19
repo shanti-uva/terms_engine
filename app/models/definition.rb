@@ -40,6 +40,7 @@ class Definition < ApplicationRecord
   #has_many :in_house_citations, -> { where(info_source_type: InfoSource.model_name.name).joins(:info_source).where('info_sources.processed' => true) }, as: :citable, class_name: 'Citation'
   has_many :non_standard_citations, -> { where(info_source_type: InfoSource.model_name.name) }, as: :citable, class_name: 'Citation'
   has_many :standard_citations, -> { where.not(info_source_type: InfoSource.model_name.name) }, as: :citable, class_name: 'Citation'
+  has_one :enumeration, as: :context, dependent: :destroy
   
   def legacy_citations
     self.non_standard_citations.reject{|c| c.info_source.processed} #. , -> { where(info_source_type: InfoSource.model_name.name).joins(:info_source).where('info_sources.processed' => false) }, as: :citable, class_name: 'Citation'

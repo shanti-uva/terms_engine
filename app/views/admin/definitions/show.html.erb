@@ -29,6 +29,9 @@
                  <label><%= FeatureName.model_name.human.titleize.s %>:</label> <span><%= parent_object.name %></span>
                </div>
                <div class="row">
+                 <label><%= Enumeration.model_name.human.s %>:</label> <span><%=  def_if_blank object, :enumeration, :value  %></span>
+               </div>
+               <div class="row">
                  <label><%= Definition.human_attribute_name(:is_public).s %>:</label> <span><%= object.is_public %></span>
                </div>
                <div class="row">
