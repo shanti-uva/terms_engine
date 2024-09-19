@@ -33,7 +33,7 @@ module TermsEngine
         end
         has_many :subject_term_associations, dependent: :destroy
         has_many :translation_equivalents, dependent: :destroy
-        has_one  :enumeration, dependent: :destroy
+        has_one  :enumeration, as: :context, dependent: :destroy
         
         # This fetches root *Definitions* (definitions that don't have parents),
         # within the scope of the current feature
@@ -271,6 +271,7 @@ module TermsEngine
           }
           author = d.author
           cd["#{def_prefix}_author_s"] = author.fullname if !author.nil?
+          cd["#{def_prefix}_enumeration_i"] = d.enumeration.value if !d.enumeration.nil?
           cd["#{def_prefix}_tense_s"] = d.tense if !d.tense.nil?
           d.etymologies.each do |de|
             etymology_prefix = "#{def_prefix}_etymology_#{de.id}"
