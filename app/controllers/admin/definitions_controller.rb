@@ -7,10 +7,11 @@ class Admin::DefinitionsController < AclController
 
   create.wants.html { redirect_to admin_feature_path(object.feature_id, section: "definitions") } 
   update.wants.html { redirect_to admin_feature_path(object.feature_id, section: "definitions") }
-  
+
   new_action.before do
     @languages = Language.order('name')
     @authors = AuthenticatedSystem::Person.order('fullname')
+    @enumeration = object.build_enumeration
   end
 
   edit.before do
@@ -21,6 +22,10 @@ class Admin::DefinitionsController < AclController
   create.before do
     @languages = Language.order('name')
     @authors = AuthenticatedSystem::Person.order('fullname')
+  end
+
+  create.after do
+    Enumeration.create(value: params[:enumeration][:value], context_type: 'Definition', context_id: object.id)
   end
   
   update.before do
@@ -58,8 +63,13 @@ class Admin::DefinitionsController < AclController
     end
     @collection = search_results.empty? ? search_results : search_results.page(params[:page])
   end
-  # Only allow a trusted parameter "white list" through.
+  
   def definition_params
-    params.require(:definition).permit(:feature_id, :is_public, :is_primary, :ancestor_ids, :position, :content, :author_id, :language_id, :numerology, :tense)
+    params.require(:definition).permit(:feature_id, :is_public, :is_primary, :ancestor_ids, :position, :content, :author_id, :language_id, :tense)
   end
+
+  def enumeration_params
+    params.require(:enumeration).permit(:value)
+  end
+  
 end
