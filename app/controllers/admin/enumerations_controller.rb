@@ -9,15 +9,14 @@ class Admin::EnumerationsController < AclController
     if object.context.instance_of? Feature
        redirect_to admin_feature_url(object.context.fid, section: 'definitions')
     else
-      redirect_to polymorphic_url([:admin, object.context.feature, object.context], section: 'definitions') 
+      redirect_to polymorphic_url([:admin, object.context.feature, object.context], section: 'general') 
     end
   end
   update.wants.html do
     if object.context.instance_of? Feature
        redirect_to admin_feature_url(object.context.fid, section: 'definitions')
     else
-      redirect_to admin_feature_definition_path(object.feature, object)
-      #redirect_to polymorphic_url([:admin, object.context.feature, object.context], section: 'definitions') 
+      redirect_to polymorphic_url([:admin, object.context.feature, object.context], section: 'general') 
     end
   end
 

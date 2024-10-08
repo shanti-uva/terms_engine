@@ -17,13 +17,15 @@ Rails.application.routes.draw do
       post :prioritize, on: :collection, to: 'info_sources#set_priorities'
     end
     resources :definitions do
-      resources :citations, :etymologies, :definition_relations, :definition_subject_associations, :passages, :passage_translations, :enumerations
+      resources :citations, :etymologies, :definition_relations, :definition_subject_associations, :passages, :passage_translations
+      
       resources :notes, concerns: :add_author
       #resources :passages do
       #  resources :passage_translations
       #end
       resources :definition_associations, except: [:new, :index]
     end
+    resources :enumerations
     resources :etymologies do
       resources :etymology_type_associations, :etymology_subject_associations
       resources :notes, concerns: :add_author

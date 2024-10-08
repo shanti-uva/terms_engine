@@ -15,7 +15,7 @@ add_breadcrumb_item ts('edit.this')
       </div>
     <% end %>
 
-    <%= form_with(model: [:admin, object, object.enumeration ], local: true) do |form| %>
+    <%= form_with(model: [:admin, object.enumeration ], local: true) do |form| %>
       <%=  render partial: 'admin/enumerations/form_fields', locals: {form: form, context_type: 'Definition', context_id: object.id} %>
       <div class="actions">
         <%=  link_to ts('cancel.this'), admin_feature_definition_path(object.feature,object), class: 'btn btn-primary form-submit', id: 'edit-cancel' %> | <%= globalized_submit_tag 'update.this', class: 'btn btn-primary form-submit' %>
