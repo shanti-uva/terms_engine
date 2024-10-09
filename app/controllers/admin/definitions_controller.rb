@@ -17,6 +17,7 @@ class Admin::DefinitionsController < AclController
   edit.before do
     @languages = Language.order('name')
     @authors = AuthenticatedSystem::Person.order('fullname')
+    @enumeration = object.enumeration
   end
   
   create.before do
@@ -25,13 +26,28 @@ class Admin::DefinitionsController < AclController
   end
 
   create.after do
-    Enumeration.create(value: params[:enumeration][:value], context_type: 'Definition', context_id: object.id)
+    Enumeration.create(value: params[:enumeration][:value], context_type: 'Definition', context_id: object.id) unless params[:enumeration][:value].blank?
   end
   
   update.before do
     @languages = Language.order('name')
     @authors = AuthenticatedSystem::Person.order('fullname')
   end
+
+  update.after do
+    e = Enumeration.where(context_id: object.id, context_type: 'Definition').last
+    if e.nil?
+      Enumeration.create(value: params[:enumeration][:value], context_type: 'Definition', context_id: object.id)
+    else
+      if params[:enumeration][:value].blank?
+        e.destroy
+      else
+        e.update_attribute(:value, params[:enumeration][:value])
+      end
+    end
+  end
+
+  
 
   def locate_for_relation
     @locating_relation=true # flag used in template
@@ -69,7 +85,7 @@ class Admin::DefinitionsController < AclController
   end
 
   def enumeration_params
-    params.require(:enumeration).permit(:value)
+    params.require(:enumeration).permit(:value, :context_id)
   end
   
 end
