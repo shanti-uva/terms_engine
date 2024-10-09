@@ -34,7 +34,7 @@
     <%= form.text_field :tense %>
   </div>
   <div class="row">
-    <% fields_for @enumeration do |enumeration_fields| %>
+    <%= fields_for @enumeration do |enumeration_fields| %>
       <%= enumeration_fields.label(:enumeration).s %>
       <%= enumeration_fields.text_field :value %>
     <% end %>
