@@ -25,6 +25,7 @@ module TermsEngine
         has_many :etymologies, as: :context, dependent: :destroy
         has_many :model_sentences, as: :context, dependent: :destroy
         has_many :phoneme_term_associations, dependent: :destroy
+        has_many :non_phoneme_term_associations, dependent: :destroy
         has_many :recordings, dependent: :destroy do
           def corrupted
             self.select{ |r| r.corrupted? }

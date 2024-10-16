@@ -35,7 +35,8 @@ module TermsEngine
     # When info source is an online resource: .info_source[.i].path, .info_source[.i].name
 
     # Fields that accept note:
-    # [i.]feature_names[.j]
+    # [i.]feature_names[.j], [i.]feature_relations[.j], i.feature_geo_codes[.j], [i].definitions.[j], [i].kmaps.[j]
+    
 
     # Note fields:
     # .note
@@ -275,6 +276,7 @@ module TermsEngine
     
     # [i.]definitions:
     # delete, content, language.code/name
+    # kmaps.delete, [i].kmaps.id, [i].kmaps.id
     # Additionally, optional column "i.definition_relations.parent_node" can be
     # used to establish name i as child of name j by simply specifying the name number.
     # The parent name has to precede the child name. If a parent column is specified,
@@ -298,16 +300,15 @@ module TermsEngine
           def_begining = definition_content[0...200]
           def_begining = def_begining.split("\n").first
           def_with_tags = '<p>' + def_begining
-          definition[i] = definitions.find_by(["LEFT(content, #{def_begining.size}) = ? OR LEFT(content, #{def_with_tags.size}) = ?", def_begining, def_with_tags]) # find_by(content: definition_content)
+          matches = definitions.where(["LEFT(content, #{def_begining.size}) = ? OR LEFT(content, #{def_with_tags.size}) = ?", def_begining, def_with_tags]) # find_by(content: definition_content)
+          definition[i] = matches.select do |d|
+            citation = d.citations.order(:created_at).first
+            !citation.nil? && info_source==citation.info_source
+          end.first
           if !definition[i].nil?
-            citation = definition[i].citations.order(:created_at).first
-            if !citation.nil? && info_source==citation.info_source
-              if delete_definitions
-                definition[i].destroy
-                next
-              end
-            else #!info_sources.values.include?(citation.info_source)
-              definition[i] = nil
+            if delete_definitions
+              definition[i].destroy
+              next
             end
           else
             if delete_definitions
@@ -326,8 +327,6 @@ module TermsEngine
             else
               definition[i] = definitions.create(attributes)
             end
-          else
-            definition[i].update(attributes)
           end
           if !definition[i].nil?
             self.spreadsheet.imports.create(item: definition[i]) if definition[i].imports.find_by(spreadsheet_id: self.spreadsheet.id).nil?
@@ -352,6 +351,28 @@ module TermsEngine
               end
             end
             self.process_model_sentences(definition[i], prefix, 4)
+            definition_subject_associations = definition[i].definition_subject_associations
+            delete_kmaps = self.fields.delete("#{prefix}.kmaps.delete")
+            definition_subject_associations.clear if !delete_kmaps.blank? && delete_kmaps.downcase == 'yes'
+            1.upto(3) do |i|
+              kmap_prefix = "#{prefix}.#{i}.kmaps"
+              kmap_str = self.fields.delete("#{kmap_prefix}.id")
+              next if kmap_str.blank?
+              kmap = SubjectsIntegration::Feature.find(kmap_str.scan(/\d+/).first.to_i)
+              if kmap.nil?
+                self.say "Could find kmap #{kmap_str} for term #{self.feature.pid}."
+                next
+              end
+              conditions = { subject_id: kmap.id, branch_id: kmap.parents.first.id }
+              definition_subject_association = definition_subject_associations.find_by(conditions)
+              next if !definition_subject_association.nil?
+              definition_subject_association = definition_subject_associations.create(conditions)
+              if definition_subject_association.nil?
+                self.say "Could create the association between subject kmap #{kmap_str} and definition #{i} for term #{self.feature.pid}."
+                next
+              end
+              self.spreadsheet.imports.create(item: definition_subject_association) if definition_subject_association.imports.find_by(spreadsheet_id: self.spreadsheet.id).nil?
+            end
           end
         end
       end
@@ -394,12 +415,13 @@ module TermsEngine
       end
     end
     
-    # [i].definitions.[j].model_sentence
+    # [i].definitions.[j].model_sentence:
+    # content, translation.content, translation.language.code
     def process_model_sentences(definition, prefix, n)
       sentences = definition.model_sentences
       0.upto(n) do |j|
-        sentence_tag = j>0 ? "#{prefix}.#{j}.model_sentence" : "#{prefix}.model_sentence"
-        sentence_content = self.fields.delete(sentence_tag)
+        sentence_prefix = j>0 ? "#{prefix}.#{j}.model_sentence" : "#{prefix}.model_sentence"
+        sentence_content = self.fields.delete("#{sentence_prefix}.content")
         if !sentence_content.blank?
           sentence_html = "<p>#{sentence_content.strip}</p>"
           conditions = {content: sentence_html}
@@ -410,6 +432,26 @@ module TermsEngine
               self.say "Sentence #{sentence_content} not saved for definition #{definition.id}.- #{sentence.errors.messages}"
               next
             else
+              translation_prefix = "#{sentence_prefix}.translation"
+              translation_content = self.fields.delete("#{translation_prefix}.content")
+              language_code = self.fields.delete("#{translation_prefix}.language.code")
+              if !translation_content.blank?
+                if language_code.blank?
+                  self.say "Missing language for sentence translation #{translation_content}."
+                else
+                  language = Language.get_by_code(language_code)
+                  if language.nil?
+                    self.say "Language #{language_code} for sentence translation #{translation_content} not found."
+                  else
+                    translation = sentence.translations.create(content: translation_content, language_id: language.id)
+                    if translation.id.nil?
+                      self.say "Translation #{translation_content} for sentence #{sentence_content} not saved for definition #{definition.id}.- #{translation.errors.messages}"
+                    else
+                      self.spreadsheet.imports.create(item: translation) if translation.imports.find_by(spreadsheet_id: self.spreadsheet.id).nil?
+                    end
+                  end
+                end
+              end
               self.spreadsheet.imports.create(item: sentence) if sentence.imports.find_by(spreadsheet_id: self.spreadsheet.id).nil?
             end
           else
@@ -419,11 +461,18 @@ module TermsEngine
       end
     end
     
+    # kmaps.delele (branch_id of subject_ids to be deleted), [i].kmaps.id
+    # Supports citations, notes and dates
     def process_kmaps(n)
       # Now deal with i.kmaps.id
-      subject_term_associations = self.feature.subject_term_associations
       delete_kmaps = self.fields.delete('kmaps.delete')
-      subject_term_associations.clear if !delete_kmaps.blank? && delete_kmaps.downcase == 'yes'
+      subject_term_associations = self.feature.non_phoneme_term_associations
+      if !delete_kmaps.blank?
+        branch_id = delete_kmaps.scan(/\d+/).first.to_i
+        if branch_id>0
+          to_be_deleted = subject_term_associations.where(branch_id: branch_id).delete_all
+        end
+      end
       1.upto(n) do |i|
         kmap_prefix = "#{i}.kmaps"
         kmap_str = self.fields.delete("#{kmap_prefix}.id")

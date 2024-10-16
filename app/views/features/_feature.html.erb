@@ -48,7 +48,7 @@
             <div role="tabpanel" class="tab-pane terms-intro-details" id="terms-intro-details">
               <div class="row"><!-- INTRO TAB 2 -->
                 <div class="col-xs-12">
-<%                subject_term_associations = feature.subject_term_associations
+<%                subject_term_associations = feature.non_phoneme_term_associations
                   if !subject_term_associations.empty? %>
                     <dl>
 <%=                   render partial: 'subjects', locals: { associations: subject_term_associations } %>

@@ -1,7 +1,10 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '2.7.6'
+ruby '3.2.2'
+
+# Use SCSS for stylesheets
+gem 'sass-rails'
 
 # Declare your gem's dependencies in terms_engine.gemspec.
 # Bundler will treat runtime dependencies like base dependencies, and
