@@ -1,21 +1,4 @@
-<% if object.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(object.errors.count, "error") %> prohibited this enumeration from being saved:</h2>
-
-      <ul>
-        <% object.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
-    </div>
+<%= fields_for enumeration do |enumeration_fields| %>
+  <%= enumeration_fields.label(:enumeration).s %>
+  <%= enumeration_fields.text_field :value %>
 <% end %>
-
-<fieldset>
-  <legend><%= Enumeration.model_name.human.titleize.s %></legend>
-  <div class="row">
-    <b><%= form.label :enumeration, Enumeration.human_attribute_name('value').s %></b>
-    <%= form.text_field :value %>
-    <%= form.hidden_field :context_type, value: context_type %>
-    <%= form.hidden_field :context_id, value: context_id %>
-  </div>
-</fieldset>

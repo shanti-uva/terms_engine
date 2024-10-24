@@ -17,7 +17,7 @@ class Admin::DefinitionsController < AclController
   edit.before do
     @languages = Language.order('name')
     @authors = AuthenticatedSystem::Person.order('fullname')
-    @enumeration = object.enumeration
+    @enumeration = object.enumeration.nil? ? object.build_enumeration : object.enumeration
   end
   
   create.before do
