@@ -12,6 +12,7 @@
      sa = etymology.generic_etymology_subject_associations %>
      <dd>
 <%=    etymology.content.html_safe %>
+<%=    citation_popup_link_for(etymology) %>
 <%     if !sa.empty? %>
          (<%= sa.collect{ |sa| "#{sa.branch['header']}: #{sa.subject['header']}" }.join('; ') %>)
 <%     end %>

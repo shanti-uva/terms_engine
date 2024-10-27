@@ -284,6 +284,9 @@ module TermsEngine
           d.passages.each { |p| p.rsolr_document_tags(cd, def_prefix) }
           d.model_sentences.each do |s|
             cd["#{def_prefix}_model_sentence_#{s.id}_content_t"] = s.content
+            s.translations do |t|
+              cd["#{def_prefix}_model_sentence_#{s.id}_translation_#{t.language.code}_content_t"] = t.content
+            end
           end
           citations = d.standard_citations
           citation_references = citations.collect { |c| c.bibliographic_reference }
@@ -366,11 +369,16 @@ module TermsEngine
           sa.notes.each { |n| n.rsolr_document_tags(doc, branch_prefix) }
         end
         self.etymologies.each do |e|
-          doc["etymology_#{e.id}_content_s"] = e.content
+          etymology_prefix = "etymology_#{e.id}"
+          doc["#{etymology_prefix}_content_s"] = e.content
           etymology_type = e.etymology_type_association
           subject = etymology_type.nil? ? nil : etymology_type.subject
-          doc["etymology_#{e.id}_type_#{subject['uid']}_s"] = subject['header'] if !subject.nil?
-          e.notes.each { |n| n.rsolr_document_tags(doc, "etymology_#{e.id}") }
+          doc["#{etymology_prefix}_type_#{subject['uid']}_s"] = subject['header'] if !subject.nil?
+          e.notes.each { |n| n.rsolr_document_tags(doc, etymology_prefix) }
+          citations = e.citations
+          citation_references = citations.collect { |c| c.bibliographic_reference }
+          doc["#{etymology_prefix}_citation_references_ss"] = citation_references if !citation_references.blank?
+          citations.each{ |ci| ci.rsolr_document_tags_for_notes(doc, etymology_prefix) }
         end
         for branch_id in subject_associations.select(:branch_id).distinct.collect(&:branch_id)
           associations = subject_associations.where(branch_id: branch_id)

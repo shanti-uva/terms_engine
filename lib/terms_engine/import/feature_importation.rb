@@ -83,6 +83,7 @@ module TermsEngine
                 self.process_names(44) if !is_blank
               end
               feature_ids_with_changes << self.feature.id
+              self.process_etymologies(1)
               self.process_kmaps(5)
               process_definitions(87)
               process_translations(64)
@@ -275,7 +276,7 @@ module TermsEngine
     end
     
     # [i.]definitions:
-    # delete, content, language.code/name
+    # delete, content, language.code/name, etymology
     # kmaps.delete, [i].kmaps.id, [i].kmaps.id
     # Additionally, optional column "i.definition_relations.parent_node" can be
     # used to establish name i as child of name j by simply specifying the name number.
@@ -330,9 +331,49 @@ module TermsEngine
           end
           if !definition[i].nil?
             self.spreadsheet.imports.create(item: definition[i]) if definition[i].imports.find_by(spreadsheet_id: self.spreadsheet.id).nil?
-            0.upto(4) do |j|
-              info_prefix = j==0 ? prefix : "#{prefix}.#{j}"
-              self.add_note(info_prefix, definition[i])
+            self.process_model_sentences(definition[i], prefix, 4)
+            definition_subject_associations = definition[i].definition_subject_associations
+            etymologies = definition[i].etymologies
+            delete_kmaps = self.fields.delete("#{prefix}.kmaps.delete")
+            definition_subject_associations.clear if !delete_kmaps.blank? && delete_kmaps.downcase == 'yes'
+            0.upto(5) do |j|
+              def_prefix = j==0 ? prefix : "#{prefix}.#{j}"
+              # handle notes
+              self.add_note(def_prefix, definition[i])
+              # handle kmaps
+              kmap_prefix = "#{def_prefix}.kmaps"
+              kmap_str = self.fields.delete("#{kmap_prefix}.id")
+              if !kmap_str.blank?
+                kmap = SubjectsIntegration::Feature.find(kmap_str.scan(/\d+/).first.to_i)
+                if kmap.nil?
+                  self.say "Could find kmap #{kmap_str} for term #{self.feature.pid}."
+                else
+                  conditions = { subject_id: kmap.id, branch_id: kmap.parents.first.id }
+                  definition_subject_association = definition_subject_associations.find_by(conditions)
+                  if definition_subject_association.nil?
+                    definition_subject_association = definition_subject_associations.create(conditions)
+                    if definition_subject_association.id.nil?
+                      self.say "Couldn't create the association between subject kmap #{kmap_str} and definition #{j} for term #{self.feature.pid}."
+                    else
+                      self.spreadsheet.imports.create(item: definition_subject_association) if definition_subject_association.imports.find_by(spreadsheet_id: self.spreadsheet.id).nil?
+                    end
+                  end
+                end
+              end
+              # handle etymologies
+              etymology_content = self.fields.delete("#{def_prefix}.etymology")
+              if !etymology_content.blank?
+                conditions = { content: etymology_content }
+                etymology = etymologies.find_by(conditions)
+                if etymology.nil?
+                  etymology = etymologies.create(conditions)
+                  if etymology.id.nil?
+                    self.say "Couldn't create the etymology #{etymology_content} under definition #{j} for term #{self.feature.pid}."
+                  else
+                    self.spreadsheet.imports.create(item: etymology) if etymology.imports.find_by(spreadsheet_id: self.spreadsheet.id).nil?
+                  end
+                end
+              end
             end
             self.process_info_source(prefix, definition[i], info_source)
             #info_sources.each{ |prefix, info_source| self.process_info_source(prefix, definition[i], info_source) }
@@ -349,29 +390,6 @@ module TermsEngine
                   self.say "Relation between definitions #{i} and #{parent_position} for feature #{self.feature.pid} could not be saved." if relation.nil?
                 end
               end
-            end
-            self.process_model_sentences(definition[i], prefix, 4)
-            definition_subject_associations = definition[i].definition_subject_associations
-            delete_kmaps = self.fields.delete("#{prefix}.kmaps.delete")
-            definition_subject_associations.clear if !delete_kmaps.blank? && delete_kmaps.downcase == 'yes'
-            1.upto(3) do |i|
-              kmap_prefix = "#{prefix}.#{i}.kmaps"
-              kmap_str = self.fields.delete("#{kmap_prefix}.id")
-              next if kmap_str.blank?
-              kmap = SubjectsIntegration::Feature.find(kmap_str.scan(/\d+/).first.to_i)
-              if kmap.nil?
-                self.say "Could find kmap #{kmap_str} for term #{self.feature.pid}."
-                next
-              end
-              conditions = { subject_id: kmap.id, branch_id: kmap.parents.first.id }
-              definition_subject_association = definition_subject_associations.find_by(conditions)
-              next if !definition_subject_association.nil?
-              definition_subject_association = definition_subject_associations.create(conditions)
-              if definition_subject_association.nil?
-                self.say "Could create the association between subject kmap #{kmap_str} and definition #{i} for term #{self.feature.pid}."
-                next
-              end
-              self.spreadsheet.imports.create(item: definition_subject_association) if definition_subject_association.imports.find_by(spreadsheet_id: self.spreadsheet.id).nil?
             end
           end
         end
@@ -420,7 +438,7 @@ module TermsEngine
     def process_model_sentences(definition, prefix, n)
       sentences = definition.model_sentences
       0.upto(n) do |j|
-        sentence_prefix = j>0 ? "#{prefix}.#{j}.model_sentence" : "#{prefix}.model_sentence"
+        sentence_prefix = j>0 ? "#{prefix}.#{j}.model_sentences" : "#{prefix}.model_sentences"
         sentence_content = self.fields.delete("#{sentence_prefix}.content")
         if !sentence_content.blank?
           sentence_html = "<p>#{sentence_content.strip}</p>"
@@ -466,7 +484,7 @@ module TermsEngine
     def process_kmaps(n)
       # Now deal with i.kmaps.id
       delete_kmaps = self.fields.delete('kmaps.delete')
-      subject_term_associations = self.feature.non_phoneme_term_associations
+      subject_term_associations = self.feature.subject_term_associations
       if !delete_kmaps.blank?
         branch_id = delete_kmaps.scan(/\d+/).first.to_i
         if branch_id>0
@@ -496,6 +514,28 @@ module TermsEngine
           self.add_date(prefix, subject_term_association)
           self.add_note(prefix, subject_term_association)
           self.add_info_source(prefix, subject_term_association)
+        end
+      end
+    end
+    
+    def process_etymologies(n)
+      etymologies = self.feature.etymologies
+      0.upto(n) do |i|
+        prefix = i==0 ? "etymologies" : "etymologies.#{i}"
+        etymology_content = self.fields.delete("#{prefix}.content")
+        next if etymology_content.blank?
+        conditions = { content: etymology_content }
+        etymology = etymologies.find_by(conditions)
+        next if !etymology.nil?
+        etymology = etymologies.create(conditions)
+        if etymology.id.nil?
+          self.say "Couldn't create the etymology #{etymology_content} for term #{self.feature.pid}."
+          next
+        end
+        self.spreadsheet.imports.create(item: etymology) if etymology.imports.find_by(spreadsheet_id: self.spreadsheet.id).nil?
+        0.upto(3) do |j|
+          info_prefix = j==0 ? prefix : "#{prefix}.#{j}"
+          self.add_info_source(info_prefix, etymology)
         end
       end
     end

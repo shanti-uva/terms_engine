@@ -13,12 +13,14 @@
 
 class Etymology < ApplicationRecord
   include KmapsEngine::IsNotable
-
+  include KmapsEngine::IsCitable
+  
   belongs_to :context, polymorphic: true, touch: true
 
   has_many :etymology_subject_associations, dependent: :destroy
   has_one :etymology_type_association, dependent: :destroy
-
+  has_many :imports, :as => 'item', :dependent => :destroy
+  
   accepts_nested_attributes_for :etymology_type_association 
 
   def generic_etymology_subject_associations

@@ -1,16 +1,21 @@
 <% if !model_sentences.empty?
      count = model_sentences.size %>
-<%   if count==1 %>
+<%   if count==1
+       model_sentence = model_sentences.first %>
      <dl>
        <dt><%= ModelSentence.model_name.human(count: count).titleize.s %></dt>
-       <dd><%= model_sentences.first.content.s %></dd>
+       <dd><p><%= model_sentence.content.s %></p></dd>
      </dl>
+<%= render(partial: 'sentence_translations', locals: { sentence_translations: model_sentence.translations }) %>
 <%   else %>
      <h5><%= ModelSentence.model_name.human(count: count).titleize.s %></h5>
      <ul>
-<%     model_sentences.each do |model_sentence| %>
-         <li><%= model_sentence.content.s %></li>
-<%     end %>
+<%   model_sentences.each do |model_sentence| %>
+       <li>
+<%=    model_sentence.content.s %>
+<%=    render(partial: 'sentence_translations', locals: { sentence_translations: model_sentence.translations }) %>
+       </li>
+<%   end %>
      </ul>
 <%   end
    end %>

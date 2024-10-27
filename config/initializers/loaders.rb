@@ -28,6 +28,11 @@ ActiveSupport.on_load(:illustration) do
   include TermsEngine::Extension::IllustrationModel
 end
 
+ActiveSupport.on_load(:notes_controller) do
+  require 'terms_engine/extensions/notes_controller'
+  include TermsEngine::Extension::NotesController
+end
+
 ActiveSupport.on_load(:perspective) do
   require 'terms_engine/extensions/perspective_model'
   include TermsEngine::Extension::PerspectiveModel

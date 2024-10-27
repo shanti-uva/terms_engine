@@ -1,0 +1,17 @@
+<% if !sentence_translations.empty?
+     count = sentence_translations.size %>
+<%   if count==1 
+       sentence_translation = sentence_translations.first %>
+     <dl>
+       <dt><%= SentenceTranslation.model_name.human(count: count).titleize.s %> (<%= sentence_translation.language.name %>)</dt>
+       <dd><p><%= sentence_translation.content.s %></p></dd>
+     </dl>
+<%   else %>
+     <h5><%= SentenceTranslation.model_name.human(count: count).titleize.s %></h5>
+     <ul>
+<%     sentence_translation.each do |sentence_translation| %>
+         <li><%= sentence_translation.language.name %>: <%= sentence_translation.content.s %></li>
+<%     end %>
+     </ul>
+<%   end
+   end %>
