@@ -16,7 +16,10 @@ class NewariTermsService
   def sorted_terms
     if @sorted_terms.nil?
       @view ||= View.get_by_code('pri.orig.sec.roman')
-      terms_with_name = terms.collect{|t| [t, t.prioritized_name(@view).name] }
+      terms_with_name = terms.collect do |t|
+        name = t.prioritized_name(@view)
+        [t, name.nil? ? '' : name.name]
+      end
       sorted_terms_with_name = terms_with_name.sort{ |a,b| a[1].new_compare(b[1]) }
       @sorted_terms = sorted_terms_with_name.collect(&:first)
     end
