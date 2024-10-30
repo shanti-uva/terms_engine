@@ -271,8 +271,13 @@ module TermsEngine
     
     def reposition_parent
       self.log.debug { "#{Time.now}: Repositioning parent #{self.last_parent.fid}." }
-      ts = TibetanTermsService.new(self.last_parent)
-      ts.reposition
+      case self.perspective.code
+      when 'tib.alpha'
+        s = TibetanTermsService.new(self.last_parent)
+      when 'new.alpha'
+        s = NewariTermsService.new(self.last_parent)
+      end
+      s.reposition
     end
     
     # [i.]definitions:
