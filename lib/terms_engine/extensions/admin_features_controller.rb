@@ -52,6 +52,7 @@ module TermsEngine
           subject_id = params[:feature][:subject_term_associations][:subject_id]
           @current_term = EnglishTermsService.add_term(subject_id, current_entry)
           @object = @current_term
+           Enumeration.create(value: params[:enumeration][:value], context_type: 'Feature', context_id: @object.id) unless params[:enumeration][:value].blank?
           FeatureRelation.create!(child_node: @current_term, parent_node: parent, perspective: eng_alpha, feature_relation_type: relation_type, skip_update: true)
           ts = EnglishTermsService.new(parent)
           ts.reposition
@@ -81,6 +82,7 @@ module TermsEngine
           else
             @current_term = TibetanTermsService.add_term(level_subject_id: Feature::BOD_EXPRESSION_SUBJECT_ID, tibetan: current_entry, wylie: TibetanTermsService.get_wylie(current_entry), phonetic: TibetanTermsService.get_phonetic(current_entry))
             @object = @current_term
+             Enumeration.create(value: params[:enumeration][:value], context_type: 'Feature', context_id: @object.id) unless params[:enumeration][:value].blank?
             FeatureRelation.create!(child_node: @current_term, parent_node: parent, perspective: tib_alpha, feature_relation_type: relation_type, skip_update: true)
             ts = TibetanTermsService.new(parent)
             ts.reposition

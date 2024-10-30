@@ -73,6 +73,10 @@
 <%                      end %>
                  </p>
 <%             end %>
+<%              unless definition.enumeration.nil? %>
+                  <dt><%= Enumeration.model_name.human.s %>:</dt>
+                  <dd><%= enumeration.value %></dd>
+<%             end %>
              </dl>
            </div>
 <%       if use_tabs %>
