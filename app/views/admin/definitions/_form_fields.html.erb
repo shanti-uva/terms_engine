@@ -28,14 +28,13 @@
     <%= form.text_area :content, rows: 4, class: 'tinymce' %>
   </div>
 <%= tinymce %>
-  <div class="row">
-    <%= form.label(:numerology).s %>
-    <%= form.number_field :numerology %>
-  </div>
 
   <div class="row">
     <%= form.label(:tense).s %>
     <%= form.text_field :tense %>
+  </div>
+  <div class="row">
+    <%= render :partial => 'admin/enumerations/form_fields', locals: {enumeration: @enumeration} %>
   </div>
   <p><b><%= form.label :language_id, Language.model_name.human.titleize.s %></b></p><br/>
   <div class="row">
@@ -45,4 +44,5 @@
   <div class="row">
   <%= form.collection_select :author_id, @authors, :id, :fullname, {include_blank: true} , class: 'form-control form-select ss-select selectpicker' %>
   </div>
+  
 </fieldset>

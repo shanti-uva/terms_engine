@@ -1,0 +1,32 @@
+<% if object.errors.any? %>
+  <div id="error_explanation">
+    <h2><%= pluralize(object.errors.count, "error") %> prohibited this <%= Feature.model_name.human %> from being saved:</h2>
+    <ul>
+    <% object.errors.full_messages.each do |msg| %>
+      <li><%= msg %></li>
+    <% end %>
+    </ul>
+  </div>
+<% end %>
+<fieldset>
+<%= f.hidden_field :fid %>
+<%  unless object.new_record? %>
+    <div class="row">
+<%=   f.label :created_at, ts('creat.e.d') %>
+<%=   object.created_at.to_formatted_s(:us_datetime) %>
+    </div>
+    <div class="row">
+<%=   f.label :updated_at, ts('update.d.this') %>
+<%=   object.updated_at.to_formatted_s(:us_datetime) %>
+    </div>
+<%  end %>
+  <div class="row">
+<%=  f.label(:is_public).s %>
+<%=  f.check_box :is_public %>
+  </div>
+  <div class="row">
+    <%= render :partial => 'admin/enumerations/form_fields', locals: {enumeration: @enumeration} %>
+  </div>
+  <div class="row">
+</fieldset>
+

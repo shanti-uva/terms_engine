@@ -12,6 +12,9 @@ en:
             definition_subject_association:
                 one: 'definition related subject'
                 other: 'definition related subjects'
+            enumeration:
+                one: 'enumeration'
+                other: 'enumerations'
             etymology:
                 one: 'etymology'
                 other: 'etymologies'
@@ -81,6 +84,8 @@ en:
                 subject:
                     one: 'subsidiary subject'
                     other: 'subsidiary subjects'
+            enumeration:
+                    value: 'value'
             etymology:
                 content: 'Content'
                 etymology_type_association:

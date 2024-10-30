@@ -70,6 +70,14 @@ to precompile assets:
 
 and then start the server.
 
+TO RUN MIGRATIONS:
+
+Copy the migrations into the parent application (eg cd into the Terms application root)
+
+`rake terms_engine_engine:install:migrations`
+
+Then run the migrations as you normally would from there.
+
 # TermsEngine
 Short description and motivation.
 

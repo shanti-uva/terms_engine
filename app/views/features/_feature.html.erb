@@ -47,7 +47,13 @@
             </div>
             <div role="tabpanel" class="tab-pane terms-intro-details" id="terms-intro-details">
               <div class="row"><!-- INTRO TAB 2 -->
+
                 <div class="col-xs-12">
+<%                unless feature.enumeration.nil? %>
+                  <div class="col-xs-12">
+<%=                 "#{Enumeration.model_name.human.titleize.s}: #{feature.enumeration.value}" %>
+                  </div>
+<%                end %>
 <%                subject_term_associations = feature.non_phoneme_term_associations
                   if !subject_term_associations.empty? %>
                     <dl>

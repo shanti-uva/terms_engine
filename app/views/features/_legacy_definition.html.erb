@@ -10,6 +10,9 @@
 <div id="other-definition-details-<%= legacy_definition.id %>" class="collapse definition-details-wrapper">
   <dl>
     <dt><%= Language.model_name.human %>:</dt> <dd><%= legacy_definition.language.name %></dd>
+  <% unless legacy_definition.enumeration.nil? %>
+    <dt><%= Enumeration.model_name.human %>:</dt> <dd><%= legacy_definition.enumeration.value %></dd>
+  <% end %>
   </dl>
   <% if !subject_associations.empty? %>
     <h4><%= DefinitionSubjectAssociation.model_name.human(count: subject_associations.count).titleize.s %></h4>
