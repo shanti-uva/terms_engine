@@ -10,7 +10,7 @@
 <%=     "<th>#{ts 'relat.ed.to'}</th>".html_safe unless options[:hide_related_to] %>
          <th><%= Definition.human_attribute_name(:content).s %></th>
          <th><%= Definition.human_attribute_name(:author).s %></th>
-         <th><%= Definition.human_attribute_name(:numerology).s %></th>
+         <th><%= Enumeration.model_name.human.s %></th>
          <th><%= Definition.human_attribute_name(:tense).s %></th>
          <th><%= Note.model_name.human(:count => :many).titleize.s %></th>
          <th><%= ts 'add.record', :what => Note.model_name.human.titleize %></th>
@@ -31,7 +31,7 @@
            <%= def_if_blank item, :author, :fullname %>
          </td>
          <td>
-<%=        def_if_blank(item, :numerology) { '' } %>
+<%=       # def_if_blank(item, :numerology) { '' } %>
          </td>
          <td>
 <%=        def_if_blank(item, :tense) { '' } %>

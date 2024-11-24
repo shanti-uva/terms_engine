@@ -18,12 +18,14 @@ Rails.application.routes.draw do
     end
     resources :definitions do
       resources :citations, :etymologies, :definition_relations, :definition_subject_associations, :passages, :passage_translations
+      
       resources :notes, concerns: :add_author
       #resources :passages do
       #  resources :passage_translations
       #end
       resources :definition_associations, except: [:new, :index]
     end
+    resources :enumerations
     resources :etymologies do
       resources :etymology_type_associations, :etymology_subject_associations
       resources :notes, concerns: :add_author
@@ -34,7 +36,7 @@ Rails.application.routes.draw do
       resources :definitions do #, only: [:index, :show]
         get :locate_for_relation, on: :member
       end
-      resources :etymologies, :passages, :recordings, :subject_term_associations
+      resources :enumerations, :etymologies, :passages, :recordings, :subject_term_associations
     end
     resources :passages, only: [:show] do
       resources :citations

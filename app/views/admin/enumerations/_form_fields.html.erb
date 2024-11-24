@@ -1,0 +1,4 @@
+<%= fields_for enumeration do |enumeration_fields| %>
+  <%= enumeration_fields.label(:enumeration).s %>
+  <%= enumeration_fields.text_field :value %>
+<% end %>

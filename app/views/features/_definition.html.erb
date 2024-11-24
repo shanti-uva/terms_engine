@@ -63,9 +63,6 @@
 <%             if !definition.tense.blank? %>
                  <dt><%= Definition.human_attribute_name(:tense).s %>:</dt> <dd><%= definition.tense %></dd>
 <%             end
-               if !definition.numerology.nil? %>
-                 <dt><%= Definition.human_attribute_name(:numerology).s %>:</dt> <dd><%= definition.numerology %></dd>
-<%             end
                if !definition.author.nil? %>
                  <dt><%= Definition.human_attribute_name(:author).s %>:</dt> <dd><%= definition.author.fullname %></dd>
 <%             end
@@ -75,6 +72,10 @@
 <%=                       citation.bibliographic_reference.html_safe %><br>
 <%                      end %>
                  </p>
+<%             end %>
+<%              unless definition.enumeration.nil? %>
+                  <dt><%= Enumeration.model_name.human.s %>:</dt>
+                  <dd><%= enumeration.value %></dd>
 <%             end %>
              </dl>
            </div>

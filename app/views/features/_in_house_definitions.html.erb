@@ -4,7 +4,7 @@
      grouped_definition = sorted_grouped_definitions[index]
      info_source = grouped_definition.first
      definitions = grouped_definition.last %>
-   <div class="terms-dictionaries-other-node">		 
+   <div class="terms-dictionaries-other-node">	 
      <h4><%= "#{index+1}. " if count>1 %><cite><a href="#"><%=" #{info_source.title}" %></a></cite></h4>
      <div class="terms-definition-list-wrapper"><!-- BEGIN terms-definitions -->
 <%=    render partial: 'standard_definitions', locals: { definitions: definitions, is_child: false, prefix: "in_house-#{info_source.id}-", def_level: 0 } %>

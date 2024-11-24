@@ -33,6 +33,7 @@ module TermsEngine
         end
         has_many :subject_term_associations, dependent: :destroy
         has_many :translation_equivalents, dependent: :destroy
+        has_one  :enumeration, as: :context, dependent: :destroy
         
         # This fetches root *Definitions* (definitions that don't have parents),
         # within the scope of the current feature
@@ -270,7 +271,7 @@ module TermsEngine
           }
           author = d.author
           cd["#{def_prefix}_author_s"] = author.fullname if !author.nil?
-          cd["#{def_prefix}_numerology_i"] = d.numerology if !d.numerology.nil?
+          cd["#{def_prefix}_enumeration_i"] = d.enumeration.value if !d.enumeration.nil?
           cd["#{def_prefix}_tense_s"] = d.tense if !d.tense.nil?
           d.etymologies.each do |de|
             etymology_prefix = "#{def_prefix}_etymology_#{de.id}"
@@ -328,6 +329,7 @@ module TermsEngine
                 associated_subjects: subject_associations.collect{ |a| a.subject['header'] },
                 associated_subject_ids: subject_associations.collect(&:subject_id),
                 etymologies_ss: self.etymologies.collect(&:content),
+                enumeration: self.enumeration&.value,
                 block_type: ['parent'],
                 '_childDocuments_'  => child_documents }
         if self.is_phoneme?(Feature::BOD_EXPRESSION_SUBJECT_ID)

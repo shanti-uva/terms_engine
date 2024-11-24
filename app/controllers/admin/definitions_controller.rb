@@ -7,26 +7,47 @@ class Admin::DefinitionsController < AclController
 
   create.wants.html { redirect_to admin_feature_path(object.feature_id, section: "definitions") } 
   update.wants.html { redirect_to admin_feature_path(object.feature_id, section: "definitions") }
-  
+
   new_action.before do
     @languages = Language.order('name')
     @authors = AuthenticatedSystem::Person.order('fullname')
+    @enumeration = object.build_enumeration
   end
 
   edit.before do
     @languages = Language.order('name')
     @authors = AuthenticatedSystem::Person.order('fullname')
+    @enumeration = object.enumeration.nil? ? object.build_enumeration : object.enumeration
   end
   
   create.before do
     @languages = Language.order('name')
     @authors = AuthenticatedSystem::Person.order('fullname')
   end
+
+  create.after do
+    Enumeration.create(value: params[:enumeration][:value], context_type: 'Definition', context_id: object.id) unless params[:enumeration][:value].blank?
+  end
   
   update.before do
     @languages = Language.order('name')
     @authors = AuthenticatedSystem::Person.order('fullname')
   end
+
+  update.after do
+    e = Enumeration.where(context_id: object.id, context_type: 'Definition').last
+    if e.nil?
+      Enumeration.create(value: params[:enumeration][:value], context_type: 'Definition', context_id: object.id)
+    else
+      if params[:enumeration][:value].blank?
+        e.destroy
+      else
+        e.update_attribute(:value, params[:enumeration][:value])
+      end
+    end
+  end
+
+  
 
   def locate_for_relation
     @locating_relation=true # flag used in template
@@ -58,8 +79,13 @@ class Admin::DefinitionsController < AclController
     end
     @collection = search_results.empty? ? search_results : search_results.page(params[:page])
   end
-  # Only allow a trusted parameter "white list" through.
+  
   def definition_params
-    params.require(:definition).permit(:feature_id, :is_public, :is_primary, :ancestor_ids, :position, :content, :author_id, :language_id, :numerology, :tense)
+    params.require(:definition).permit(:feature_id, :is_public, :is_primary, :ancestor_ids, :position, :content, :author_id, :language_id, :tense)
   end
+
+  def enumeration_params
+    params.require(:enumeration).permit(:value, :context_id)
+  end
+  
 end

@@ -6,7 +6,40 @@ module TermsEngine
       included do
         # We want to remove the default action created in KmapsEngine
         new_action.wants.html {}
+
+        new_action.before do
+          object.is_public = true
+          parent_id = params[:parent_id]
+          @parent = parent_id.blank? ? nil : Feature.get_by_fid(parent_id)
+          if !@parent.nil?
+            @perspectives = @parent.affiliations_by_user(current_user, descendants: true).collect(&:perspective)
+            @perspectives = Perspective.order(:name) if @perspectives.include?(nil) || current_user.admin?
+            @name = FeatureName.new(language: Language.get_by_code('eng'), writing_system: WritingSystem.get_by_code('latin'), is_primary_for_romanization: true)
+            @relation = FeatureRelation.new(parent_node: @parent, perspective: current_perspective, feature_relation_type: FeatureRelationType.get_by_code(default_relation_type_code) )
+          end
+          @enumeration = object.build_enumeration
+        end
+
+        edit.before do
+          @enumeration = object.enumeration.nil? ? object.build_enumeration : object.enumeration
+        end
+
+        update.after do
+          e = Enumeration.where(context_id: object.id, context_type: 'Feature').last
+          if e.nil?
+            Enumeration.create(value: params[:enumeration][:value], context_type: 'Feature', context_id: object.id)
+          else
+            if params[:enumeration][:value].blank?
+              e.destroy
+            else
+              e.update_attribute(:value, params[:enumeration][:value])
+            end
+          end
+        end
       end
+
+      
+      
 
       def create_english_term
         # TODO: Create english_cleanup to remove leading and trailing spaces
@@ -19,6 +52,7 @@ module TermsEngine
           subject_id = params[:feature][:subject_term_associations][:subject_id]
           @current_term = EnglishTermsService.add_term(subject_id, current_entry)
           @object = @current_term
+           Enumeration.create(value: params[:enumeration][:value], context_type: 'Feature', context_id: @object.id) unless params[:enumeration][:value].blank?
           FeatureRelation.create!(child_node: @current_term, parent_node: parent, perspective: eng_alpha, feature_relation_type: relation_type, skip_update: true)
           ts = EnglishTermsService.new(parent)
           ts.reposition
@@ -48,6 +82,7 @@ module TermsEngine
           else
             @current_term = TibetanTermsService.add_term(level_subject_id: Feature::BOD_EXPRESSION_SUBJECT_ID, tibetan: current_entry, wylie: TibetanTermsService.get_wylie(current_entry), phonetic: TibetanTermsService.get_phonetic(current_entry))
             @object = @current_term
+             Enumeration.create(value: params[:enumeration][:value], context_type: 'Feature', context_id: @object.id) unless params[:enumeration][:value].blank?
             FeatureRelation.create!(child_node: @current_term, parent_node: parent, perspective: tib_alpha, feature_relation_type: relation_type, skip_update: true)
             ts = TibetanTermsService.new(parent)
             ts.reposition

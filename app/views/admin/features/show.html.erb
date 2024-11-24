@@ -28,6 +28,9 @@
           <div class="row">
             <label><%= Feature.human_attribute_name(:is_public).s %></label> <span><%= object.is_public? ? "Yes" : "No" %></span>
           </div>
+          <div class="row">
+            <label><%= Enumeration.model_name.human.s %></label> <span><%= def_if_blank object, :enumeration, :value %></span>
+          </div>
         </div> <!-- END panel-body -->
       </div> <!-- END collapseOne -->
     </section> <!-- END panel -->
