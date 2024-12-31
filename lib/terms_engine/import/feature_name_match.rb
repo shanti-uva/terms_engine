@@ -6,8 +6,15 @@ module TermsEngine
     def self.match(**args)
       table1 = CSV.parse(File.read(args[:input1]), headers: true, col_sep: "\t")
       table2 = CSV.parse(File.read(args[:input2]), headers: true, col_sep: "\t")
-      matcher1 = table1[args[:matching_column]].collect{|w| w.blank? ? w : w.tibetan_cleanup + String::INTERSYLLABIC_TSHEG}
-      matcher2 = table2[args[:matching_column]].collect{|w| w.blank? ? w : w.tibetan_cleanup + String::INTERSYLLABIC_TSHEG}
+      perspective = Perspective.get_by_code(args[:perspective_code])
+      case perspective.code
+      when 'tib.alpha'
+        matcher1 = table1[args[:matching_column]].collect{|w| w.blank? ? w : w.tibetan_cleanup + String::INTERSYLLABIC_TSHEG}
+        matcher2 = table2[args[:matching_column]].collect{|w| w.blank? ? w : w.tibetan_cleanup + String::INTERSYLLABIC_TSHEG}
+      else
+        matcher1 = table1[args[:matching_column]].collect{|w| w.blank? ? w : w.strip}
+        matcher2 = table2[args[:matching_column]].collect{|w| w.blank? ? w : w.strip}
+      end
       corr_2_to_1 = Array.new(matcher2.size)
       current1 = 0
       size1 = matcher1.size

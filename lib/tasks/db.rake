@@ -79,17 +79,18 @@ namespace :terms_engine do
       end
       
       import_match_desc = "Matches rows in CSV input1 with input2 based on column matching_column and produces third CSV output.\n"+
-        "Syntax: rake terms_engine:db:import:match INPUT1=csv-file-name INPUT2=csv-file-name OUTPUT=csv-file-name MATCHING_COL=col-name"
+        "Syntax: rake terms_engine:db:import:match PERSPECTIVE=perspective-code INPUT1=csv-file-name INPUT2=csv-file-name OUTPUT=csv-file-name MATCHING_COL=col-name"
       desc import_match_desc
       task match: :environment do
         input1 = ENV['INPUT1']
         input2 = ENV['INPUT2']
         output = ENV['OUTPUT']
         matching_column = ENV['MATCHING_COL']
-        if input1.blank? || input2.blank? || output.blank? || matching_column.blank?
+        perspective_code = ENV['PERSPECTIVE']
+        if input1.blank? || input2.blank? || output.blank? || matching_column.blank? || perspective_code.blank?
           puts import_match_desc
         else
-          TermsEngine::FeatureNameMatch.match(input1: input1, input2: input2, output: output, matching_column: matching_column)
+          TermsEngine::FeatureNameMatch.match(input1: input1, input2: input2, output: output, matching_column: matching_column, perspective_code: perspective_code)
         end
       end
     end
