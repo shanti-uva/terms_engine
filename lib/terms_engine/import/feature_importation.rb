@@ -41,7 +41,7 @@ module TermsEngine
     # Note fields:
     # .note
 
-    def do_feature_import(filename:, task_code:, perspective_code:)
+    def do_feature_import(filename:, task_code:, perspective_code:, skip_main_names: false)
       puts "#{Time.now}: Starting importation."
       task = ImportationTask.find_by(task_code: task_code)
       task = ImportationTask.create(:task_code => task_code) if task.nil?
@@ -70,17 +70,17 @@ module TermsEngine
             for i in current...limit
               row = rows[i]
               self.fields = row.to_hash.delete_if{ |key, value| value.blank? }
-              self.get_main_names
+              self.get_main_names if !skip_main_names
               if self.fields['features.fid'].blank?
                 self.infer_feature
-                self.set_up_main_names_for_new_or_blank_feature if self.feature.nil?
+                self.set_up_main_names_for_new_or_blank_feature if self.feature.nil? && !skip_main_names
                 self.process_feature
               else
                 next unless self.get_feature(current)
                 is_blank = self.feature.is_blank?
-                self.set_up_main_names_for_new_or_blank_feature if is_blank
+                self.set_up_main_names_for_new_or_blank_feature if is_blank && !skip_main_names
                 self.process_feature
-                self.process_names(44) if !is_blank
+                self.process_names(44) if !is_blank || skip_main_names
               end
               feature_ids_with_changes << self.feature.id
               self.process_etymologies(1)

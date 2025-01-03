@@ -122,6 +122,7 @@ module TermsEngine
               FeatureRelation.create(child_node: head, parent_node: letter, perspective: @new_alpha, feature_relation_type: starts_type, skip_update: true)
               head.subject_term_associations.create(subject_id: Feature::NEW_PLACE_HOLDER_SUBJECT_ID, branch_id: Feature::NEW_PHONEME_SUBJECT_ID)
               head_range.each do |f|
+                f.parent_relations.clear
                 FeatureRelation.create(child_node: f, parent_node: head, perspective: @new_alpha, feature_relation_type: heads_type, skip_update: true)
                 f.skip_update = false
                 f.update_hierarchy
@@ -157,12 +158,26 @@ module TermsEngine
     
     def get_new_terms_under_letter_by_phoneme(letter, phoneme_sid)
       children = letter.children.order(:position)
-      case phoneme_sid
-      when Feature::NEW_PLACE_HOLDER_SUBJECT_ID
-        return children.to_a
-      when Feature::NEW_EXPRESSION_SUBJECT_ID
-        return children.collect{ |c| c.children.order(:position) }.flatten(1)
+      results = []
+      children.each do |child|
+        if child.is_phoneme? phoneme_sid
+          results << child
+        else
+          if child.is_phoneme? Feature::NEW_PLACE_HOLDER_SUBJECT_ID
+            child.children.each do |gc|
+              results << gc if gc.is_phoneme? phoneme_sid
+            end
+          end
+        end
       end
+      return results
+      #case phoneme_sid
+      #when Feature::NEW_PLACE_HOLDER_SUBJECT_ID
+      #  return children.to_a
+      #when Feature::NEW_EXPRESSION_SUBJECT_ID
+      #  return children.collect{ |c| c.children.order(:position) }.flatten(1)
+      #end
+      
       #letter.children.joins(:phoneme_term_associations).where('subject_term_associations.branch_id' => Feature::NEW_PHONEME_SUBJECT_ID, 'subject_term_associations.subject_id' => phoneme_sid).order(:position).to_a
       #letter_fid = letter.fid
       #query = "tree:terms AND ancestor_ids_new.alpha:#{letter_fid} AND associated_subject_#{Feature::NEW_PHONEME_SUBJECT_ID}_ls:#{phoneme_sid}"
