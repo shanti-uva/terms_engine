@@ -19,6 +19,7 @@ gemspec
 # Git. Remember to move these dependencies to your gemspec before releasing
 # your gem to rubygems.org.
 
+gem 'hpricot', github: 'ycorredius/hpricot'#, '>= 0.8.6'
 gem 'spawnling'
 
 gem 'activeresource', require: 'active_resource'
