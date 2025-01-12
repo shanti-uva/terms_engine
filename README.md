@@ -78,6 +78,9 @@ Copy the migrations into the parent application (eg cd into the Terms applicatio
 
 Then run the migrations as you normally would from there.
 
+To log in to your development app locally:
+In the Non-uva login, enter your uva username and for password enter !!yourusername.
+
 # TermsEngine
 Short description and motivation.
 
