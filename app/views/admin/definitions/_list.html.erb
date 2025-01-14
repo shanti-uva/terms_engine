@@ -27,10 +27,20 @@
          view_path: admin_feature_definition_path(item.feature, item)) %>
 <%   end %>
        </td>
-       <td><%= item.language.name %></td>
        <td><%= item.snippet.s %></td>
+       <td><%= item.language.name %></td>
        <td><%= accordion_citation_list_fieldset(object: item) %></td>
      </tr>
+     <% item.children.each do |child_def| %>
+       <tr>
+         <td class="centerText"><%= list_actions_for_item(child_def, delete_path: admin_feature_definition_path(child_def.feature, child_def),
+         edit_path: edit_admin_feature_definition_path(child_def.feature, child_def),
+         view_path: admin_feature_definition_path(child_def.feature, child_def)) %></td>
+         <td>&nbsp; &nbsp; <%= child_def.snippet.s %></td>
+         <td><%= child_def.language.name %></td>
+         <td><%= accordion_citation_list_fieldset(object: child_def) %></td>
+       </tr>
+     <% end %>
 <%   end %>
    </table>
 <% end %>
