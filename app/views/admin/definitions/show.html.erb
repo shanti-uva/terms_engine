@@ -1,7 +1,6 @@
 <% 
   add_breadcrumb_item feature_link(object.feature)
   add_breadcrumb_item link_to Definition.model_name.human(count: :many).titleize.s, admin_feature_path(object.feature.fid, section: 'definitions')
-
   add_breadcrumb_item object.content.strip_tags.blank? ? object.id : object.content.strip_tags.truncate(25).s 
 %>
 <div id="definitionShow" style="position:relative;">

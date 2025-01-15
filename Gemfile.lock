@@ -135,7 +135,7 @@ GIT
 PATH
   remote: .
   specs:
-    terms_engine (1.7.5)
+    terms_engine (1.7.6)
       sprockets-rails
 
 GEM
