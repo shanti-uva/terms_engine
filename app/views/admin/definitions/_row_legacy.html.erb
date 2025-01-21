@@ -1,0 +1,22 @@
+<%  source = InfoSource.find(row.first)
+    definitions = row.last
+    size = definitions.size
+    padding = level * 25
+    definitions.each do |item| %>
+       <tr>
+<%       if !source.nil? %>
+           <td rowspan="<%= size %>"><%= source.title %></td>
+<%         source = nil
+         end %>
+         <td class="centerText">
+<%=        list_actions_for_item(item, delete_path: admin_feature_definition_path(item.feature, item),
+           edit_path: edit_admin_feature_definition_path(item.feature, item),
+           view_path: admin_feature_definition_path(item.feature, item)) %>
+         </td>
+         <td><%= item.language.name %></td>
+         <td style="padding-left: <%= padding %>px"><%= item.snippet.s %></td>
+         <td><%= accordion_citation_list_fieldset(object: item) %></td>
+       </tr>
+       <%= render partial: 'admin/definitions/row_legacy', collection: item.children, as: :row, locals: { level: level+1 } %> 
+   <% end %>
+

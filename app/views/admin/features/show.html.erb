@@ -97,8 +97,8 @@
           <legend>
             <br class="clear"/>Other Dictionaries
           </legend>
-<%=       render partial: 'admin/definitions/list_legacy', locals: { list: object.definitions.legacy_definitions_by_info_source } %>
-<%=       render partial: 'admin/definitions/list_in_house', locals: { list: object.definitions.in_house_definitions_by_info_source } unless object.definitions.in_house_definitions_by_info_source.empty? %>
+<%=       render partial: 'admin/definitions/list_legacy_in_house', locals: { list: object.definitions.legacy_definitions_by_info_source, show_header: true } %>
+<%=       render partial: 'admin/definitions/list_legacy_in_house', locals: { list: object.definitions.in_house_definitions_by_info_source, show_header: false } %>
 <%=       association_note_list_fieldset(Definition.name) %>
         </div> <!-- END panel-body -->
       </div> <!-- END collapseTen -->

@@ -1,4 +1,4 @@
-<% if list.empty? %>
+<% if list.empty? && show_header %>
   <%= empty_collection_message("No #{Definition.model_name.human(count: :many).s} found.") %>
 <% else %>
   <table class="listGrid">
@@ -11,6 +11,6 @@
        <th><%= Citation.model_name.human(count: :many).titleize.s %></th>
      </tr>
     <% end %>
-     <%= render partial: 'admin/definitions/row_legacy', collection: list, as: :row, locals: { level: 0 } %>
+     <%= render partial: 'admin/definitions/row_legacy_in_house', collection: list, as: :row, locals: { level: 0 } %>
    </table>
 <% end %>
