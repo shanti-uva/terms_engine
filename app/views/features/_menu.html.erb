@@ -4,7 +4,6 @@
 	<section class="search-section">
     <ul class="nav nav-tabs">
       <li class="searchview active"><a href=".searchview" data-toggle="tab"><span class="icon shanticon-search"></span>Search</a></li>
-      <li class="goview"><a href=".goview" data-toggle="tab"><span class="icon shanticon-arrow-right_2"></span>Go</a></li>
 <%  if perspective_code = 'tib.alpha' %>
       <li class="parseview"><a href=".parseview" data-toggle="tab"><span class="icon shanticon-share"></span>Parse</a></li>
 <%  end %>
@@ -56,18 +55,15 @@
               </div>
               <div id="search-note" style='display:none'><p>'Starts with' and 'Exactly' filters are case sensitive</p></div>
             </div>
+            <hr>
+            <div id='goto-fid' class="input-group">
+              <input type="text" class="form-control" placeholder="Go to <%= Feature.human_attribute_name(:pid).s %>...">
+              <span class="input-group-btn">
+                <button class="btn btn-default" type="button">Go!</button>
+              </span>
+            </div><!-- /input-group -->
           </section>
 <%      end %>
-        </section>
-      </div>
-      <div class="goview tab-pane">
-				<section class="input-section">
-          <div id='goto-fid' class="input-group">
-            <input type="text" class="form-control" placeholder="Go to <%= Feature.human_attribute_name(:pid).s %>...">
-            <span class="input-group-btn">
-              <button class="btn btn-default" type="button">Go!</button>
-            </span>
-          </div><!-- /input-group -->
         </section>
       </div>
 <%  if perspective_code = 'tib.alpha' %>
