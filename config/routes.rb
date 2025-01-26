@@ -5,6 +5,7 @@ Rails.application.routes.draw do
   end
   resources :features do
     resources :recordings, only: [:index,:show], defaults: { format: 'json' }
+    post :parse, on: :collection
   end
   resources :recordings, only: [:show]
   namespace :admin do

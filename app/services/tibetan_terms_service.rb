@@ -69,7 +69,7 @@ class TibetanTermsService
       term = sorted[i]
       if term.position != new_position
         term.update(position: i+1, skip_update: true)
-        term.queued_index
+        term.queued_index(priority: Flare::IndexerJob::LOW)
       end
     end
   end

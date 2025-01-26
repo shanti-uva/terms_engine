@@ -13,6 +13,14 @@
 class DefinitionRelation < ApplicationRecord
   acts_as_family_tree :tree, nil, node_class: 'Definition'
   
+  after_save do |record|
+    [record.parent_node, record.child_node].each { |r| r.queued_update_hierarchy }
+  end
+  
+  after_destroy do |record|
+    [record.parent_node, record.child_node].each { |r| r.queued_update_hierarchy }
+  end
+  
   has_many :imports, :as => 'item', :dependent => :destroy
 
   def self.search(filter_value)

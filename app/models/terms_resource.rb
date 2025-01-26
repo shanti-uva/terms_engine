@@ -4,8 +4,6 @@ class TermsResource < ActiveResource::Base
   case InterfaceUtils::Server.environment
   when InterfaceUtils::Server::DEVELOPMENT
     self.site = "http://dev-terms.kmaps.virginia.edu/"
-  when InterfaceUtils::Server::STAGING
-    self.site = "http://staging-terms.kmaps.virginia.edu/"
   when InterfaceUtils::Server::PRODUCTION
     self.site = "http://terms.kmaps.virginia.edu/"
   when InterfaceUtils::Server::LOCAL

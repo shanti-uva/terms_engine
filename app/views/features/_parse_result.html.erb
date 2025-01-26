@@ -1,0 +1,16 @@
+<div class="form-group">
+<%= form_tag parse_features_path, remote: true do -%>
+<%=   label_tag 'Enter text' %><br>
+<%=   text_area_tag 'text', @text, rows: 5, cols: 20, lang: 'bo', 'xml:lang' => 'bo', class: 'bo' %><br>
+<%=   submit_tag 'Go' %>
+<%  end -%>
+</div>
+<div lang="bo" xml:lang="bo" class="bo"><p>
+<%  i = 0
+    while i < @parsed_text.size
+      text = @parsed_text[i]
+      tid = @parsed_text[i+1] %>
+<%=   tid.blank? ? text : link_to("#{text}#{String::INTERSYLLABIC_TSHEG}".html_safe, feature_path(tid), remote: true) %>
+<%	  i+=2
+		end %>
+</p></div>

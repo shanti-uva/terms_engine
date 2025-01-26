@@ -125,11 +125,11 @@ module TermsEngine
                 f.parent_relations.clear
                 FeatureRelation.create(child_node: f, parent_node: head, perspective: @new_alpha, feature_relation_type: heads_type, skip_update: true)
                 f.skip_update = false
-                f.update_hierarchy
+                f.queued_update_hierarchy
                 f.queued_index(priority: 3)
               end
               head.skip_update = false
-              head.update_hierarchy
+              head.queued_update_hierarchy
               head.queued_index(priority: 2)
               puts "#{Time.now}: Finishing sub-process #{Process.pid}."
             rescue Exception => e
