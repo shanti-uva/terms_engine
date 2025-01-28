@@ -1,6 +1,6 @@
 module TermsEngine
   module Extension
-    module FeatureController
+    module FeaturesController
       extend ActiveSupport::Concern
 
       included do
