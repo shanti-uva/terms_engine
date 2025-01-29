@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   end
   resources :recordings, only: [:show]
   namespace :admin do
+    resource :assistant, only: [:show, :create]
     concern :add_author do
       get :add_author, on: :collection
     end

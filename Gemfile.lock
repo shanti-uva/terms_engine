@@ -135,7 +135,8 @@ GIT
 PATH
   remote: .
   specs:
-    terms_engine (1.7.6)
+    terms_engine (1.8.0)
+      ruby-openai
       sprockets-rails
 
 GEM
@@ -254,11 +255,14 @@ GEM
     diff-lcs (1.5.1)
     drb (2.2.1)
     erubi (1.13.1)
+    event_stream_parser (1.0.0)
     exception_notification (4.5.0)
       actionmailer (>= 5.2, < 8)
       activesupport (>= 5.2, < 8)
     faraday (2.0.0)
       ruby2_keywords (>= 0.0.4)
+    faraday-multipart (1.1.0)
+      multipart-post (~> 2.0)
     ffi (1.17.0-arm64-darwin)
     globalid (1.2.1)
       activesupport (>= 6.1)
@@ -285,6 +289,7 @@ GEM
     mini_mime (1.1.5)
     minitest (5.25.4)
     msgpack (1.7.2)
+    multipart-post (2.4.1)
     mutex_m (0.3.0)
     net-imap (0.5.4)
       date
@@ -366,6 +371,10 @@ GEM
       rspec-mocks (~> 3.10)
       rspec-support (~> 3.10)
     rspec-support (3.13.1)
+    ruby-openai (7.3.1)
+      event_stream_parser (>= 0.3.0, < 2.0.0)
+      faraday (>= 1)
+      faraday-multipart (>= 1)
     ruby2_keywords (0.0.5)
     sass-rails (6.0.0)
       sassc-rails (~> 2.1, >= 2.1.1)

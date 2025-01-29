@@ -1,0 +1,40 @@
+<%= form_for @assistant, url: admin_assistant_path do |f| %>
+    <fieldset>
+      <legend>Automated assistant for dictionary input</legend>
+      <div class="row">
+<%=     f.label 'Original passage', style: "display: block" %>
+<%=     f.text_area :passage, rows: 6, cols: 20, lang: 'bo', 'xml:lang' => 'bo', class: 'bo' %>
+      </div>
+      <div class="row">
+<%=     f.label 'Base dictionary', style: "display: block" %>
+<%=     f.collection_select :base_dictionary_id, @dictionaries, :id, :title, { include_blank: true }, class: 'form-control form-select ss-select selectpicker' %> 
+	    </div>
+      <div class="row">
+<%=     f.label :language_id, Language.model_name.human.titleize.s %>
+<%=     f.collection_select :language_id, @languages, :id, :name, { prompt: true }, class: 'form-control form-select ss-select selectpicker'  %>
+	    </div>
+      <div class="row">
+<%=     f.label 'Translated passage', style: "display: block" %>
+<%=     f.text_area :translated_passage, rows: 6, cols: 40 %>
+      </div>
+      <div class="row">
+<%=     f.label 'Destination dictionary', style: "display: block" %>
+<%=     f.collection_select :destination_dictionary_id, @dictionaries, :id, :title, { prompt: true }, class: 'form-control form-select ss-select selectpicker' %> 
+	    </div>
+      <div class="row">
+<%=     f.submit 'Go', class: 'submit btn btn-primary form-submit' %>
+      </div>
+<%  end
+    @terms.each_index do |i|
+      tag = "term[#{@fids[i]}]"
+			suggested_content = @translations.empty? ? nil : @translations[@terms[i]] %>
+      <div class="row">
+<%=   label_tag tag, @terms[i].span, style: "display: block" %>
+<%=   text_field_tag tag, suggested_content %>
+<%=   submit_tag 'Confirm' %>
+<%    if !@definitions.empty? %>
+        <p><%= @definitions[i] %></p>
+<%    end %>
+      </div>
+<%  end %>
+    </fieldset>

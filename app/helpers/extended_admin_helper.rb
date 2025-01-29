@@ -4,6 +4,7 @@ module ExtendedAdminHelper
     if authorized?(admin_geo_code_types_path) || authorized?(admin_perspectives_path) || authorized?(admin_views_path) || authorized?(admin_oral_sources_path) || authorized?(admin_note_titles_path)
       menu[GeoCodeType.model_name.human(:count => :many).titleize.s] = admin_geo_code_types_path if authorized? admin_geo_code_types_path
       menu["Create new #{Feature.model_name.human.titleize.s}"] = new_admin_feature_path if authorized? new_admin_feature_path
+      menu["Dictionary assistant"] = admin_assistant_path if authorized?(admin_assistant_path)
       menu[FeatureRelationType.model_name.human(:count => :many).titleize.s] = admin_feature_relation_types_path if authorized? admin_feature_relation_types_path
       menu[Perspective.model_name.human(:count => :many).titleize.s] = admin_perspectives_path if authorized? admin_perspectives_path
       menu[View.model_name.human(:count => :many).titleize.s] = admin_views_path if authorized? admin_views_path

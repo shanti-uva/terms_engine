@@ -21,5 +21,6 @@ Gem::Specification.new do |s|
   #s.add_development_dependency 'pry-byebug'
   
   s.add_dependency 'sprockets-rails'
+  s.add_dependency 'ruby-openai'
   s.test_files = Dir["spec/**/*"]
 end

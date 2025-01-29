@@ -27,7 +27,7 @@
 	</div>
   <div class="row">
 <%= f.label :language_id, Language.model_name.human.titleize.s %>
-<%= f.collection_select :language_id, Language.all.sort_by{ |l| l.to_s }, :id, :to_s, {}, class: 'form-control form-select ss-select selectpicker' %>
+<%= f.collection_select :language_id, Language.all.sort_by{ |l| l.to_s }, :id, :to_s, { prompt: true }, class: 'form-control form-select ss-select selectpicker' %>
   </div>
   <div class="row">
 <%= f.label(:date_published).s %>
