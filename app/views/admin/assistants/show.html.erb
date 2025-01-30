@@ -25,16 +25,27 @@
 <%=     f.submit 'Go', class: 'submit btn btn-primary form-submit' %>
       </div>
 <%  end
+    options = @grammatical_functions.to_a
     @terms.each_index do |i|
-      tag = "term[#{@fids[i]}]"
-			suggested_content = @translations.empty? ? nil : @translations[@terms[i]] %>
+      translation_tag = "translation[#{@fids[i]}]"
+      grammar_tag = "gramm_function[#{@fids[i]}]"
+      if @translations.empty?
+        suggested_translation = nil
+        suggested_gramm_function = nil
+      else
+        translation = @translations[@terms[i]]
+        next if translation.nil?
+        suggested_translation = translation.first
+        suggested_gramm_function = @grammatical_functions[translation.second]
+      end %>
       <div class="row">
-<%=   label_tag tag, @terms[i].span, style: "display: block" %>
-<%=   text_field_tag tag, suggested_content %>
-<%=   submit_tag 'Confirm' %>
+<%=   label_tag translation_tag, @terms[i].span, style: "display: block" %>
+<%=   text_field_tag tag, suggested_translation %>
+<%=   select_tag grammar_tag, options_for_select(options, suggested_gramm_function), include_blank: true %>
+<%=   submit_tag 'Confirm', class: 'submit btn btn-primary form-submit' %>
+      </div>
 <%    if !@definitions.empty? %>
         <p><%= @definitions[i] %></p>
 <%    end %>
-      </div>
 <%  end %>
     </fieldset>
