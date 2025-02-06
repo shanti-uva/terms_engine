@@ -35,7 +35,7 @@ class Admin::AssistantsController < AclController
     else
       @prompt = "When translating the passage \"#{@assistant.passage.gsub(/[\n\v\r]/, " ")}\" into #{@assistant.language.name} like as \"#{@assistant.translated_passage.gsub(/[\n\v\r]/, " ")}\""
       @prompt << "How were the following Tibetan terms exactly translated? " + @terms.join(", ")
-      @prompt << " Give response as a JSON object with the keys being all terms exactly as they were provided and the value and array."
+      @prompt << " The json keys should be all terms exactly as they were provided and the value and array."
       @prompt << " The first element of the array should be the corresponding translation without any additional text or explanation."
       @prompt << " If verb is conjugated in past, present or future tense, put in third person singular. Nouns and adjectives put in masculine singular."
       @prompt << " In the second element of the array put the grammatical function among the following options: #{@grammatical_functions.keys.join(', ')} (which gets translated into a preposition)."
@@ -45,6 +45,7 @@ class Admin::AssistantsController < AclController
       response = client.chat(
         parameters: {
           model: "gpt-4o-mini", # Required.
+          response_format: { type: "json_object" },
           messages: [{ role: "user", content: @prompt}], # Required.
           temperature: 0.1
         }

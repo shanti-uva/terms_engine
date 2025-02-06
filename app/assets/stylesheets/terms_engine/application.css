@@ -84,3 +84,23 @@ body.page-terms .main-col {
   display: none;
 }
 /* this hides the HOME item in the breadcrumbs for terms app only */
+
+.sticky-row {
+  position: sticky;
+  top: 0; /* Sticks to the top */
+  z-index: 1000; /* Ensures it stays above other content */
+	background-color: #eeeeee; /* Prevents text overlap */
+	padding: 10px 0;
+	border-bottom: 2px solid #ccc; /* Optional visual separation */
+}
+
+.matrix-row {
+  display: flex; /* Aligns items in a row */
+  gap: 20px; /* Adds spacing between columns */
+}
+
+.matrix-column {
+  display: flex;
+  flex-direction: column; /* Stack label above textarea */
+  flex: 1; /* Ensures both columns take equal space */
+}

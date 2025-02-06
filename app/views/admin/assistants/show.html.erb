@@ -2,11 +2,7 @@
     <fieldset>
       <legend>Automated assistant for dictionary input</legend>
       <div class="row">
-<%=     f.label 'Original passage', style: "display: block" %>
-<%=     f.text_area :passage, rows: 6, cols: 20, lang: 'bo', 'xml:lang' => 'bo', class: 'bo' %>
-      </div>
-      <div class="row">
-<%=     f.label 'Base dictionary', style: "display: block" %>
+<%=     f.label :base_dictionary_id, 'Base dictionary', style: "display: block" %>
 <%=     f.collection_select :base_dictionary_id, @dictionaries, :id, :title, { include_blank: true }, class: 'form-control form-select ss-select selectpicker' %> 
 	    </div>
       <div class="row">
@@ -14,15 +10,19 @@
 <%=     f.collection_select :language_id, @languages, :id, :name, { prompt: true }, class: 'form-control form-select ss-select selectpicker'  %>
 	    </div>
       <div class="row">
-<%=     f.label 'Translated passage', style: "display: block" %>
-<%=     f.text_area :translated_passage, rows: 6, cols: 40 %>
-      </div>
-      <div class="row">
-<%=     f.label 'Destination dictionary', style: "display: block" %>
+<%=     f.label :destination_dictionary_id, 'Destination dictionary', style: "display: block" %>
 <%=     f.collection_select :destination_dictionary_id, @dictionaries, :id, :title, { prompt: true }, class: 'form-control form-select ss-select selectpicker' %> 
 	    </div>
-      <div class="row">
+      <div class="row sticky-row matrix-row">
+        <div class="matrix-column">
+<%=     f.label :passage, 'Original passage', style: "display: block" %>
+<%=     f.text_area :passage, rows: 6, lang: 'bo', 'xml:lang' => 'bo', class: 'bo' %>
+        </div>
+        <div class="matrix-column">
+<%=     f.label :translated_passage, 'Translated passage', style: "display: block" %>
+<%=     f.text_area :translated_passage, rows: 6 %>
 <%=     f.submit 'Go', class: 'submit btn btn-primary form-submit' %>
+        </div>
       </div>
 <%  end
     options = @grammatical_functions.to_a
@@ -40,7 +40,7 @@
       end %>
       <div class="row">
 <%=   label_tag translation_tag, @terms[i].span, style: "display: block" %>
-<%=   text_field_tag tag, suggested_translation %>
+<%=   text_field_tag translation_tag, suggested_translation %>
 <%=   select_tag grammar_tag, options_for_select(options, suggested_gramm_function), include_blank: true %>
 <%=   submit_tag 'Confirm', class: 'submit btn btn-primary form-submit' %>
       </div>

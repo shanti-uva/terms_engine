@@ -4,7 +4,7 @@
 	<section class="search-section">
     <ul class="nav nav-tabs">
       <li class="searchview active"><a href=".searchview" data-toggle="tab"><span class="icon shanticon-search"></span>Search</a></li>
-<%  if perspective_code = 'tib.alpha' %>
+<%  if perspective_code == 'tib.alpha' %>
       <li class="parseview"><a href=".parseview" data-toggle="tab"><span class="icon shanticon-share"></span>Parse</a></li>
 <%  end %>
     </ul>
@@ -66,7 +66,7 @@
 <%      end %>
         </section>
       </div>
-<%  if perspective_code = 'tib.alpha' %>
+<%  if perspective_code == 'tib.alpha' %>
       <div class="parseview tab-pane">
         <div id="parse">
 <%=       render partial: 'features/parse_form' %>
@@ -96,8 +96,7 @@
 </section>
 <% feature = contextual_feature
    fid = feature.nil? ? nil : feature.fid
-   uid = !fid.nil? ? "#{Feature.uid_prefix}-#{fid}" : "";
-%>
+   uid = !fid.nil? ? "#{Feature.uid_prefix}-#{fid}" : ""; %>
 <%= content_tag :div, "", id: 'menu_js_data', data: {
  term_index: Feature.config.url,
  asset_index: ShantiIntegration::Source.config.url,
