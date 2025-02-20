@@ -1,6 +1,6 @@
 <%
   add_breadcrumb_item feature_link(object.definition.feature)
-  add_breadcrumb_item link_to Definition.model_name.human(count: :many).titleize.s, polymorphic_path([:admin, object.definition.feature], section: 'definitions')
+  add_breadcrumb_item link_to Definition.model_name.human(count: :many).titleize.s, admin_feature_path(object.definition.feature.fid, section: 'definitions')
   add_breadcrumb_item link_to object.definition.content.strip_tags.truncate(25).titleize.s, polymorphic_path([:admin, object.feature, object.definition], section: 'related_subjects')
   add_breadcrumb_item link_to DefinitionSubjectAssociation.model_name.human(count: :many).titleize.s, polymorphic_path([:admin, object.feature, object.definition], section: 'related_subjects')
   add_breadcrumb_item ts('edit.this')

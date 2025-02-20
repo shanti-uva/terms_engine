@@ -6,6 +6,7 @@
        <th class="listActionsCol"></th>
        <th><%= Etymology.model_name.human.titleize.s %></th>
        <th><%= Etymology.human_attribute_name('object_type').s %></th>
+       <th><%= Citation.model_name.human(count: :many).titleize.s %></th>
      </tr>
 <%   list.each do |item| %>
      <tr>
@@ -16,6 +17,7 @@
        </td>
        <td><%= item.content.s %></td>
        <td><p><%= item.etymology_type_association.nil? ? "-" : item.etymology_type_association.subject['header'].s %></p></td>
+       <td><%= accordion_citation_list_fieldset(object: item) %></td>
      </tr>
 <%   end %>
    </table>

@@ -19,6 +19,8 @@ class Admin::PassageTranslationsController < AclController
   create.wants.html do
     if object.context.instance_of? Definition
       redirect_to polymorphic_url( [:admin, object.context.feature, object.context], section: 'passage_translations' )
+    elsif object.context.instance_of? Feature
+      redirect_to admin_feature_url(object.context.fid, section: 'passage_translations' )
     else
       redirect_to polymorphic_url( [:admin, object.context], section: 'passage_translations' )
     end
@@ -26,6 +28,8 @@ class Admin::PassageTranslationsController < AclController
   update.wants.html do
     if object.context.instance_of? Definition
       redirect_to polymorphic_url( [:admin, object.context.feature, object.context], section: 'passage_translations' )
+    elsif object.context.instance_of? Feature
+      redirect_to admin_feature_url(object.context.fid, section: 'passage_translations' )
     else
       redirect_to polymorphic_url( [:admin, object.context], section: 'passage_translations' )
     end
@@ -33,6 +37,8 @@ class Admin::PassageTranslationsController < AclController
   destroy.wants.html do
     if object.context.instance_of? Definition
       redirect_to polymorphic_url( [:admin, object.context.feature, object.context], section: 'passage_translations' )
+    elsif object.context.instance_of? Feature
+      redirect_to admin_feature_url(object.context.fid, section: 'passage_translations' )
     else
       redirect_to polymorphic_url( [:admin, object.context], section: 'passage_translations' )
     end

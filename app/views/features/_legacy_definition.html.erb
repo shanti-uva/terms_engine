@@ -3,7 +3,7 @@
 <%= legacy_definition.content.s.html_safe %>
 <%= note_popup_link_for(legacy_definition) %>
 </p>
-<%= render(partial: 'etymologies', locals: { etymologies: legacy_definition.etymologies }) %>
+<%= render(partial: 'etymologies', locals: { etymologies: legacy_definition.etymologies, include_citation: true }) %>
 <%= render(partial: 'model_sentences', locals: { model_sentences: legacy_definition.model_sentences }) %>
 <p><a data-toggle="collapse" href="#other-definition-details-<%= legacy_definition.id %>" role="button" aria-expanded="false" aria-controls="definition-details" class="definition-details-control collapsed">
   <span class="glyphicon"></span>Further Details</a></p>
@@ -14,10 +14,10 @@
     <dt><%= Enumeration.model_name.human %>:</dt> <dd><%= legacy_definition.enumeration.value %></dd>
   <% end %>
   </dl>
-  <% if !subject_associations.empty? %>
+  <% if !subject_associations.blank? %>
     <h4><%= DefinitionSubjectAssociation.model_name.human(count: subject_associations.count).titleize.s %></h4>
     <dl>
-      <%=  render partial: 'subjects', locals: { associations: subject_associations } %>
+      <%=  render partial: 'subjects', locals: { associations: subject_associations, include_citation: true } %>
     </dl>
   <% end %>
 </div>

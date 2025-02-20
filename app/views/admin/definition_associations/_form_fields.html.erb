@@ -17,7 +17,7 @@
   </div>
   <div class="row">
     <div>
-<%    source_definitions = object.definition.feature.definitions.standard_definitions %>
+<%    source_definitions = object.definition.feature.definitions.standard %>
 <%=   f.label :definition_id, 'Definition' %>
 <%=   f.select :definition_id, source_definitions.collect{ |d| [d.snippet, d.id] }, {}, class: 'form-control form-select ss-select selectpicker' %>
     </div>
@@ -35,7 +35,7 @@
     <div>
 <%=   f.radio_button :associated_type, definition_str %>
 <%=   f.label :associated_id, 'specific definition' %>
-<%    dest_definitions = associated_feature.definitions.standard_definitions %>
+<%    dest_definitions = associated_feature.definitions.standard %>
 <%=   f.select :associated_id, dest_definitions.collect{ |d| [d.snippet, d.id] }, { }, id: 'definition_association[associated_id]', class: 'form-control form-select ss-select selectpicker' %>
     </div>
   </div>

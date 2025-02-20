@@ -7,14 +7,14 @@
   add_breadcrumb_item feature_link(object.context.feature)
 
   if object.context.instance_of? Definition
-    add_breadcrumb_item link_to Definition.model_name.human(count: :many).titleize.s, polymorphic_path([:admin, object.context.feature], section: 'definitions')
+    add_breadcrumb_item link_to Definition.model_name.human(count: :many).titleize.s, admin_feature_path(object.context.feature.fid, section: 'definitions')
     # higgins definitions are blank, so output the id in the breadcrumbs instead of the content
     add_breadcrumb_item link_to object.context.content.strip_tags.blank? ? object.context.id : object.context.content.strip_tags.truncate(25).titleize.s, polymorphic_path([:admin, object.context])
   end
 
   if object.context.instance_of? Passage
     if object.context.context.instance_of? Definition
-      add_breadcrumb_item link_to Definition.model_name.human(count: :many).titleize.s, polymorphic_path([:admin, object.context.context.feature], section: 'definitions')
+      add_breadcrumb_item link_to Definition.model_name.human(count: :many).titleize.s, admin_feature_path(object.context.context.feature.fid, section: 'definitions')
       add_breadcrumb_item link_to object.context.context.content.strip_tags.blank? ? object.context.context.id : object.context.context.content.strip_tags.truncate(25).titleize.s, polymorphic_path([:admin, object.context.context])
     end
 

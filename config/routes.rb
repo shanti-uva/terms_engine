@@ -29,6 +29,7 @@ Rails.application.routes.draw do
     end
     resources :enumerations
     resources :etymologies do
+      resources :citations
       resources :etymology_type_associations, :etymology_subject_associations
       resources :notes, concerns: :add_author
     end

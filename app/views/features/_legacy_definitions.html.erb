@@ -1,10 +1,11 @@
 <header class="sr-only">Other Dictionaries</header>
 <h3>Other Dictionaries</h3>
-<% sorted_grouped_definitions = grouped_definitions.to_a.collect{ |a| [InfoSource.find(a.first), a.last] }.reject{ |a| a.first.nil? }.sort{ |a, b| a.first.position <=> b.first.position }
-   sorted_grouped_definitions.each_index do |index|
-     grouped_definition = sorted_grouped_definitions[index]
-     info_source = grouped_definition.first
-     definitions = grouped_definition.last %>
+<% sorted_info_sources = feature.legacy_info_sources.collect{|i| InfoSource.find(i) }.reject{ |i| i.nil? }.sort{ |a, b| a.position <=> b.position }
+   grouped_definitions = feature.definitions.legacy_by_info_source
+   sorted_info_sources.each_index do |index|
+     info_source = sorted_info_sources[index]
+     info_source_id = info_source.id
+     definitions = grouped_definitions[info_source_id] %>
 <div class="terms-dictionaries-other-node">
      <h4><%= "#{index+1}. "%><cite><a href="#"><%=" #{info_source.title}" %></a></cite></h4>
 <%   relations_by_type = feature.legacy_relations_by_type(info_source)
@@ -15,16 +16,26 @@
 <%     end %>
      </dl>
 <%   end
-     if definitions.size==1 %>
-<%=    render partial: 'legacy_definition', object: definitions.first %>
-<%   else %>
+     etymologies = feature.etymologies.legacy_by_info_source[info_source_id] %>
+<%=  render(partial: 'etymologies', locals: { etymologies: etymologies, include_citation: false }) %>
+<%   subject_term_associations = feature.non_phoneme_term_associations.legacy_by_info_source[info_source_id]
+     if !subject_term_associations.blank? %>
+     <dl>
+<%=    render partial: 'subjects', locals: { associations: subject_term_associations, include_citation: false } %>
+     </dl>
+<%   end
+     if !definitions.nil?
+       if definitions.size==1 %>
+<%=      render partial: 'legacy_definition', object: definitions.first %>
+<%     else %>
        <ul>
-<%     definitions.each do |definition| %>
+<%       definitions.each do |definition| %>
          <li>
-<%=      render partial: 'legacy_definition', object: definition %>
+<%=        render partial: 'legacy_definition', object: definition %>
          </li>
-<%     end %>
+<%       end %>
        </ul>
-<%   end %>
+<%     end
+     end %>
 </div>
 <% end %>
