@@ -5,7 +5,7 @@ if object.context.instance_of? Feature
   add_breadcrumb_item link_to Passage.model_name.human(count: :many).titleize.s, admin_feature_path(feature.fid, section: 'passages')
 elsif object.context.instance_of? Definition
   add_breadcrumb_item feature_link(object.context.feature)
-  add_breadcrumb_item link_to Definition.model_name.human(count: :many).titleize.s, polymorphic_path([:admin, object.context.feature], section: 'definitions')
+  add_breadcrumb_item link_to Definition.model_name.human(count: :many).titleize.s, admin_feature_path(object.context.feature.fid, section: 'definitions')
   add_breadcrumb_item link_to object.context.content.strip_tags.truncate(25).titleize.s, polymorphic_path([:admin, object.feature, object.context], section: 'passages')
   add_breadcrumb_item link_to Passage.model_name.human(count: :many).titleize.s, polymorphic_path([:admin, object.feature, object.context], section: 'passages')
 end

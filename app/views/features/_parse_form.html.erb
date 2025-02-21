@@ -1,0 +1,7 @@
+<section class="input-section">
+<%= form_tag parse_features_path, remote: true do -%>
+<%=   label_tag 'Enter text' %><br>
+<%=   text_area_tag 'text', nil, rows: 5, cols: 20, lang: 'bo', 'xml:lang' => 'bo', class: 'bo' %><br>
+<%=   submit_tag 'Go' %>
+<%  end %>
+</section>

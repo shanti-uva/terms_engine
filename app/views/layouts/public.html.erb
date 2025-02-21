@@ -10,7 +10,7 @@
           <h1 class="page-title"><span class="icon shanticon-<%= Feature.uid_prefix %>"></span><span class="page-title-text"><%= page_header_title %></span></h1>
         </header>
         <nav class="breadwrap">
-<%=                   f_breadcrumb %>
+<%=       f_breadcrumb %>
         </nav>
         <div class="banner-content"></div>
         <div class="banner-tabs"></div>
@@ -20,14 +20,13 @@
     <!-- Begin Content Row -->
     <section class="row row-offcanvas" role="main">
       <!-- Sidebar First Region -->
-
       <!-- Begin Page Content -->
       <section class="content-section  equal-height">
         <!-- <button type="button" class="btn btn-default view-offcanvas-sidebar" data-toggle="offcanvas" style="display:none;">
           <span class="icon"></span>
         </button> -->
-              <!-- Message Area -->
-              <!-- Main Content -->
+        <!-- Message Area -->
+        <!-- Main Content -->
         <div class="tab-content container-fluid">
           <article id="tab-overview" class="tab-pane main-col active">
             <div class="region region-content">
@@ -37,19 +36,19 @@
                   <!-- Column Resources  -->
 <% #               universal_navigation :topics, @current_tab_id, custom_secondary_tabs(@current_tab_id) %>
                   <!-- Column Main -->
-                  <section  class="content-section col-xs-12 col-md-9 equal-height">
-                    <div class="tab-content">
-                      <div id="tab-content-loading" style="display:none"></div>
-                    <article class="tab-pane active" id="<%= @current_tab_id %>">
-<%=                                         render 'public/flash' %>
-<%=                                         yield %>
-                              </article>
-<% #                                    render partial: 'main/inactive_tab_content', locals: {current_app_id: :topics} %>
-                              </div> <!-- END tab-content -->
-                      </section><!-- END content-section -->
-                </div>
-                              <!-- END Content -->
-                              <!-- Sidebar Second Region -->
+                    <section  class="content-section col-xs-12 col-md-9 equal-height">
+                      <div class="tab-content">
+                        <div id="tab-content-loading" style="display:none"></div>
+                        <article class="tab-pane active app-main" id="<%= @current_tab_id %>">
+<%=                       render 'public/flash' %>
+<%=                       yield %>
+                        </article>
+<% #                    render partial: 'main/inactive_tab_content', locals: {current_app_id: :topics} %>
+                      </div> <!-- END tab-content -->
+                    </section><!-- END content-section -->
+                  </div>
+                  <!-- END Content -->
+                  <!-- Sidebar Second Region -->
                 </div>
               </div> <!-- END block-system-main -->
             </div> <!-- END region -->
@@ -62,7 +61,7 @@
     <div class="region region-search-flyout">
       <div id="block-kmaps-explorer-kmaps-explorer-block--2" class="block block-kmaps-explorer">
         <div class="content">
-<%=               render :partial => "features/menu" %>
+<%=       render :partial => "features/menu" %>
         </div>
       </div>
     </div>

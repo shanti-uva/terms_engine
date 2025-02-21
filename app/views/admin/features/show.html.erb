@@ -93,12 +93,12 @@
         <div class="panel-body">
 <%=       highlighted_new_item_link [object, :definition] %>
           <br class="clear"/>
-<%=       render partial: 'admin/definitions/list', locals: { list: object.definitions.standard_definitions } %>
+<%=       render partial: 'admin/definitions/list', locals: { list: object.definitions.standard } %>
           <legend>
             <br class="clear"/>Other Dictionaries
           </legend>
-<%=       render partial: 'admin/definitions/list_legacy_in_house', locals: { list: object.definitions.legacy_definitions_by_info_source, show_header: true } %>
-<%=       render partial: 'admin/definitions/list_legacy_in_house', locals: { list: object.definitions.in_house_definitions_by_info_source, show_header: false } %>
+<%=       render partial: 'admin/definitions/list_legacy_in_house', locals: { list: object.definitions.legacy_by_info_source, show_header: true } %>
+<%=       render partial: 'admin/definitions/list_legacy_in_house', locals: { list: object.definitions.in_house_by_info_source, show_header: false } %>
 <%=       association_note_list_fieldset(Definition.name) %>
         </div> <!-- END panel-body -->
       </div> <!-- END collapseTen -->

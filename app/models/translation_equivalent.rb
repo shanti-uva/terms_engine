@@ -20,10 +20,12 @@
 class TranslationEquivalent < ApplicationRecord
   include KmapsEngine::IsCitable
   
-  belongs_to :feature
+  belongs_to :feature, touch: true
   belongs_to :language
   
   has_many :imports, as: 'item', dependent: :destroy
+  has_many :legacy_citations, -> { where(info_source_type: InfoSource.model_name.name) }, as: :citable, class_name: 'Citation'
+  has_many :standard_citations, -> { where.not(info_source_type: InfoSource.model_name.name) }, as: :citable, class_name: 'Citation'
   
   def rsolr_document_tags(document, prefix = '')
     prefix_ = prefix.blank? ? '' : "#{prefix}_"
@@ -31,8 +33,10 @@ class TranslationEquivalent < ApplicationRecord
     document["#{translation_equivalent_prefix}_content_s"] = self.content
     document["#{translation_equivalent_prefix}_language_s"] = self.language.name
     document["#{translation_equivalent_prefix}_language_code_s"] = self.language.code
-    citation_references = self.citations.collect { |c| c.bibliographic_reference }
+    citation_references = self.standard_citations.collect { |c| c.bibliographic_reference }
     document["#{translation_equivalent_prefix}_citation_references_ss"] = citation_references if !citation_references.blank?
+    info_source = self.legacy_citations.collect(&:info_source).first
+    document["#{translation_equivalent_prefix}_source_code_s"] = info_source.code if !info_source.nil?
   end
   
   # Produces a hash of hashes. First level is keyed on language id. Second level on an array of citation_ids.

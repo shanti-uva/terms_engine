@@ -1,6 +1,6 @@
 <%
 if object.etymology.context.instance_of? Feature
-  add_breadcrumb_item link_to object.etymology.context.model_name.human.titleize.s, polymorphic_path([:admin, object.etymology.context])
+  add_breadcrumb_item link_to object.etymology.context.model_name.human.titleize.s, admin_feature_path(object.etymology.context.fid)
 else
   add_breadcrumb_item link_to object.etymology.context.model_name.human.titleize.s, polymorphic_path([:admin, object.etymology.context.feature])
   add_breadcrumb_item link_to object.etymology.context.model_name.human.titleize.s, polymorphic_path([:admin, object.etymology.context.feature, object.etymology.context])

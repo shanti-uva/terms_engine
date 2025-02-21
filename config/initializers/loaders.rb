@@ -9,8 +9,8 @@ ActiveSupport.on_load(:citations_controller) do
 end
 
 ActiveSupport.on_load(:features_controller) do
-  require 'terms_engine/extensions/feature_controller'
-  include TermsEngine::Extension::FeatureController
+  require 'terms_engine/extensions/features_controller'
+  include TermsEngine::Extension::FeaturesController
 end
 
 ActiveSupport.on_load(:feature_relation) do
@@ -36,6 +36,11 @@ end
 ActiveSupport.on_load(:perspective) do
   require 'terms_engine/extensions/perspective_model'
   include TermsEngine::Extension::PerspectiveModel
+end
+
+ActiveSupport.on_load(:authenticated_system_users_controller) do
+  require 'terms_engine/extensions/users_controller'
+  include TermsEngine::Extension::UsersController
 end
 
 ActiveSupport.on_load(:sessions_controller) do

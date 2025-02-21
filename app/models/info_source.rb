@@ -19,6 +19,7 @@
 
 class InfoSource < ActiveRecord::Base
   has_many :citations
+  belongs_to :language
   
   # Validation
   validates_presence_of :code

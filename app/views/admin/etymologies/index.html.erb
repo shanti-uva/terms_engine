@@ -1,11 +1,13 @@
-<%
-add_breadcrumb_item link_to parent_object.model_name.human.titleize.s, polymorphic_path([:admin, parent_object])
-%>
+<% if parent_object.instance_of Feature
+     add_breadcrumb_item link_to parent_object.model_name.human.titleize.s, admin_feature_path(parent_object.fid)
+   else
+     add_breadcrumb_item link_to parent_object.model_name.human.titleize.s, polymorphic_path([:admin, parent_object])
+   end %>
 <section class="panel panel-content">
   <div class="panel-heading">
     <h6><%= Etymology.model_name.human.pluralize.titleize.s %></h6>
   </div>
   <div class="panel-body">
-<%=       render :partial => 'admin/etymologies/list', :locals => { :list => parent_object.etymologies } %>
+<%= render :partial => 'admin/etymologies/list', :locals => { :list => parent_object.etymologies } %>
   </div> <!-- END panel-body -->
 </section> <!-- END panel -->

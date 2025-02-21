@@ -1,6 +1,6 @@
 <% 
   add_breadcrumb_item feature_link(object.feature)
-  add_breadcrumb_item link_to FeatureName.model_name.human(count: :many).titleize.s, admin_feature_path(object.feature, section: 'names')
+  add_breadcrumb_item link_to FeatureName.model_name.human(count: :many).titleize.s, admin_feature_path(object.feature.fid, section: 'names')
   add_breadcrumb_item object.name.s 
 %>
 <section class="panel panel-content">

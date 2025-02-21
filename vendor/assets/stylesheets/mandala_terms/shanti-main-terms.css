@@ -33,6 +33,9 @@
 .page-terms .input-section .toggle-link .icon::before,
 .page-terms .input-section .toggle-link:hover .icon::before,
 .page-terms .input-section .selectpicker .caret::before,
+.page-terms .search-section .nav-tabs>li.active>a,
+.page-terms .search-section .nav-tabs>li.active>a:hover,
+.page-terms .search-section .nav-tabs>li.active>a:active,
 .page-terms .view-section .nav-tabs>li.active>a,
 .page-terms .view-section .nav-tabs>li.active>a:hover,
 .page-terms .view-section .nav-tabs>li.active>a:active {
@@ -52,6 +55,7 @@
   border-color: #a57546 !important; /* Darker shade of red for shadow blend */
 }
 
+.page-terms .search-section .nav-tabs>li.active>a,
 .page-terms .view-section .nav-tabs>li.active>a,
 .page-terms .nav-tabs.nav-justified>li.active{
   /*border-top-color: #4ca6fb !important;*/

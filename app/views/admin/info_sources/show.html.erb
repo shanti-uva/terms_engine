@@ -23,6 +23,10 @@
     <span><%= def_if_blank(object, :agent) %></span>
   </div>
   <div class="row">
+     <label><%= Language.model_name.human.titleize.s %>:</label>
+		 <span><%= def_if_blank object, :language, :name %></span>
+  </div>
+  <div class="row">
     <label><%= Perspective.human_attribute_name(:date_published).s %></label>
     <span><%= def_if_blank(object, :date_published) %></span>
   </div>

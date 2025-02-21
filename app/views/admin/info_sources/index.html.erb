@@ -25,6 +25,7 @@
        <th><%= InfoSource.human_attribute_name(:title).s %></th>
        <th><%= InfoSource.human_attribute_name(:processed).s %></th>
        <th><%= InfoSource.human_attribute_name(:agent).s %></th>
+       <th><%= Language.model_name.human.titleize.s %></th>
        <th><%= InfoSource.human_attribute_name(:date_published).s %></th>
      </tr>
 <%   @collection.each do |item| %>
@@ -34,6 +35,7 @@
        <td><%= item.title %></td>
        <td><%= item.processed ? ts(:affirmation) : ts(:negation) %></td>
        <td><%= item.agent %></td>
+       <td><%= item.language.nil? ? '' : item.language.name %></td>
        <td><%= item.date_published %></td>
      </tr>
 <%   end %>

@@ -1,61 +1,79 @@
-<% active_item = active_menu_item %>
+<% active_item = active_menu_item
+   perspective_code = current_perspective.code %>
 <section id="kmaps-search" role="search">
-  <!-- BEGIN Input section -->
-  <section class="input-section" style="display:none">
-<%= form_for search_instance, url: search_features_path, remote: true do |form| %>
-    <div class="search-group">
-      <!-- typeahead search -->
-<div class="kmap-typeahead-picker">
-  <label class="flyout-search-label"><span>Search:</span></label>
-    <%=     text_field_tag "kmaps-explorer-search-term", "",  class: 'kmap-search-term form-control form-text', placeholder: 'Enter Search...', autocomplete: :off %>
-  <span class="icon shanticon-magnify"></span>
-  <button type="button" class="btn searchreset" aria-label="Clear search text" style="display: none;"><span class="icon"></span></button>
-</div>
-      <!-- END - typeahead search -->
-    <div class="form-group">
-<%=     link_to '#', class: 'advanced-link toggle-link' do %>
-          <span class="icon"></span><%= ts(:advanced) %>
-<%      end %>
-    </div>
-<%=   javascript_on_load do %>
-        $('.advanced-link').click ( function () {
-        var tg = $('.advanced-view').is(":visible");
-         $(this).toggleClass("show-advanced",'fast');
-          $(".advanced-view").slideToggle('fast');
-          $(".advanced-view").toggleClass("show-options");
-          ShantiSarvaka.searchTabHeight(!tg);
-        });
-<%    end %>
-    </div>
-  <section class="advanced-view" style="<%= 'display:none;' unless current_show_advanced_search  %>">
-     <div class="form-group" id="searchScopeGroup">
-       <label><span>Filter:</span> search scope</label>
-        <div>
-<%=       form.radio_button :scope, 'full_text' %>
-<%=       form.label :scope, ts('search.full_text'), value: 'full_text' %>
-<%=       form.radio_button :scope, 'name' %>
-<%=       form.label :scope, FeatureName.model_name.human.titleize.s, value: 'name'%>
-        </div>
-        <div>
-          <%=       form.radio_button :match, 'contains' %>
-          <%= form.label :match, ts('search.contains'), value: 'contains' %>
-<%=       form.radio_button :match, 'begins' %>
-<%=       form.label :match, ts('search.begins'), value: 'begins' %>
-<%=       form.radio_button :match, 'exactly' %>
-<%=       form.label :match, ts('search.exactly'), value: 'exactly' %>
-        </div>
-        <div id="search-note" style='display:none'><p>'Starts with' and 'Exactly' filters are case sensitive</p></div>
-        <hr />
-<hr>
-    <div id='goto-fid' class="input-group">
-      <input type="text" class="form-control" placeholder="Go to <%= Feature.human_attribute_name(:pid).s %>...">
-      <span class="input-group-btn">
-        <button class="btn btn-default" type="button">Go!</button>
-      </span>
-    </div><!-- /input-group -->
-      </div>
-  </section>
+	<section class="search-section">
+    <ul class="nav nav-tabs">
+      <li class="searchview active"><a href=".searchview" data-toggle="tab"><span class="icon shanticon-search"></span>Search</a></li>
+<%  if perspective_code == 'tib.alpha' %>
+      <li class="parseview"><a href=".parseview" data-toggle="tab"><span class="icon shanticon-share"></span>Parse</a></li>
 <%  end %>
+    </ul>
+    <div class="tab-content">
+      <div class="searchview tab-pane active">
+        <!-- BEGIN Input section -->
+        <section class="input-section" style="display:none">
+<%=     form_for search_instance, url: '' do |form| %>
+          <div class="search-group">
+            <!-- typeahead search -->
+            <div class="kmap-typeahead-picker">
+<%=           text_field_tag "kmaps-explorer-search-term", "",  class: 'kmap-search-term form-control form-text', placeholder: 'Enter Search...', autocomplete: :off %>
+              <span class="icon shanticon-magnify"></span>
+              <button type="button" class="btn searchreset" aria-label="Clear search text" style="display: none;"><span class="icon"></span></button>
+            </div>
+            <!-- END - typeahead search -->
+            <div class="form-group">
+<%=           link_to '#', class: 'advanced-link toggle-link' do %>
+                <span class="icon"></span><%= ts(:advanced) %>
+<%            end %>
+            </div>
+<%=         javascript_on_load do %>
+              $('.advanced-link').click ( function () {
+                var tg = $('.advanced-view').is(":visible");
+                $(this).toggleClass("show-advanced",'fast');
+                $(".advanced-view").slideToggle('fast');
+                $(".advanced-view").toggleClass("show-options");
+                ShantiSarvaka.searchTabHeight(!tg);
+              });
+<%          end %>
+          </div>
+          <section class="advanced-view" style="<%= 'display:none;' unless current_show_advanced_search  %>">
+            <div class="form-group" id="searchScopeGroup">
+              <label><span>Filter:</span> search scope</label>
+              <div>
+<%=             form.radio_button :scope, 'full_text' %>
+<%=             form.label :scope, ts('search.full_text'), value: 'full_text' %>
+<%=             form.radio_button :scope, 'name' %>
+<%=             form.label :scope, FeatureName.model_name.human.titleize.s, value: 'name'%>
+              </div>
+              <div>
+<%=             form.radio_button :match, 'contains' %>
+<%=             form.label :match, ts('search.contains'), value: 'contains' %>
+<%=             form.radio_button :match, 'begins' %>
+<%=             form.label :match, ts('search.begins'), value: 'begins' %>
+<%=             form.radio_button :match, 'exactly' %>
+<%=             form.label :match, ts('search.exactly'), value: 'exactly' %>
+              </div>
+              <div id="search-note" style='display:none'><p>'Starts with' and 'Exactly' filters are case sensitive</p></div>
+            </div>
+            <hr>
+            <div id='goto-fid' class="input-group">
+              <input type="text" class="form-control" placeholder="Go to <%= Feature.human_attribute_name(:pid).s %>...">
+              <span class="input-group-btn">
+                <button class="btn btn-default" type="button">Go!</button>
+              </span>
+            </div><!-- /input-group -->
+          </section>
+<%      end %>
+        </section>
+      </div>
+<%  if perspective_code == 'tib.alpha' %>
+      <div class="parseview tab-pane">
+        <div id="parse">
+<%=       render partial: 'features/parse_form' %>
+        </div>
+      </div>
+<%  end %>
+    </div>
   </section>
   <!-- END input section -->
   <!-- BEGIN view section -->
@@ -76,11 +94,9 @@
     </div>
   </section>
 </section>
-<% perspective_code = current_perspective.code
-   feature = contextual_feature
+<% feature = contextual_feature
    fid = feature.nil? ? nil : feature.fid
-   uid = !fid.nil? ? "#{Feature.uid_prefix}-#{fid}" : "";
-%>
+   uid = !fid.nil? ? "#{Feature.uid_prefix}-#{fid}" : ""; %>
 <%= content_tag :div, "", id: 'menu_js_data', data: {
  term_index: Feature.config.url,
  asset_index: ShantiIntegration::Source.config.url,
@@ -158,3 +174,4 @@
   Cookies.remove('search_<%= Feature.uid_prefix %>');
   }
 <% end %>
+  

@@ -1,3 +1,3 @@
 module TermsEngine
-  VERSION = '1.7.7'
+  VERSION = '1.8.4'
 end

@@ -20,6 +20,8 @@ class Etymology < ApplicationRecord
   has_many :etymology_subject_associations, dependent: :destroy
   has_one :etymology_type_association, dependent: :destroy
   has_many :imports, :as => 'item', :dependent => :destroy
+  has_many :legacy_citations, -> { where(info_source_type: InfoSource.model_name.name) }, as: :citable, class_name: 'Citation'
+  has_many :standard_citations, -> { where.not(info_source_type: InfoSource.model_name.name) }, as: :citable, class_name: 'Citation'
   
   accepts_nested_attributes_for :etymology_type_association 
 

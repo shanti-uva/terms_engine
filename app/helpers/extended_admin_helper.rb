@@ -4,6 +4,7 @@ module ExtendedAdminHelper
     if authorized?(admin_geo_code_types_path) || authorized?(admin_perspectives_path) || authorized?(admin_views_path) || authorized?(admin_oral_sources_path) || authorized?(admin_note_titles_path)
       menu[GeoCodeType.model_name.human(:count => :many).titleize.s] = admin_geo_code_types_path if authorized? admin_geo_code_types_path
       menu["Create new #{Feature.model_name.human.titleize.s}"] = new_admin_feature_path if authorized? new_admin_feature_path
+      menu["Dictionary assistant"] = admin_assistant_path if authorized?(admin_assistant_path)
       menu[FeatureRelationType.model_name.human(:count => :many).titleize.s] = admin_feature_relation_types_path if authorized? admin_feature_relation_types_path
       menu[Perspective.model_name.human(:count => :many).titleize.s] = admin_perspectives_path if authorized? admin_perspectives_path
       menu[View.model_name.human(:count => :many).titleize.s] = admin_views_path if authorized? admin_views_path
@@ -19,7 +20,7 @@ module ExtendedAdminHelper
     if !parent_object.instance_of?(Feature)
       if parent_object.instance_of?(FeatureNameRelation)
         array << parent_object.child_node
-      elsif parent_object.instance_of?(Passage) || parent_object.instance_of?(PassageTranslation)
+      elsif parent_object.instance_of?(Passage) || parent_object.instance_of?(PassageTranslation) || parent_object.instance_of?(Etymology)
         array << parent_object.context
       elsif parent_object.respond_to?(:feature)
         array << parent_object.feature
@@ -38,7 +39,7 @@ module ExtendedAdminHelper
       add_breadcrumb_item link_to(parent_object.content.strip_tags.truncate(25).s,  polymorphic_path([:admin, parent_object]))
     when :passage # in terms_engine
       if parent_object.context.instance_of? Feature
-        add_breadcrumb_item link_to(Passage.model_name.human(:count => :many).s, admin_feature_path(parent_object.feature, section: 'passages'))
+        add_breadcrumb_item link_to(Passage.model_name.human(:count => :many).s, admin_feature_path(parent_object.feature.fid, section: 'passages'))
         add_breadcrumb_item link_to(parent_object.content.strip_tags.truncate(25).s, polymorphic_path([:admin, parent_object.feature, parent_object]))
       else
         add_breadcrumb_item link_to(Passage.model_name.human(:count => :many).s, polymorphic_path([:admin, parent_object.feature, parent_object.context], section: 'passages'))

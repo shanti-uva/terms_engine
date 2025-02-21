@@ -5,9 +5,11 @@ Rails.application.routes.draw do
   end
   resources :features do
     resources :recordings, only: [:index,:show], defaults: { format: 'json' }
+    post :parse, on: :collection
   end
   resources :recordings, only: [:show]
   namespace :admin do
+    resource :assistant, only: [:show, :create]
     concern :add_author do
       get :add_author, on: :collection
     end
@@ -27,6 +29,7 @@ Rails.application.routes.draw do
     end
     resources :enumerations
     resources :etymologies do
+      resources :citations
       resources :etymology_type_associations, :etymology_subject_associations
       resources :notes, concerns: :add_author
     end

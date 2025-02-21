@@ -4,8 +4,8 @@ class Admin::RecordingsController < AclController
 
   belongs_to :feature
 
-  create.wants.html { redirect_to admin_feature_path(object.feature_id, section: "recordings") } 
-  update.wants.html { redirect_to admin_feature_path(object.feature_id, section: "recordings") }
+  create.wants.html { redirect_to admin_feature_path(object.feature.fid, section: 'recordings') }
+  update.wants.html { redirect_to admin_feature_path(object.feature.fid, section: 'recordings') }
 
   protected
 

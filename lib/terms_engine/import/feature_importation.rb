@@ -127,7 +127,7 @@ module TermsEngine
         id = feature_ids_with_changes_accumulated[i]
         feature = Feature.find(id)
         feature.skip_update = false
-        feature.queued_index
+        feature.queued_index(priority: Flare::IndexerJob::LOW)
         self.progress_bar(num: i, total: feature_ids_with_changes_accumulated.size, current: feature.pid)
         self.log.debug "#{Time.now}: Reindexed feature #{feature.fid}."
       end

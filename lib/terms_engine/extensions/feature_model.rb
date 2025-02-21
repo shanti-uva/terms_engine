@@ -22,17 +22,138 @@ module TermsEngine
         NEW_EXPRESSION_SUBJECT_ID = 10525
         
         has_many :definition_associations, as: :associated, dependent: :destroy
-        has_many :etymologies, as: :context, dependent: :destroy
+        has_many :etymologies, as: :context, dependent: :destroy do
+          def all
+            if @all_etymologies.nil?
+              etymologies = self
+              standard = []
+              legacy = {}
+              in_house = {}
+              etymologies.each do |e|
+                citation = e.legacy_citations.first
+                #citations = d.citations.where(info_source_type: InfoSource.model_name.name)
+                if citation.nil?
+                  standard << e
+                else
+                  info_source = citation.info_source
+                  source_id = info_source.id
+                  if info_source.processed?
+                    in_house[source_id] ||= []
+                    in_house[source_id] << e
+                  else
+                    legacy[source_id] ||= []
+                    legacy[source_id] << e
+                  end
+                end
+              end
+              @all_etymologies = { standard: standard, in_house: in_house, legacy: legacy }
+            end
+            @all_etymologies
+          end
+          
+          def standard
+            all[:standard]
+          end
+          
+          def in_house_by_info_source
+            all[:in_house]
+          end
+          
+          def legacy_by_info_source
+            all[:legacy]
+          end
+        end
         has_many :model_sentences, as: :context, dependent: :destroy
         has_many :phoneme_term_associations, dependent: :destroy
-        has_many :non_phoneme_term_associations, dependent: :destroy
+        has_many :non_phoneme_term_associations, dependent: :destroy do
+          def all
+            if @all_subject_term_associations.nil?
+              subject_term_associations = self
+              standard = []
+              legacy = {}
+              in_house = {}
+              subject_term_associations.each do |a|
+                citation = a.legacy_citations.first
+                #citations = d.citations.where(info_source_type: InfoSource.model_name.name)
+                if citation.nil?
+                  standard << a
+                else
+                  info_source = citation.info_source
+                  source_id = info_source.id
+                  if info_source.processed?
+                    in_house[source_id] ||= []
+                    in_house[source_id] << a
+                  else
+                    legacy[source_id] ||= []
+                    legacy[source_id] << a
+                  end
+                end
+              end
+              @all_subject_term_associations = { standard: standard, in_house: in_house, legacy: legacy }
+            end
+            @all_subject_term_associations
+          end
+          
+          def standard
+            all[:standard]
+          end
+          
+          def in_house_by_info_source
+            all[:in_house]
+          end
+          
+          def legacy_by_info_source
+            all[:legacy]
+          end
+        end
         has_many :recordings, dependent: :destroy do
           def corrupted
             self.select{ |r| r.corrupted? }
           end
         end
         has_many :subject_term_associations, dependent: :destroy
-        has_many :translation_equivalents, dependent: :destroy
+        has_many :translation_equivalents, dependent: :destroy do
+          def all
+            if @translation_equivalents.nil?
+              translation_equivalents = self
+              standard = []
+              legacy = {}
+              in_house = {}
+              translation_equivalents.each do |t|
+                citation = t.legacy_citations.first
+                #citations = d.citations.where(info_source_type: InfoSource.model_name.name)
+                if citation.nil?
+                  standard << t
+                else
+                  info_source = citation.info_source
+                  source_id = info_source.id
+                  if info_source.processed?
+                    in_house[source_id] ||= []
+                    in_house[source_id] << t
+                  else
+                    legacy[source_id] ||= []
+                    legacy[source_id] << t
+                  end
+                end
+              end
+              @translation_equivalents = { standard: standard, in_house: in_house, legacy: legacy }
+            end
+            @translation_equivalents
+          end
+          
+          def standard
+            all[:standard]
+          end
+          
+          def in_house_by_info_source
+            all[:in_house]
+          end
+          
+          def legacy_by_info_source
+            all[:legacy]
+          end
+        end
+        
         has_one  :enumeration, as: :context, dependent: :destroy
         
         # This fetches root *Definitions* (definitions that don't have parents),
@@ -53,58 +174,116 @@ module TermsEngine
             res
           end
 
-          def all_definitions
+          def all
             if @all_definitions.nil?
               definitions = self.roots
-              standard_definitions = []
-              legacy_definitions = {}
-              in_house_definitions = {}
+              standard = []
+              legacy = {}
+              in_house = {}
               definitions.each do |d|
                 citation = d.non_standard_citations.first
                 #citations = d.citations.where(info_source_type: InfoSource.model_name.name)
                 if citation.nil?
-                  standard_definitions << d
+                  standard << d
                 else
                   info_source = citation.info_source
                   source_id = info_source.id
                   if info_source.processed?
-                    in_house_definitions[source_id] ||= []
-                    in_house_definitions[source_id] << d
+                    in_house[source_id] ||= []
+                    in_house[source_id] << d
                   else
-                    legacy_definitions[source_id] ||= []
-                    legacy_definitions[source_id] << d
+                    legacy[source_id] ||= []
+                    legacy[source_id] << d
                   end
                 end
               end
-              @all_definitions = { standard_definitions: standard_definitions, in_house_definitions: in_house_definitions, legacy_definitions: legacy_definitions }
+              @all_definitions = { standard: standard, in_house: in_house, legacy: legacy }
             end
             @all_definitions
           end
           
-          def standard_definitions
-            all_definitions[:standard_definitions]
+          def standard
+            all[:standard]
           end
           
-          def in_house_definitions_by_info_source
-            all_definitions[:in_house_definitions]
+          def in_house_by_info_source
+            all[:in_house]
           end
 
-          def legacy_definitions_by_info_source
-            all_definitions[:legacy_definitions]
+          def legacy_by_info_source
+            all[:legacy]
           end
         end
       end
       
+      def legacy_info_sources
+        definitions_hash = self.definitions.legacy_by_info_source
+        translation_equivalents_hash = self.translation_equivalents.legacy_by_info_source
+        subject_associations_hash = self.non_phoneme_term_associations.legacy_by_info_source
+        etymologies_hash = self.etymologies.legacy_by_info_source
+        relations_hash = self.legacy_relations_by_info_source
+        definitions_hash.keys.union(translation_equivalents_hash.keys).union(relations_hash.keys).union(subject_associations_hash.keys).union(etymologies_hash.keys)
+      end
+      
+      def in_house_info_sources
+        definitions_hash = self.definitions.in_house_by_info_source
+        translation_equivalents_hash = self.translation_equivalents.in_house_by_info_source
+        subject_associations_hash = self.non_phoneme_term_associations.in_house_by_info_source
+        etymologies_hash = self.etymologies.in_house_by_info_source
+        relations_hash = self.in_house_relations_by_info_source
+        definitions_hash.keys.union(translation_equivalents_hash.keys).union(relations_hash.keys).union(subject_associations_hash.keys).union(etymologies_hash.keys)
+      end
+      
+      def all_relations_by_info_source
+        if @all_relations.nil?
+          all_relations = self.all_relations
+          standard = []
+          legacy = {}
+          in_house = {}
+          all_relations.each do |r|
+            citation = r.legacy_citations.first
+            #citations = d.citations.where(info_source_type: InfoSource.model_name.name)
+            if citation.nil?
+              standard << r
+            else
+              info_source = citation.info_source
+              source_id = info_source.id
+              if info_source.processed?
+                in_house[source_id] ||= []
+                in_house[source_id] << r
+              else
+                legacy[source_id] ||= []
+                legacy[source_id] << r
+              end
+            end
+          end
+          @all_relations = { standard: standard, in_house: in_house, legacy: legacy }
+        end
+        @all_relations
+      end
+      
+      def standard_relations
+        all_relations_by_info_source[:standard]
+      end
+      
+      def in_house_relations_by_info_source
+        all_relations_by_info_source[:in_house]
+      end
+      
+      def legacy_relations_by_info_source
+        all_relations_by_info_source[:legacy]
+      end
+      
       def legacy_relations(info_source)
-        self.all_relations.reject{ |r| r.non_standard_citations.where(info_source: info_source).first.nil? }
+        self.all_relations.reject{ |r| r.legacy_citations.where(info_source: info_source).first.nil? }
       end
       
       def legacy_parent_relations(info_source)
-        self.all_parent_relations.reject{ |r| r.non_standard_citations.where(info_source: info_source).first.nil? }
+        self.all_parent_relations.reject{ |r| r.legacy_citations.where(info_source: info_source).first.nil? }
       end
       
       def legacy_child_relations(info_source)
-        self.all_child_relations.reject{ |r| r.non_standard_citations.where(info_source: info_source).first.nil? }
+        self.all_child_relations.reject{ |r| r.legacy_citations.where(info_source: info_source).first.nil? }
       end
       
       def legacy_relations_by_type(info_source)
@@ -185,7 +364,7 @@ module TermsEngine
           p_rel_citation_references = citations.collect { |c| c.bibliographic_reference }
           cd["#{prefix}_relation_citation_references_ss"] = p_rel_citation_references if !p_rel_citation_references.blank?
           citations.each{ |ci| ci.rsolr_document_tags_for_notes(cd, "#{prefix}_relation") }
-          info_source = pr.non_standard_citations.collect(&:info_source).first
+          info_source = pr.legacy_citations.collect(&:info_source).first
           cd["#{prefix}_relation_source_code_s"] = info_source.code if !info_source.nil?
           time_units = pr.time_units_ordered_by_date.collect { |t| t.to_s }
           cd["#{prefix}_relation_time_units_ss"] = time_units if !time_units.blank?
@@ -230,7 +409,7 @@ module TermsEngine
           p_rel_citation_references = citations.collect { |c| c.bibliographic_reference }
           cd["#{prefix}_relation_citation_references_ss"] = p_rel_citation_references if !p_rel_citation_references.blank?
           citations.each{ |ci| ci.rsolr_document_tags_for_notes(cd, "#{prefix}_relation") }
-          info_source = pr.non_standard_citations.collect(&:info_source).first
+          info_source = pr.legacy_citations.collect(&:info_source).first
           cd["#{prefix}_relation_source_code_s"] = info_source.code if !info_source.nil?
           time_units = pr.time_units_ordered_by_date.collect { |t| t.to_s }
           cd["#{prefix}_relation_time_units_ss"] = time_units if !time_units.blank?
@@ -362,10 +541,12 @@ module TermsEngine
         subject_associations.each do |sa|
           branch_prefix = "#{prefix}_branch_#{sa.branch_id}"
           subject_prefix = "#{branch_prefix}_#{SubjectsIntegration::Feature.uid_prefix}_#{sa.subject_id}"
-          citations = sa.citations
+          citations = sa.standard_citations
           citation_references = citations.collect { |c| c.bibliographic_reference }
           doc["#{subject_prefix}_citation_references_ss"] = citation_references if !citation_references.blank?
           citations.each{ |ci| ci.rsolr_document_tags_for_notes(doc, subject_prefix) }
+          info_source = sa.legacy_citations.collect(&:info_source).first
+          doc["#{subject_prefix}_source_code_s"] = info_source.code if !info_source.nil?
           time_units = sa.time_units_ordered_by_date.collect { |t| t.to_s }
           doc["#{subject_prefix}_time_units_ss"] = time_units if !time_units.blank?
           sa.notes.each { |n| n.rsolr_document_tags(doc, branch_prefix) }
@@ -377,10 +558,12 @@ module TermsEngine
           subject = etymology_type.nil? ? nil : etymology_type.subject
           doc["#{etymology_prefix}_type_#{subject['uid']}_s"] = subject['header'] if !subject.nil?
           e.notes.each { |n| n.rsolr_document_tags(doc, etymology_prefix) }
-          citations = e.citations
+          citations = e.standard_citations
           citation_references = citations.collect { |c| c.bibliographic_reference }
           doc["#{etymology_prefix}_citation_references_ss"] = citation_references if !citation_references.blank?
           citations.each{ |ci| ci.rsolr_document_tags_for_notes(doc, etymology_prefix) }
+          info_source = e.legacy_citations.collect(&:info_source).first
+          doc["#{etymology_prefix}_source_code_s"] = info_source.code if !info_source.nil?
         end
         for branch_id in subject_associations.select(:branch_id).distinct.collect(&:branch_id)
           associations = subject_associations.where(branch_id: branch_id)
@@ -412,7 +595,7 @@ module TermsEngine
       end
       
       def bod_expression?
-        !self.subject_term_associations.where(branch_id: Feature::BOD_PHONEME_SUBJECT_ID, subject_id: Feature::BOD_EXPRESSION_SUBJECT_ID).first.nil?
+        !self.phoneme_term_associations.where(branch_id: Feature::BOD_PHONEME_SUBJECT_ID, subject_id: Feature::BOD_EXPRESSION_SUBJECT_ID).first.nil?
       end
       
       module ClassMethods
@@ -463,20 +646,20 @@ module TermsEngine
         def search_by_phoneme(name, phoneme_id)
           name = FeatureName.joins(feature: :subject_term_associations).where(name: name, 'subject_term_associations.subject_id' => Feature::BOD_EXPRESSION_SUBJECT_ID).first
           name.nil? ? nil : name.feature
-          #name_position = names.find_index{ |n| n.feature.subject_term_associations.collect(&:subject_id).include? phoneme_id }
+          #name_position = names.find_index{ |n| n.feature.phoneme_term_associations.collect(&:subject_id).include? phoneme_id }
           #name_position.nil? ? nil : names[name_position].feature
         end
 
         def search_by_eng_phoneme(name, phoneme_id)
           names = FeatureName.where('lower(name) = ?', name.downcase).joins(feature: :subject_term_associations)
-          name_position = names.find_index{ |n| n.feature.subject_term_associations.collect(&:subject_id).include? phoneme_id }
+          name_position = names.find_index{ |n| n.feature.phoneme_term_associations.collect(&:subject_id).include? phoneme_id }
           name_position.nil? ? nil : names[name_position].feature
         end
 
         def search_by_excluding_phoneme(name, branch_id, phoneme_id)
           names = FeatureName.where('lower(name) = ?', name.downcase).joins(feature: :subject_term_associations)
           name_position = names.find_index do |n|
-            !(n.feature.subject_term_associations.find_index { |a| a.branch_id == branch_id && a.subject_id != phoneme_id }).nil?
+            !(n.feature.phoneme_term_associations.find_index { |a| a.branch_id == branch_id && a.subject_id != phoneme_id }).nil?
           end
           name_position.nil? ? nil : names[name_position].feature
         end
