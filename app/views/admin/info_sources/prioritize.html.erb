@@ -4,7 +4,7 @@
     action: '<%= prioritize_admin_info_sources_path %>'
   });
 <% end
-   add_breadcrumb_item InfoSource.model_name.human(count: :many).s
+   add_breadcrumb_item link_to(InfoSource.model_name.human(:count => :many).s, collection_path)
    add_breadcrumb_item ts('change.record', what: t('priorit.ization_of', what: InfoSource.model_name.human(count: :many))) %>
 <section class="panel panel-content">
   <div class="panel-heading">

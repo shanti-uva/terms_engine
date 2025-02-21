@@ -20,7 +20,7 @@
 class TranslationEquivalent < ApplicationRecord
   include KmapsEngine::IsCitable
   
-  belongs_to :feature
+  belongs_to :feature, touch: true
   belongs_to :language
   
   has_many :imports, as: 'item', dependent: :destroy
