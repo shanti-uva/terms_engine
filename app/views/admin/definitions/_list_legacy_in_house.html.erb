@@ -1,8 +1,8 @@
 <% if list.empty? && show_header %>
-  <%= empty_collection_message("No #{Definition.model_name.human(count: :many).s} found.") %>
+<%=  empty_collection_message("No #{Definition.model_name.human(count: :many).s} found.") %>
 <% else %>
-  <table class="listGrid">
-    <% if show_header %>
+   <table class="listGrid">
+<%   if show_header %>
      <tr>
        <th>Dictionary</th>
        <th class="listActionsCol"></th>
@@ -10,7 +10,15 @@
        <th><%= Definition.model_name.human.titleize.s %></th>
        <th><%= Citation.model_name.human(count: :many).titleize.s %></th>
      </tr>
-    <% end %>
-     <%= render partial: 'admin/definitions/row_legacy_in_house', collection: list, as: :row, locals: { level: 0 } %>
+<%   end
+     list.each_pair do |info_source_id, definitions|
+       size = definitions.size
+       first = true
+       definitions.each do |definition| 
+         source = first ? InfoSource.find(info_source_id) : nil %>
+<%=      render partial: 'admin/definitions/row_legacy_in_house', locals: { level: 0, item: definition, source: source } %>
+<%       first = false if first
+       end
+     end %>
    </table>
 <% end %>
