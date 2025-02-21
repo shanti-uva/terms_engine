@@ -9,28 +9,10 @@
    <table class="listGrid">
      <tr>
        <th class="listActionsCol"></th>
-       <th><%= Language.model_name.human.titleize.s %></th>
        <th><%= Definition.model_name.human.titleize.s %></th>
+       <th><%= Language.model_name.human.titleize.s %></th>
        <th><%= Citation.model_name.human(count: :many).titleize.s %></th>
      </tr>
-<%   list.each do |item| %>
-     <tr>
-       <td class="centerText">
-<%     if @locating_relation %>
-<%=      form_tag new_admin_definition_definition_relation_path(object), {method: :get} %>
-<%=      hidden_field_tag :target_id, item.id %>
-<%=      globalized_submit_tag 'select.this' %>
-         </form>
-<%     else %>
-<%=      list_actions_for_item(item, delete_path: admin_feature_definition_path(item.feature, item),
-         edit_path: edit_admin_feature_definition_path(item.feature, item),
-         view_path: admin_feature_definition_path(item.feature, item)) %>
-<%   end %>
-       </td>
-       <td><%= item.language.name %></td>
-       <td><%= item.snippet.s %></td>
-       <td><%= accordion_citation_list_fieldset(object: item) %></td>
-     </tr>
-<%   end %>
+<%= render partial: 'admin/definitions/row', collection: list, as: :item, locals: { level: 0 } %>
    </table>
 <% end %>
