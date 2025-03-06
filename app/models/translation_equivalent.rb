@@ -35,8 +35,8 @@ class TranslationEquivalent < ApplicationRecord
     document["#{translation_equivalent_prefix}_language_code_s"] = self.language.code
     citation_references = self.standard_citations.collect { |c| c.bibliographic_reference }
     document["#{translation_equivalent_prefix}_citation_references_ss"] = citation_references if !citation_references.blank?
-    info_source = self.legacy_citations.collect(&:info_source).first
-    document["#{translation_equivalent_prefix}_source_code_s"] = info_source.code if !info_source.nil?
+    info_sources = self.legacy_citations.collect(&:info_source)
+    document["#{translation_equivalent_prefix}_source_code_ss"] = info_sources.collect(&:code) if !info_sources.blank?
   end
   
   # Produces a hash of hashes. First level is keyed on language id. Second level on an array of citation_ids.

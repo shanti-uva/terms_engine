@@ -1,6 +1,8 @@
-<% sorted_info_sources = feature.in_house_info_sources.collect{|i| InfoSource.find(i) }.reject{ |i| i.nil? }.sort{ |a, b| a.position <=> b.position }
-   count = sorted_info_sources.size
+<% all_sorted_info_sources = feature.in_house_info_sources.collect{|i| InfoSource.find(i) }.reject{ |i| i.nil? }.sort{ |a, b| a.position <=> b.position }
    grouped_definitions = feature.definitions.in_house_by_info_source
+   grouped_keys = grouped_definitions.keys
+   sorted_info_sources = all_sorted_info_sources.select{ |info_source| grouped_keys.include? info_source.id }
+   count = sorted_info_sources.size
    sorted_info_sources.each_index do |index|
      info_source = sorted_info_sources[index]
      info_source_id = info_source.id

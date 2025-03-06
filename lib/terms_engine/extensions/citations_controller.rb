@@ -9,9 +9,9 @@ module TermsEngine
         :definition, :definition_association, :etymology, :non_phoneme_term_association, :passage, :passage_translation, :translation_equivalent #specific to terms_engine
       end
       
-      def collection
-        @collection ||= parent_object.citations.where.not(info_source_type: :InfoSource)
-      end
+      #def collection
+      #  @collection ||= parent_object.citations.where.not(info_source_type: :InfoSource)
+      #end
     end
   end
 end

@@ -73,19 +73,21 @@ module TermsEngine
               legacy = {}
               in_house = {}
               subject_term_associations.each do |a|
-                citation = a.legacy_citations.first
+                citations = a.legacy_citations
                 #citations = d.citations.where(info_source_type: InfoSource.model_name.name)
-                if citation.nil?
+                if citations.blank?
                   standard << a
                 else
-                  info_source = citation.info_source
-                  source_id = info_source.id
-                  if info_source.processed?
-                    in_house[source_id] ||= []
-                    in_house[source_id] << a
-                  else
-                    legacy[source_id] ||= []
-                    legacy[source_id] << a
+                  citations.each do |citation|
+                    info_source = citation.info_source
+                    source_id = info_source.id
+                    if info_source.processed?
+                      in_house[source_id] ||= []
+                      in_house[source_id] << a
+                    else
+                      legacy[source_id] ||= []
+                      legacy[source_id] << a
+                    end
                   end
                 end
               end
@@ -120,19 +122,21 @@ module TermsEngine
               legacy = {}
               in_house = {}
               translation_equivalents.each do |t|
-                citation = t.legacy_citations.first
+                citations = t.legacy_citations
                 #citations = d.citations.where(info_source_type: InfoSource.model_name.name)
-                if citation.nil?
+                if citations.blank?
                   standard << t
                 else
-                  info_source = citation.info_source
-                  source_id = info_source.id
-                  if info_source.processed?
-                    in_house[source_id] ||= []
-                    in_house[source_id] << t
-                  else
-                    legacy[source_id] ||= []
-                    legacy[source_id] << t
+                  citations.each do |citation|
+                    info_source = citation.info_source
+                    source_id = info_source.id
+                    if info_source.processed?
+                      in_house[source_id] ||= []
+                      in_house[source_id] << t
+                    else
+                      legacy[source_id] ||= []
+                      legacy[source_id] << t
+                    end
                   end
                 end
               end
@@ -241,19 +245,21 @@ module TermsEngine
           legacy = {}
           in_house = {}
           all_relations.each do |r|
-            citation = r.legacy_citations.first
+            citation = r.legacy_citations
             #citations = d.citations.where(info_source_type: InfoSource.model_name.name)
-            if citation.nil?
+            if citations.blank?
               standard << r
             else
-              info_source = citation.info_source
-              source_id = info_source.id
-              if info_source.processed?
-                in_house[source_id] ||= []
-                in_house[source_id] << r
-              else
-                legacy[source_id] ||= []
-                legacy[source_id] << r
+              citations.each do |citation|
+                info_source = citation.info_source
+                source_id = info_source.id
+                if info_source.processed?
+                  in_house[source_id] ||= []
+                  in_house[source_id] << r
+                else
+                  legacy[source_id] ||= []
+                  legacy[source_id] << r
+                end
               end
             end
           end
@@ -364,8 +370,8 @@ module TermsEngine
           p_rel_citation_references = citations.collect { |c| c.bibliographic_reference }
           cd["#{prefix}_relation_citation_references_ss"] = p_rel_citation_references if !p_rel_citation_references.blank?
           citations.each{ |ci| ci.rsolr_document_tags_for_notes(cd, "#{prefix}_relation") }
-          info_source = pr.legacy_citations.collect(&:info_source).first
-          cd["#{prefix}_relation_source_code_s"] = info_source.code if !info_source.nil?
+          info_sources = pr.legacy_citations.collect(&:info_source)
+          cd["#{prefix}_relation_source_code_ss"] = info_sources.collect(&:code) if !info_sources.blank?
           time_units = pr.time_units_ordered_by_date.collect { |t| t.to_s }
           cd["#{prefix}_relation_time_units_ss"] = time_units if !time_units.blank?
           pr.notes.each { |n| n.rsolr_document_tags(cd, prefix) }
@@ -409,8 +415,8 @@ module TermsEngine
           p_rel_citation_references = citations.collect { |c| c.bibliographic_reference }
           cd["#{prefix}_relation_citation_references_ss"] = p_rel_citation_references if !p_rel_citation_references.blank?
           citations.each{ |ci| ci.rsolr_document_tags_for_notes(cd, "#{prefix}_relation") }
-          info_source = pr.legacy_citations.collect(&:info_source).first
-          cd["#{prefix}_relation_source_code_s"] = info_source.code if !info_source.nil?
+          info_sources = pr.legacy_citations.collect(&:info_source)
+          cd["#{prefix}_relation_source_code_ss"] = info_sources.collect(&:code) if !info_sources.blank?
           time_units = pr.time_units_ordered_by_date.collect { |t| t.to_s }
           cd["#{prefix}_relation_time_units_ss"] = time_units if !time_units.blank?
           pr.notes.each { |n| n.rsolr_document_tags(cd, prefix) }
@@ -545,8 +551,8 @@ module TermsEngine
           citation_references = citations.collect { |c| c.bibliographic_reference }
           doc["#{subject_prefix}_citation_references_ss"] = citation_references if !citation_references.blank?
           citations.each{ |ci| ci.rsolr_document_tags_for_notes(doc, subject_prefix) }
-          info_source = sa.legacy_citations.collect(&:info_source).first
-          doc["#{subject_prefix}_source_code_s"] = info_source.code if !info_source.nil?
+          info_sources = sa.legacy_citations.collect(&:info_source)
+          doc["#{subject_prefix}_source_code_ss"] = info_sources.collect(&:code) if !info_sources.blank?
           time_units = sa.time_units_ordered_by_date.collect { |t| t.to_s }
           doc["#{subject_prefix}_time_units_ss"] = time_units if !time_units.blank?
           sa.notes.each { |n| n.rsolr_document_tags(doc, branch_prefix) }

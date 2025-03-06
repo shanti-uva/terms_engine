@@ -1,7 +1,9 @@
 <header class="sr-only">Other Dictionaries</header>
 <h3>Other Dictionaries</h3>
-<% sorted_info_sources = feature.legacy_info_sources.collect{|i| InfoSource.find(i) }.reject{ |i| i.nil? }.sort{ |a, b| a.position <=> b.position }
+<% all_sorted_info_sources = feature.legacy_info_sources.collect{|i| InfoSource.find(i) }.reject{ |i| i.nil? }.sort{ |a, b| a.position <=> b.position }
    grouped_definitions = feature.definitions.legacy_by_info_source
+   grouped_keys = grouped_definitions.keys
+   sorted_info_sources = all_sorted_info_sources.select{ |info_source| grouped_keys.include? info_source.id }
    sorted_info_sources.each_index do |index|
      info_source = sorted_info_sources[index]
      info_source_id = info_source.id
