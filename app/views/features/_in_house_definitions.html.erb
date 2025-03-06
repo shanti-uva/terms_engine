@@ -1,7 +1,5 @@
-<% all_sorted_info_sources = feature.in_house_info_sources.collect{|i| InfoSource.find(i) }.reject{ |i| i.nil? }.sort{ |a, b| a.position <=> b.position }
+<% sorted_info_sources = feature.in_house_info_sources.collect{|i| InfoSource.find(i) }.reject{ |i| i.nil? }.sort{ |a, b| a.position <=> b.position }
    grouped_definitions = feature.definitions.in_house_by_info_source
-   grouped_keys = grouped_definitions.keys
-   sorted_info_sources = all_sorted_info_sources.select{ |info_source| grouped_keys.include? info_source.id }
    count = sorted_info_sources.size
    sorted_info_sources.each_index do |index|
      info_source = sorted_info_sources[index]
@@ -24,9 +22,15 @@
      <dl>
 <%=    render partial: 'subjects', locals: { associations: subject_term_associations, include_citation: false } %>
      </dl>
-<%   end %>
+<%   end
+     translation_equivalents_by_language = feature.translation_equivalents.in_house_by_info_source[info_source_id]
+     if !translation_equivalents_by_language.blank? %>
+<%=    render partial: 'translation_equivalents_by_info_source', locals: { translation_equivalents_by_language: translation_equivalents_by_language } %>
+<%   end
+     if !definitions.blank? %>
      <div class="terms-definition-list-wrapper"><!-- BEGIN terms-definitions -->
 <%=    render partial: 'standard_definitions', locals: { definitions: definitions, is_child: false, prefix: "in_house-#{info_source.id}-", def_level: 0 } %>
      </div> <!-- END terms-definition-list-wrapper -->
+<%   end %>
    </div>
 <% end %>

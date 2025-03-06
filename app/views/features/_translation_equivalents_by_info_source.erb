@@ -1,0 +1,17 @@
+<dl>
+<% translation_equivalents_by_language.each_pair do |language_id, translation_equivalents|
+     language = Language.find(language_id) %>
+     <dt><%= language.name %>:</dt>
+     <dd>
+<%   if translation_equivalents.count==1 %>
+<%=    translation_equivalents.first.content %>
+<%   else %>
+       <br><br><ul>
+<%       translation_equivalents.each do |translation_equivalent| %>
+         <li><%= translation_equivalents.content %></li>
+<%       end %>
+       <ul>
+<%   end %>
+     </dd>
+<% end %>
+</dl>

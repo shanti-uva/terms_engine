@@ -1,9 +1,7 @@
 <header class="sr-only">Other Dictionaries</header>
 <h3>Other Dictionaries</h3>
-<% all_sorted_info_sources = feature.legacy_info_sources.collect{|i| InfoSource.find(i) }.reject{ |i| i.nil? }.sort{ |a, b| a.position <=> b.position }
+<% sorted_info_sources = feature.legacy_info_sources.collect{|i| InfoSource.find(i) }.reject{ |i| i.nil? }.sort{ |a, b| a.position <=> b.position }
    grouped_definitions = feature.definitions.legacy_by_info_source
-   grouped_keys = grouped_definitions.keys
-   sorted_info_sources = all_sorted_info_sources.select{ |info_source| grouped_keys.include? info_source.id }
    sorted_info_sources.each_index do |index|
      info_source = sorted_info_sources[index]
      info_source_id = info_source.id
@@ -26,7 +24,11 @@
 <%=    render partial: 'subjects', locals: { associations: subject_term_associations, include_citation: false } %>
      </dl>
 <%   end
-     if !definitions.nil?
+     translation_equivalents_by_language = feature.translation_equivalents.legacy_by_info_source[info_source_id]
+     if !translation_equivalents_by_language.blank? %>
+<%=    render partial: 'translation_equivalents_by_info_source', locals: { translation_equivalents_by_language: translation_equivalents_by_language } %>
+<%   end
+     if !definitions.blank?
        if definitions.size==1 %>
 <%=      render partial: 'legacy_definition', object: definitions.first %>
 <%     else %>

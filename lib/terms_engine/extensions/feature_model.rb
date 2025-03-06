@@ -131,11 +131,13 @@ module TermsEngine
                     info_source = citation.info_source
                     source_id = info_source.id
                     if info_source.processed?
-                      in_house[source_id] ||= []
-                      in_house[source_id] << t
+                      in_house[source_id] ||= {}
+                      in_house[source_id][t.language_id] ||= []
+                      in_house[source_id][t.language_id] << t
                     else
-                      legacy[source_id] ||= []
-                      legacy[source_id] << t
+                      legacy[source_id] ||= {}
+                      legacy[source_id][t.language_id] ||= []
+                      legacy[source_id][t.language_id] << t
                     end
                   end
                 end
