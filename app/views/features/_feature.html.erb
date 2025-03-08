@@ -53,7 +53,7 @@
 <%=                 "#{Enumeration.model_name.human.titleize.s}: #{feature.enumeration.value}" %>
                   </div>
 <%                end %>
-<%                subject_term_associations = feature.non_phoneme_term_associations.standard
+<%                subject_term_associations = feature.non_phoneme_term_associations
                   if !subject_term_associations.blank? %>
                     <dl>
 <%=                   render partial: 'subjects', locals: { associations: subject_term_associations, include_citation: true } %>

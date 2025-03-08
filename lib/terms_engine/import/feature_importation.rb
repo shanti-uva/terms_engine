@@ -507,13 +507,14 @@ module TermsEngine
         end
         conditions = { subject_id: kmap.id, branch_id: kmap.parents.first.id }
         subject_term_association = subject_term_associations.find_by(conditions)
-        next if !subject_term_association.nil?
-        subject_term_association = subject_term_associations.create(conditions)
         if subject_term_association.nil?
-          self.say "Could create the association between subject kmap #{kmap_str} and term #{self.feature.pid}."
-          next
+          subject_term_association = subject_term_associations.create(conditions)
+          if subject_term_association.nil?
+            self.say "Could create the association between subject kmap #{kmap_str} and term #{self.feature.pid}."
+            next
+          end
+          self.spreadsheet.imports.create(item: subject_term_association) if subject_term_association.imports.find_by(spreadsheet_id: self.spreadsheet.id).nil?
         end
-        self.spreadsheet.imports.create(item: subject_term_association) if subject_term_association.imports.find_by(spreadsheet_id: self.spreadsheet.id).nil?
         0.upto(3) do |j|
           prefix = j==0 ? kmap_prefix : "#{kmap_prefix}.#{j}"
           self.add_date(prefix, subject_term_association)
