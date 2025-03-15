@@ -18,7 +18,7 @@
 #  fk_rails_...  (model_sentence_id => model_sentences.id)
 #
 class SentenceTranslation < ApplicationRecord
-  belongs_to :model_sentence
+  belongs_to :model_sentence, touch: true
   belongs_to :language
   has_many :imports, as: 'item', dependent: :destroy
 end

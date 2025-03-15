@@ -472,7 +472,7 @@ module TermsEngine
           d.passages.each { |p| p.rsolr_document_tags(cd, def_prefix) }
           d.model_sentences.each do |s|
             cd["#{def_prefix}_model_sentence_#{s.id}_content_t"] = s.content
-            s.translations do |t|
+            s.translations.each do |t|
               cd["#{def_prefix}_model_sentence_#{s.id}_translation_#{t.language.code}_content_t"] = t.content
             end
           end
