@@ -25,8 +25,8 @@ class Admin::InfoSourcesController < AclController
     render plain: ''
   end
   
-  index.wants.xml { render xml: JSON.parse(@collection.to_json).to_xml(root: :info_sources) }
-  index.wants.json { render json: @collection }
+  index.wants.xml #{ render xml: JSON.parse(@collection.to_json).to_xml(root: :info_sources) }
+  index.wants.json { render json: Hash.from_xml(render_to_string(action: 'index', formats: [:xml], handlers: [:builder], layout: false)) }
   
   protected
   

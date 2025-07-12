@@ -11,6 +11,7 @@
 #  title          :string
 #  created_at     :datetime
 #  updated_at     :datetime
+#  language_id    :integer          not null
 #
 # Indexes
 #
