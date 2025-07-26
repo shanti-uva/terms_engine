@@ -81,7 +81,7 @@ class Definition < ApplicationRecord
       return WritingSystem.get_by_code('hant') # when needed can see https://github.com/jpatokal/script_detector for distinguishing simplified and trad.
     when 'bod'
       return WritingSystem.get_by_code('tibt')
-    when 'hin', 'nep'
+    when 'hin', 'nep', 'new'
       return WritingSystem.get_by_code('deva')
     when 'dzo'
       return WritingSystem.get_by_code('dzongkha')
