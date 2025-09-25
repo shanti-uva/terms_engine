@@ -356,7 +356,7 @@ module TermsEngine
       !self.phoneme_term_associations.where(branch_id: Feature::BOD_PHONEME_SUBJECT_ID, subject_id: Feature::BOD_EXPRESSION_SUBJECT_ID).first.nil?
     end
     
-    module ClassMethods
+    class_methods do
       def corrupted
         ipc_reader, ipc_writer = IO.pipe('ASCII-8BIT')
         ipc_writer.set_encoding('ASCII-8BIT')

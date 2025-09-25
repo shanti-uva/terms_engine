@@ -17,7 +17,7 @@ module TermsEngine
       fid.nil? ? nil : PlacesIntegration::Feature.find(fid.to_i)
     end
     
-    module ClassMethods
+    class_methods do
     end
   end
 end

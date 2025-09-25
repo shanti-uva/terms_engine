@@ -5,8 +5,7 @@ module TermsEngine
     included do
     end
 
-    module ClassMethods
-
+    class_methods do
       def get_by_language_code(code)
         perspective_code = Rails.cache.fetch("perspective/language/#{code}", :expires_in => 1.day) do
           case code
