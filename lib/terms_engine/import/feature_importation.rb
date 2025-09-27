@@ -95,7 +95,7 @@ module TermsEngine
                 self.log.warn { "#{Time.now}: #{self.feature.pid}: the following fields have been ignored: #{self.fields.keys.join(', ')}" }
               end
             end
-            ipc_hash = { bar: self.bar, num_errors: self.num_errors, valid_point: self.valid_point, changes: feature_ids_with_changes, last_parent_fid: self.last_parent.nil? ? nil : self.last_parent.fid }
+            ipc_hash = { bar: self.bar, num_errors: self.num_errors, valid_point: self.valid_point, changes: feature_ids_with_changes, last_parent_fid: self.last_parent&.fid }
             data = Marshal.dump(ipc_hash)
             ipc_writer.puts(data.length)
             ipc_writer.write(data)

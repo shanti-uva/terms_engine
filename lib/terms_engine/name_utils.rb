@@ -16,9 +16,9 @@ module TermsEngine
         tibetan_name = f.names.roots.where(writing_system: tib).first
         next if tibetan_name.nil?
         relation = tibetan_name.child_relations.where(orthographic_system: wylie).first
-        wylie_name = relation.nil? ? nil : relation.child_node
+        wylie_name = relation&.child_node
         relation = tibetan_name.child_relations.where(phonetic_system: phonetic).first
-        phonetic_name = relation.nil? ? nil : relation.child_node
+        phonetic_name = relation&.child_node
         #wylie_name = f.names.where(writing_system: latin).first
         #tibetan_name = f.names.where(writing_system: tib).first
         puts [f.fid, tibetan_name.name, wylie_name.nil? ? '' : wylie_name.name, phonetic_name.nil? ? '' : phonetic_name.name].join("\t")

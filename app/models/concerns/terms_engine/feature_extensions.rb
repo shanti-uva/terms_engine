@@ -390,7 +390,7 @@ module TermsEngine
       
       def search_by_phoneme(name, phoneme_id)
         name = FeatureName.joins(feature: :subject_term_associations).where(name: name, 'subject_term_associations.subject_id' => Feature::BOD_EXPRESSION_SUBJECT_ID).first
-        name.nil? ? nil : name.feature
+        name&.feature
         #name_position = names.find_index{ |n| n.feature.phoneme_term_associations.collect(&:subject_id).include? phoneme_id }
         #name_position.nil? ? nil : names[name_position].feature
       end
@@ -433,7 +433,7 @@ module TermsEngine
             end
           end
         end
-        name.nil? ? nil : name.feature
+        name&.feature
       end
       
       def search_new_expression(name_str)
@@ -445,7 +445,7 @@ module TermsEngine
           o = OrthographicSystem.get_by_code('indo.standard.translit')
           name = FeatureName.joins(:parent_relations, feature: :subject_term_associations).where(name: name_str, writing_system_id: script.id, 'subject_term_associations.branch_id' => Feature::NEW_PHONEME_SUBJECT_ID, 'subject_term_associations.subject_id' => Feature::NEW_EXPRESSION_SUBJECT_ID, 'feature_name_relations.orthographic_system_id' => o.id).first
         end
-        name.nil? ? nil : name.feature
+        name&.feature
       end
       
       def solr_url

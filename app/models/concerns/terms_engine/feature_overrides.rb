@@ -21,7 +21,7 @@ module TermsEngine
       child_documents = self.all_parent_relations.collect do |pr|
         parent_node = pr.parent_node
         name = parent_node.prioritized_name(v)
-        name_str = name.nil? ? nil : name.name
+        name_str = name&.name
         relation_type = pr.feature_relation_type
         cd = { id: "#{self.uid}_#{relation_type.code}_#{parent_node.fid}",
           related_uid_s: parent_node.uid,
@@ -64,7 +64,7 @@ module TermsEngine
       child_documents = child_documents + self.all_child_relations.collect do |pr|
         child_node = pr.child_node
         name = child_node.prioritized_name(v)
-        name_str = name.nil? ? nil : name.name
+        name_str = name&.name
         relation_type = pr.feature_relation_type
         code = relation_type.is_symmetric ? relation_type.code : relation_type.asymmetric_code
         cd =
@@ -131,7 +131,7 @@ module TermsEngine
           etymology_prefix = "#{def_prefix}_etymology_#{de.id}"
           cd["#{etymology_prefix}_content_ss"] = de.content
           etymology_type = de.etymology_type_association
-          subject = etymology_type.nil? ? nil : etymology_type.subject
+          subject = etymology_type&.subject
           cd["#{etymology_prefix}_type_#{subject['uid']}_s"] = subject['header'] if !subject.nil?
           de.notes.each { |n| n.rsolr_document_tags(cd, etymology_prefix) }
         end
@@ -230,7 +230,7 @@ module TermsEngine
         etymology_prefix = "etymology_#{e.id}"
         doc["#{etymology_prefix}_content_s"] = e.content
         etymology_type = e.etymology_type_association
-        subject = etymology_type.nil? ? nil : etymology_type.subject
+        subject = etymology_type&.subject
         doc["#{etymology_prefix}_type_#{subject['uid']}_s"] = subject['header'] if !subject.nil?
         e.notes.each { |n| n.rsolr_document_tags(doc, etymology_prefix) }
         citations = e.standard_citations
