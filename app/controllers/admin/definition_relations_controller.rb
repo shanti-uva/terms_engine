@@ -1,4 +1,5 @@
-class Admin::DefinitionRelationsController < AclController
+class Admin::DefinitionRelationsController < ApplicationController
+  allow_unauthenticated_access only: %i[ index show ]
   include KmapsEngine::ResourceObjectAuthentication
   resource_controller
 

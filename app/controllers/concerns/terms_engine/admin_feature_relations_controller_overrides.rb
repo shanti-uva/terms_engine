@@ -3,8 +3,8 @@ module TermsEngine
     protected
     
     def get_perspectives
-      @perspectives = parent_object.affiliations_by_user(current_user, descendants: true).collect(&:perspective).reject(&:is_public)
-      @perspectives = Perspective.where(is_public: false).order(:name) if current_user.admin? || @perspectives.blank?
+      @perspectives = parent_object.affiliations_by_user(AuthenticatedSystem::Current.user, descendants: true).collect(&:perspective).reject(&:is_public)
+      @perspectives = Perspective.where(is_public: false).order(:name) if AuthenticatedSystem::Current.user.admin? || @perspectives.blank?
     end
 
     # Only allow a trusted parameter "white list" through.

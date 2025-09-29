@@ -1,4 +1,5 @@
 class RecordingsController < ApplicationController
+  allow_unauthenticated_access
 
   # GET /recordings
   def index

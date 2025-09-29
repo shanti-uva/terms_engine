@@ -1,7 +1,7 @@
-class Admin::DefinitionsController < AclController
+class Admin::DefinitionsController < ApplicationController
+  allow_unauthenticated_access only: %i[ index show ]
   include KmapsEngine::ResourceObjectAuthentication
   resource_controller
-
   belongs_to :feature
   before_action :collection, :only=>:locate_for_relation
 

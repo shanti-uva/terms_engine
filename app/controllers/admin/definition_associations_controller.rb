@@ -1,11 +1,6 @@
-class Admin::DefinitionAssociationsController < AclController
+class Admin::DefinitionAssociationsController < ApplicationController
   resource_controller
   belongs_to :definition
-  
-  def initialize
-    super
-    @guest_perms = []
-  end
   
   create.wants.html do
     redirect_to admin_feature_definition_url(parent_object.feature, object.definition)

@@ -11,8 +11,8 @@ module TermsEngine
         parent_id = params[:parent_id]
         @parent = parent_id.blank? ? nil : Feature.get_by_fid(parent_id)
         if !@parent.nil?
-          @perspectives = @parent.affiliations_by_user(current_user, descendants: true).collect(&:perspective)
-          @perspectives = Perspective.order(:name) if @perspectives.include?(nil) || current_user.admin?
+          @perspectives = @parent.affiliations_by_user(AuthenticatedSystem::Current.user, descendants: true).collect(&:perspective)
+          @perspectives = Perspective.order(:name) if @perspectives.include?(nil) || AuthenticatedSystem::Current.user.admin?
           @name = FeatureName.new(language: Language.get_by_code('eng'), writing_system: WritingSystem.get_by_code('latin'), is_primary_for_romanization: true)
           @relation = FeatureRelation.new(parent_node: @parent, perspective: current_perspective, feature_relation_type: FeatureRelationType.get_by_code(default_relation_type_code) )
         end

@@ -1,7 +1,7 @@
-class Admin::EtymologiesController < AclController
+class Admin::EtymologiesController < ApplicationController
   include KmapsEngine::ResourceObjectAuthentication
+  allow_unauthenticated_access only: %i[ index show ]
   resource_controller
-
   belongs_to :definition, :feature
 
   update.wants.html do

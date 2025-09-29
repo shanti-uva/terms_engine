@@ -1,8 +1,7 @@
-class Admin::EnumerationsController < AclController
-
+class Admin::EnumerationsController < ApplicationController
+  allow_unauthenticated_access only: %i[ index show ]
   include KmapsEngine::ResourceObjectAuthentication
   resource_controller
-
   belongs_to :definition, :feature
 
   create.wants.html do

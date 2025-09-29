@@ -1,7 +1,7 @@
-class Admin::PassageTranslationsController < AclController
+class Admin::PassageTranslationsController < ApplicationController
+  allow_unauthenticated_access only: %i[ index show ]
   include KmapsEngine::ResourceObjectAuthentication
   resource_controller
-
   belongs_to :definition, :passage
 
   new_action.before do

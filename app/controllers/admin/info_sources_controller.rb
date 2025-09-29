@@ -1,13 +1,8 @@
-class Admin::InfoSourcesController < AclController
+class Admin::InfoSourcesController < ApplicationController
+  allow_unauthenticated_access only: :index
   resource_controller
-  
   caches_page :index, if: Proc.new { |c| c.request.format.xml? || c.request.format.json? }
   cache_sweeper :info_source_sweeper, only: [:update, :destroy]
-  
-  def initialize
-    super
-    @guest_perms = ['admin/info_sources/index']
-  end
   
   def collection
     @collection = InfoSource.search(params[:filter]).order(:position).page(params[:page])

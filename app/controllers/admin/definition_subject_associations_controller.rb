@@ -1,7 +1,7 @@
-class Admin::DefinitionSubjectAssociationsController < AclController
+class Admin::DefinitionSubjectAssociationsController < ApplicationController
+  allow_unauthenticated_access only: %i[ index show ]
   include KmapsEngine::ResourceObjectAuthentication
   resource_controller
-
   belongs_to :definition
 
   new_action.before { object.branch_id = params[:branch_id] if params[:branch_id] }

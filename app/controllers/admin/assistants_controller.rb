@@ -1,6 +1,7 @@
 require 'openai'
 
-class Admin::AssistantsController < AclController
+class Admin::AssistantsController < ApplicationController
+  allow_unauthenticated_access only: %i[ index show ]
   
   # GET /assistant . No id because it is a singular resource (resource :assistant)
   def show
@@ -30,7 +31,7 @@ class Admin::AssistantsController < AclController
         @definitions << (definitions_hash[@assistant.base_dictionary.code].nil? ? '' : definitions_hash[@assistant.base_dictionary.code].join(". "))
       end
     end
-    if @assistant.translated_passage.blank? || current_user.access_token.blank?
+    if @assistant.translated_passage.blank? || AuthenticatedSystem::Current.user.access_token.blank?
       @translations = {}
     else
       @prompt = "When translating the passage \"#{@assistant.passage.gsub(/[\n\v\r]/, " ")}\" into #{@assistant.language.name} like as \"#{@assistant.translated_passage.gsub(/[\n\v\r]/, " ")}\""
@@ -40,7 +41,7 @@ class Admin::AssistantsController < AclController
       @prompt << " If verb is conjugated in past, present or future tense, put in third person singular. Nouns and adjectives put in masculine singular."
       @prompt << " In the second element of the array put the grammatical function among the following options: #{@grammatical_functions.keys.join(', ')} (which gets translated into a preposition)."
       # Initialize OpenAI client
-      client = OpenAI::Client.new(access_token: current_user.access_token)
+      client = OpenAI::Client.new(access_token: AuthenticatedSystem::Current.user.access_token)
       # Call ChatGPT API
       response = client.chat(
         parameters: {

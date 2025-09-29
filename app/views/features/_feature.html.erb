@@ -15,7 +15,7 @@
           </ul>
           <div class="tab-content">
             <div role="tabpanel" class="tab-pane terms-intro active" id="terms-intro">
-<%=           edit_item_link(admin_feature_path(feature.fid)) if logged_in? && object_authorized?(feature) %>
+<%=           edit_item_link(admin_feature_path(feature.fid)) if authenticated? && object_authorized?(feature) %>
               <div class="row"><!-- INTRO TAB 1 -->
                 <div class="col-xs-12">
                   <dl>
