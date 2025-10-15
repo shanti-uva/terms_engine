@@ -347,7 +347,7 @@ module TermsEngine
         name = scholarly_prioritized_name(all_names)
       when 'pri.orig.sec.roman'
         name = tibetan_prioritized_name(all_names)
-        name = FeatureExtensionForNamePositioning::HelperMethods.find_name_for_writing_system(all_names, WritingSystem.get_by_code('deva').id) if name.nil?
+        name = KmapsEngine::FeatureExtensionForNamePositioning::HelperMethods.find_name_for_writing_system(all_names, WritingSystem.get_by_code('deva').id) if name.nil?
       end
       name || popular_prioritized_name(all_names)
     end
