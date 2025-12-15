@@ -1,7 +1,7 @@
 #TermsEngine::Engine.routes.draw do
 Rails.application.routes.draw do
   concern :notable_citable do
-    resources :notes, :citations
+    resources :notes, :citations, only: :index
   end
   resources :features do
     resources :recordings, only: [:index,:show], defaults: { format: 'json' }
