@@ -17,6 +17,8 @@
 #
 
 class Definition < ApplicationRecord
+  attr_accessor :skip_update
+  
   acts_as_family_tree :node, nil, tree_class: 'DefinitionRelation'
 
   
