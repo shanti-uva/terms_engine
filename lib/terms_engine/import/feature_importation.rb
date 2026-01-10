@@ -351,6 +351,7 @@ module TermsEngine
           rescue ActiveRecord::RecordNotFound
             self.say "Definition #{definition_id} not found for feature #{self.feature.pid}."
             definition[i] = nil
+            next
           end
         end
         if definition[i].nil?
