@@ -346,7 +346,12 @@ module TermsEngine
             end.first
           end
         else
-          definition[i] = Definition.find(definition_id.to_i)
+          begin
+            definition[i] = Definition.find(definition_id.to_i)
+          rescue ActiveRecord::RecordNotFound
+            self.say "Definition #{definition_id} not found for feature #{self.feature.pid}."
+            definition[i] = nil
+          end
         end
         if definition[i].nil?
           if !definition_content.blank?
