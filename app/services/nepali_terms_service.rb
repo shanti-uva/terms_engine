@@ -1,7 +1,7 @@
-class NewariTermsService
+class NepaliTermsService
   def initialize(arg = nil)
     if arg.nil?
-      @terms = Feature.current_roots_by_perspective(Perspective.get_by_code('new.alpha'))
+      @terms = Feature.current_roots_by_perspective(Perspective.get_by_code('nep.alpha'))
     elsif arg.instance_of? Array
       @terms = arg
     elsif arg.instance_of? Feature
@@ -20,7 +20,7 @@ class NewariTermsService
         name = t.prioritized_name(@view)
         [t, name.nil? ? '' : name.name]
       end
-      sorted_terms_with_name = terms_with_name.sort{ |a,b| a[1].new_compare(b[1]) }
+      sorted_terms_with_name = terms_with_name.sort{ |a,b| a[1].nep_compare(b[1]) }
       @sorted_terms = sorted_terms_with_name.collect(&:first)
     end
     @sorted_terms
@@ -40,26 +40,26 @@ class NewariTermsService
   end
     
   def position_for(name)
-    pos = names.find_index { |n| n.new_compare(name)>0 }
+    pos = names.find_index { |n| n.nep_compare(name)>0 }
     pos.nil? || pos==0 ? nil : pos - 1
   end
   
   def self.recursive_trunk_for(name)
     if name.instance_of? String
-      letters = NewariTermsService.new
+      letters = NepaliTermsService.new
       letter = letters.trunk_for(name)
-      return letter.nil? ? nil : NewariTermsService.new(letter).trunk_for(name)
+      return letter.nil? ? nil : NepaliTermsService.new(letter).trunk_for(name)
     elsif name.instance_of? Feature
       @view ||= View.get_by_code('pri.orig.sec.roman')
       name_str = name.prioritized_name(@view).name
-      letters_a = Feature.current_roots_by_perspective(Perspective.get_by_code('new.alpha'))
+      letters_a = Feature.current_roots_by_perspective(Perspective.get_by_code('nep.alpha'))
       letters_a.reject! do |l|
         a = l.phoneme_term_associations.first
-        a.nil? || a.subject_id != Feature::NEW_LETTER_SUBJECT_ID
+        a.nil? || a.subject_id != Feature::NEP_LETTER_SUBJECT_ID
       end
-      letters = NewariTermsService.new(letters_a)
+      letters = NepaliTermsService.new(letters_a)
       letter = letters.trunk_for(name_str)
-      return letter.nil? ? nil : NewariTermsService.new(letter).trunk_for(name_str)
+      return letter.nil? ? nil : NepaliTermsService.new(letter).trunk_for(name_str)
     else
       return nil
     end
@@ -89,21 +89,21 @@ class NewariTermsService
       f.update(attrs)
     end
     @@deva_script ||= WritingSystem.get_by_code('deva')
-    @@newari_language ||= Language.get_by_code('new')
+    @@nepali_language ||= Language.get_by_code('nep')
     @@latin_script ||= WritingSystem.get_by_code('latin')
     @@indo_system ||= OrthographicSystem.get_by_code('indo.standard.translit')
     
     names = f.names
     if !deva.blank?
-      deva_name = names.create!(skip_update: true, name: deva, position: 0, writing_system: @@deva_script, language: @@newari_language, is_primary_for_romanization: false)
+      deva_name = names.create!(skip_update: true, name: deva, position: 0, writing_system: @@deva_script, language: @@nepali_language, is_primary_for_romanization: false)
     end
     if !latin.blank?
-      latin_name = names.create!(skip_update: true, name: latin, position: 1, writing_system: @@latin_script, language: @@newari_language, is_primary_for_romanization: true)
+      latin_name = names.create!(skip_update: true, name: latin, position: 1, writing_system: @@latin_script, language: @@nepali_language, is_primary_for_romanization: true)
       if !deva_name.nil?
         relation = FeatureNameRelation.create!(skip_update: true, parent_node: deva_name, child_node: latin_name, is_phonetic: 0, is_orthographic: 1, is_translation: 0, is_alt_spelling: 0, orthographic_system: @@indo_system)
       end
     end
-    a = f.subject_term_associations.create(subject_id: level_subject_id, branch_id: Feature::NEW_PHONEME_SUBJECT_ID)
+    a = f.subject_term_associations.create(subject_id: level_subject_id, branch_id: Feature::NEP_PHONEME_SUBJECT_ID)
     return f
   end
 end

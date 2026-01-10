@@ -202,6 +202,21 @@ module TermsEngine
           end
         end
         self.main_names = { deva: deva_str, latin: latin_str }
+      when 'nep.alpha'
+        deva_str = nil
+        latin_str = nil
+        1.upto(2) do |i|
+          name_tag = "#{i}.feature_names"
+          name_str = self.fields.delete("#{name_tag}.name")
+          writing_system_str = self.fields.delete("#{i}.writing_systems.code")
+          relationship_system_str = self.fields.delete("#{i}.feature_name_relations.relationship.code")
+          if writing_system_str=='deva'
+            deva_str = name_str.strip if deva_str.blank?
+          elsif relationship_system_str=='indo.standard.translit'
+            latin_str = name_str.strip if latin_str.blank?
+          end
+        end
+        self.main_names = { deva: deva_str, latin: latin_str }
       end
     end
     
@@ -250,6 +265,26 @@ module TermsEngine
           reposition_parent
           self.last_parent = parent
         end
+      when 'nep.alpha'
+        parent = NepaliTermsService.recursive_trunk_for(names_hash[:deva])
+        if parent.ancestors_by_perspective(self.perspective).count == 0 #!= 2
+          self.say "There is a problem for term: #{names_hash[:deva]} with calculated parent: #{parent.pid} in herarchy. Skipping term creation."
+          return
+        end
+        attrs = { level_subject_id: Feature::NEP_EXPRESSION_SUBJECT_ID, deva: names_hash[:deva], latin: names_hash[:latin] }
+        if self.feature.nil?
+          self.feature = NepaliTermsService.add_term(**attrs)
+        else
+          attrs[:fid] = self.feature.fid
+          NepaliTermsService.add_term(**attrs)
+        end
+        FeatureRelation.create!(child_node: self.feature, parent_node: parent, perspective: self.perspective, feature_relation_type: @relation_type)
+        if self.last_parent.nil?
+          self.last_parent = parent
+        elsif self.last_parent != parent
+          reposition_parent
+          self.last_parent = parent
+        end
       end
     end
     
@@ -263,6 +298,11 @@ module TermsEngine
         end
       when 'new.alpha'
         self.feature = Feature.search_new_expression(names_hash[:deva])
+        if self.feature.nil?
+          self.log.debug "Adding new term #{names_hash[:deva]}"
+        end
+      when 'nep.alpha'
+        self.feature = Feature.search_nep_expression(names_hash[:deva])
         if self.feature.nil?
           self.log.debug "Adding new term #{names_hash[:deva]}"
         end
@@ -281,7 +321,7 @@ module TermsEngine
     end
     
     # [i.]definitions:
-    # delete, content, language.code/name, etymology
+    # id, delete, replace, content, language.code/name, etymology
     # kmaps.delete, [i].kmaps.id, [i].kmaps.id
     # Additionally, optional column "i.definition_relations.parent_node" can be
     # used to establish name i as child of name j by simply specifying the name number.
@@ -291,110 +331,108 @@ module TermsEngine
       definition = Array.new(total)
       0.upto(total) do |i|
         prefix = i>0 ? "#{i}.definitions" : 'definitions'
+        definition_id = self.fields.delete("#{prefix}.id")
         definition_content = self.fields.delete("#{prefix}.content")
-        if !definition_content.blank?
-          # I am unclear about support of adding several citations to a single definition.
-          #info_sources = {}
-          #0.upto(4) do |j|
-          #  info_prefix = j==0 ? prefix : "#{prefix}.#{j}"
-          #  info_source = self.get_info_source(info_prefix)
-          #  info_sources[info_prefix] = info_source if !info_source.nil?
-          #end
-          info_source = self.get_info_source(prefix)
-          delete_definitions_str = self.fields.delete("#{prefix}.delete")
-          delete_definitions = !delete_definitions_str.blank? && delete_definitions_str.downcase == 'yes'
-          def_begining = definition_content[0...200]
-          def_begining = def_begining.split("\n").first
-          def_with_tags = '<p>' + def_begining
-          matches = definitions.where(["LEFT(content, #{def_begining.size}) = ? OR LEFT(content, #{def_with_tags.size}) = ?", def_begining, def_with_tags]) # find_by(content: definition_content)
-          definition[i] = matches.select do |d|
-            citation = d.citations.order(:created_at).first
-            !citation.nil? && info_source==citation.info_source
-          end.first
-          if !definition[i].nil?
-            if delete_definitions
-              definition[i].destroy
-              next
-            end
-          else
-            if delete_definitions
-              self.say "Did not find definition for feature #{self.feature.pid} marked for deletion."
-            end
+        info_source = self.get_info_source(prefix)
+        if definition_id.blank?
+          if !definition_content.blank?
+            def_begining = definition_content[0...200]
+            def_begining = def_begining.split("\n").first
+            def_with_tags = '<p>' + def_begining
+            matches = definitions.where(["LEFT(content, #{def_begining.size}) = ? OR LEFT(content, #{def_with_tags.size}) = ?", def_begining, def_with_tags]) # find_by(content: definition_content)
+            definition[i] = matches.select do |d|
+              citation = d.citations.order(:created_at).first
+              !citation.nil? && info_source==citation.info_source
+            end.first
           end
-          language = Language.get_by_code_or_name(self.fields.delete("#{prefix}.languages.code"), self.fields.delete("#{prefix}.languages.name"))
-          position = definitions.maximum(:position)
-          position = position.nil? ? 1 : position + 1
-          attributes = {content: definition_content, is_public: true, position: position}
-          attributes[:language_id] = language.id if !language.nil?
-          if definition[i].nil?
+        else
+          definition[i] = Definition.find(definition_id.to_i)
+        end
+        if definition[i].nil?
+          if !definition_content.blank?
+            language = Language.get_by_code_or_name(self.fields.delete("#{prefix}.languages.code"), self.fields.delete("#{prefix}.languages.name"))
+            position = definitions.maximum(:position)
+            position = position.nil? ? 1 : position + 1
+            attributes = {content: definition_content, is_public: true, position: position}
+            attributes[:language_id] = language.id if !language.nil?
             if language.nil?
               self.say "Language needed to create definition for feature #{self.feature.pid}."
               definition[i] = nil
             else
               definition[i] = definitions.create(attributes)
+              self.spreadsheet.imports.create(item: definition[i]) if definition[i].imports.find_by(spreadsheet_id: self.spreadsheet.id).nil?
             end
           end
-          if !definition[i].nil?
-            self.spreadsheet.imports.create(item: definition[i]) if definition[i].imports.find_by(spreadsheet_id: self.spreadsheet.id).nil?
-            self.process_model_sentences(definition[i], prefix, 4)
-            definition_subject_associations = definition[i].definition_subject_associations
-            etymologies = definition[i].etymologies
-            delete_kmaps = self.fields.delete("#{prefix}.kmaps.delete")
-            definition_subject_associations.clear if !delete_kmaps.blank? && delete_kmaps.downcase == 'yes'
-            0.upto(5) do |j|
-              def_prefix = j==0 ? prefix : "#{prefix}.#{j}"
-              # handle notes
-              self.add_note(def_prefix, definition[i])
-              # handle kmaps
-              kmap_prefix = "#{def_prefix}.kmaps"
-              kmap_str = self.fields.delete("#{kmap_prefix}.id")
-              if !kmap_str.blank?
-                kmap = SubjectsIntegration::Feature.find(kmap_str.scan(/\d+/).first.to_i)
-                if kmap.nil?
-                  self.say "Could find kmap #{kmap_str} for term #{self.feature.pid}."
+          next if definition[i].nil?
+        else
+          delete_definitions_str = self.fields.delete("#{prefix}.delete")
+          if !delete_definitions_str.blank? && delete_definitions_str.downcase == 'yes'
+            definition[i].destroy
+            next
+          end
+          replace_definitions_str = self.fields.delete("#{prefix}.replace")
+          if !replace_definitions_str.blank? && replace_definitions_str.downcase == 'yes' && !definition_content.blank?
+            definition[i].update_attribute(:content, definition_content)
+            next
+          end
+        end
+        self.process_model_sentences(definition[i], prefix, 4)
+        definition_subject_associations = definition[i].definition_subject_associations
+        etymologies = definition[i].etymologies
+        delete_kmaps = self.fields.delete("#{prefix}.kmaps.delete")
+        definition_subject_associations.clear if !delete_kmaps.blank? && delete_kmaps.downcase == 'yes'
+        0.upto(5) do |j|
+          def_prefix = j==0 ? prefix : "#{prefix}.#{j}"
+          # handle notes
+          self.add_note(def_prefix, definition[i])
+          # handle kmaps
+          kmap_prefix = "#{def_prefix}.kmaps"
+          kmap_str = self.fields.delete("#{kmap_prefix}.id")
+          if !kmap_str.blank?
+            kmap = SubjectsIntegration::Feature.find(kmap_str.scan(/\d+/).first.to_i)
+            if kmap.nil?
+              self.say "Could find kmap #{kmap_str} for term #{self.feature.pid}."
+            else
+              conditions = { subject_id: kmap.id, branch_id: kmap.parents.first.id }
+              definition_subject_association = definition_subject_associations.find_by(conditions)
+              if definition_subject_association.nil?
+                definition_subject_association = definition_subject_associations.create(conditions)
+                if definition_subject_association.id.nil?
+                  self.say "Couldn't create the association between subject kmap #{kmap_str} and definition #{j} for term #{self.feature.pid}."
                 else
-                  conditions = { subject_id: kmap.id, branch_id: kmap.parents.first.id }
-                  definition_subject_association = definition_subject_associations.find_by(conditions)
-                  if definition_subject_association.nil?
-                    definition_subject_association = definition_subject_associations.create(conditions)
-                    if definition_subject_association.id.nil?
-                      self.say "Couldn't create the association between subject kmap #{kmap_str} and definition #{j} for term #{self.feature.pid}."
-                    else
-                      self.spreadsheet.imports.create(item: definition_subject_association) if definition_subject_association.imports.find_by(spreadsheet_id: self.spreadsheet.id).nil?
-                    end
-                  end
-                end
-              end
-              # handle etymologies
-              etymology_content = self.fields.delete("#{def_prefix}.etymology")
-              if !etymology_content.blank?
-                conditions = { content: etymology_content }
-                etymology = etymologies.find_by(conditions)
-                if etymology.nil?
-                  etymology = etymologies.create(conditions)
-                  if etymology.id.nil?
-                    self.say "Couldn't create the etymology #{etymology_content} under definition #{j} for term #{self.feature.pid}."
-                  else
-                    self.spreadsheet.imports.create(item: etymology) if etymology.imports.find_by(spreadsheet_id: self.spreadsheet.id).nil?
-                  end
+                  self.spreadsheet.imports.create(item: definition_subject_association) if definition_subject_association.imports.find_by(spreadsheet_id: self.spreadsheet.id).nil?
                 end
               end
             end
-            self.process_info_source(prefix, definition[i], info_source)
-            #info_sources.each{ |prefix, info_source| self.process_info_source(prefix, definition[i], info_source) }
-            parent_node_str = self.fields.delete("#{i}.definition_relations.parent_node")
-            if !parent_node_str.blank?
-              parent_position = parent_node_str.to_i
-              parent_node = definition[parent_position]
-              if parent_node.nil?
-                self.say "Parent definition #{parent_position} of definition #{i} for feature #{self.feature.pid} not found."
+          end
+          # handle etymologies
+          etymology_content = self.fields.delete("#{def_prefix}.etymology")
+          if !etymology_content.blank?
+            conditions = { content: etymology_content }
+            etymology = etymologies.find_by(conditions)
+            if etymology.nil?
+              etymology = etymologies.create(conditions)
+              if etymology.id.nil?
+                self.say "Couldn't create the etymology #{etymology_content} under definition #{j} for term #{self.feature.pid}."
               else
-                relation = definition[i].parent_relations.find_by(parent_node_id: parent_node.id)
-                if relation.nil?
-                  relation = definition[i].parent_relations.create(parent_node_id: parent_node.id)
-                  self.say "Relation between definitions #{i} and #{parent_position} for feature #{self.feature.pid} could not be saved." if relation.nil?
-                end
+                self.spreadsheet.imports.create(item: etymology) if etymology.imports.find_by(spreadsheet_id: self.spreadsheet.id).nil?
               end
+            end
+          end
+        end
+        self.process_info_source(prefix, definition[i], info_source)
+        #info_sources.each{ |prefix, info_source| self.process_info_source(prefix, definition[i], info_source) }
+        parent_node_str = self.fields.delete("#{i}.definition_relations.parent_node")
+        if !parent_node_str.blank?
+          parent_position = parent_node_str.to_i
+          parent_node = definition[parent_position]
+          if parent_node.nil?
+            self.say "Parent definition #{parent_position} of definition #{i} for feature #{self.feature.pid} not found."
+          else
+            relation = definition[i].parent_relations.find_by(parent_node_id: parent_node.id)
+            if relation.nil?
+              relation = definition[i].parent_relations.create(parent_node_id: parent_node.id)
+              self.say "Relation between definitions #{i} and #{parent_position} for feature #{self.feature.pid} could not be saved." if relation.nil?
             end
           end
         end

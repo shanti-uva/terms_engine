@@ -19,6 +19,11 @@ module TermsEngine
       NEW_LETTER_SUBJECT_ID = 10523
       NEW_PLACE_HOLDER_SUBJECT_ID = 10524
       NEW_EXPRESSION_SUBJECT_ID = 10525
+
+      NEP_PHONEME_SUBJECT_ID = 10594
+      NEP_LETTER_SUBJECT_ID = 10595
+      NEP_PLACE_HOLDER_SUBJECT_ID = 10596
+      NEP_EXPRESSION_SUBJECT_ID = 10597
       
       has_many :definition_associations, as: :associated, dependent: :destroy
       has_many :etymologies, as: :context, dependent: :destroy do
@@ -444,6 +449,18 @@ module TermsEngine
           script = WritingSystem.get_by_code('latin')
           o = OrthographicSystem.get_by_code('indo.standard.translit')
           name = FeatureName.joins(:parent_relations, feature: :subject_term_associations).where(name: name_str, writing_system_id: script.id, 'subject_term_associations.branch_id' => Feature::NEW_PHONEME_SUBJECT_ID, 'subject_term_associations.subject_id' => Feature::NEW_EXPRESSION_SUBJECT_ID, 'feature_name_relations.orthographic_system_id' => o.id).first
+        end
+        name&.feature
+      end
+
+      def search_nep_expression(name_str)
+        if name_str.is_devanagari_word?
+          script = WritingSystem.get_by_code('deva')
+          name = FeatureName.joins(feature: :subject_term_associations).where(name: name_str, writing_system_id: script.id, 'subject_term_associations.branch_id' => Feature::NEP_PHONEME_SUBJECT_ID, 'subject_term_associations.subject_id' => Feature::NEP_EXPRESSION_SUBJECT_ID).first
+        else
+          script = WritingSystem.get_by_code('latin')
+          o = OrthographicSystem.get_by_code('indo.standard.translit')
+          name = FeatureName.joins(:parent_relations, feature: :subject_term_associations).where(name: name_str, writing_system_id: script.id, 'subject_term_associations.branch_id' => Feature::NEP_PHONEME_SUBJECT_ID, 'subject_term_associations.subject_id' => Feature::NEP_EXPRESSION_SUBJECT_ID, 'feature_name_relations.orthographic_system_id' => o.id).first
         end
         name&.feature
       end

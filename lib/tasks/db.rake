@@ -119,6 +119,20 @@ namespace :terms_engine do
           TermsEngine::Filter.new.do_parent_filter(filename: source)
         end
       end
+      
+      get_def_filter_desc = "Use to infer definition ids from CSV containing fid and definition.\n" +
+                  "Syntax: rake terms_engine:db:filter:get_features SOURCE=csv-file-name DICT=dict-code"
+      desc get_def_filter_desc
+      task get_definitions: :environment do
+        source = ENV['SOURCE']
+        dict = ENV['DICT']
+        if source.blank? || dict.blank?
+          puts get_def_filter_desc
+        else
+          info_source = InfoSource.get_by_code(dict)
+          TermsEngine::Filter.new.do_definition_filter(filename: source, info_source: info_source)
+        end
+      end
     end
     
     desc "Load seeds for terms engine tables"

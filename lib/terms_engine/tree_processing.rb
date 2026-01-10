@@ -3,6 +3,7 @@ module TermsEngine
     def initialize
       @tib_alpha = Perspective.get_by_code('tib.alpha')
       @new_alpha = Perspective.get_by_code('new.alpha')
+      @nep_alpha = Perspective.get_by_code('nep.alpha')
       @relation_type = FeatureRelationType.get_by_code('heads')
       @view = View.get_by_code('pri.orig.sec.roman')
       @fixed_size = 100
@@ -145,6 +146,60 @@ module TermsEngine
       puts "#{Time.now}: Finished tree generation."
     end
     
+    def run_nepali_tree_flattening_fixed(**options)
+      v = View.get_by_code('roman.scholar')
+      heads_type = @relation_type
+      starts_type = FeatureRelationType.get_by_code('is.beginning.of')
+      letters = Feature.current_roots_by_perspective(@nep_alpha)
+      letters.select!{|f| f.fid >= options[:from].to_i} if !options[:from].nil?
+      letters.select!{|f| f.fid <= options[:to].to_i} if !options[:to].nil?
+      puts "#{Time.now}: Starting the processing of #{letters.size} letters..."
+      letters.sort_by{|f| f.position}.each do |letter|
+        letter.skip_update = true
+        expressions = get_nep_terms_under_letter_by_phoneme(letter, Feature::NEP_EXPRESSION_SUBJECT_ID)
+        ns = NepaliTermsService.new(expressions)
+        sorted_expressions = ns.reposition
+        puts "#{Time.now}: Deleting intermediate level under letter #{letter.prioritized_name(v).name}..."
+        destroy_features(get_nep_terms_under_letter_by_phoneme(letter, Feature::NEP_PLACE_HOLDER_SUBJECT_ID))
+        head = nil
+        i = 0
+        size = expressions.size
+        puts "#{Time.now}: Processing expressions under letter #{letter.prioritized_name(v).name}..."
+        while i<size
+          limit = i+@fixed_size
+          sid = Spawnling.new(kill: true) do
+            begin
+              head_range = expressions[i...limit]
+              f = head_range.first
+              head = f.clone_with_names
+              puts "#{Time.now}: Spawning sub-process #{Process.pid} for head #{head.prioritized_name(v).name} (#{head.fid})..."
+              head.update(is_public: true, position: f.position, skip_update: true)
+              FeatureRelation.create(child_node: head, parent_node: letter, perspective: @nep_alpha, feature_relation_type: starts_type, skip_update: true)
+              head.subject_term_associations.create(subject_id: Feature::NEP_PLACE_HOLDER_SUBJECT_ID, branch_id: Feature::NEP_PHONEME_SUBJECT_ID)
+              head_range.each do |f|
+                f.parent_relations.clear
+                FeatureRelation.create(child_node: f, parent_node: head, perspective: @nep_alpha, feature_relation_type: heads_type, skip_update: true)
+                f.skip_update = false
+                f.queued_update_hierarchy
+                f.queued_index(priority: 3)
+              end
+              head.skip_update = false
+              head.queued_update_hierarchy
+              head.queued_index(priority: 2)
+              puts "#{Time.now}: Finishing sub-process #{Process.pid}."
+            rescue Exception => e
+              Rails.logger.fatal { "#{Time.now}: Something went wrong for #{f.fid}: #{e.to_s}" }
+            end
+          end
+          Spawnling.wait([sid])
+          i = limit
+        end
+        letter.skip_update = false
+        letter.queued_index(priority: 1)
+      end
+      puts "#{Time.now}: Finished tree generation."
+    end
+    
     private
     
     def get_tib_terms_under_letter_by_phoneme(letter, phoneme_sid)
@@ -184,6 +239,23 @@ module TermsEngine
       #numFound = Feature.search_by(query)['numFound']
       #resp = Feature.search_by(query, fl: 'uid', rows: numFound, sort: 'position_i asc')['docs']
       #resp.collect{|f| f['uid'].split('-').last.to_i}
+    end
+    
+    def get_nep_terms_under_letter_by_phoneme(letter, phoneme_sid)
+      children = letter.children.order(:position)
+      results = []
+      children.each do |child|
+        if child.is_phoneme? phoneme_sid
+          results << child
+        else
+          if child.is_phoneme? Feature::NEP_PLACE_HOLDER_SUBJECT_ID
+            child.children.each do |gc|
+              results << gc if gc.is_phoneme? phoneme_sid
+            end
+          end
+        end
+      end
+      return results
     end
     
     def destroy_features(terms)
