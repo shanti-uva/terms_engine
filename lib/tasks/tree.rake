@@ -11,5 +11,10 @@ namespace :terms_engine do
     task generate_newar: :environment do
       TermsEngine::TreeProcessing.new.run_newar_tree_flattening_fixed(from: ENV['FROM'], to: ENV['TO'])
     end
+    
+    desc "Generate nepali tree. rake terms_engine:tree:generate_nepali [FROM=fid] [TO=fid]"
+    task generate_nepali: :environment do
+      TermsEngine::TreeProcessing.new.run_nepali_tree_flattening_fixed(from: ENV['FROM'], to: ENV['TO'])
+    end
   end
 end

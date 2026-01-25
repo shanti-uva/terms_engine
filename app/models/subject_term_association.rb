@@ -25,7 +25,7 @@ class SubjectTermAssociation < ApplicationRecord
   has_many :legacy_citations, -> { where(info_source_type: InfoSource.model_name.name) }, as: :citable, class_name: 'Citation'
   has_many :standard_citations, -> { where.not(info_source_type: InfoSource.model_name.name) }, as: :citable, class_name: 'Citation'
   
-  PHONEME_BRANCH_IDS = [Feature::BOD_PHONEME_SUBJECT_ID, Feature::ENG_PHONEME_SUBJECT_ID, Feature::NEW_PHONEME_SUBJECT_ID]
+  PHONEME_BRANCH_IDS = [Feature::BOD_PHONEME_SUBJECT_ID, Feature::ENG_PHONEME_SUBJECT_ID, Feature::NEW_PHONEME_SUBJECT_ID, Feature::NEP_PHONEME_SUBJECT_ID]
   LANGUAGE_DETAIL_SUBJECTS = [184, 185, 301, 186, 5809, 187, 10358, 190, 286, 119]
   EXTRA_HIDDEN_SUBJECS     = [638, 9310, 9666, 10522]
   

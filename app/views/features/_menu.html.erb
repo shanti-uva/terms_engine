@@ -166,6 +166,8 @@
      nodeMarkerPredicates: [{field: 'associated_subject_ids', value: <%= Feature::ENG_LETTER_SUBJECT_ID %>, operation: 'includes', mark: 'nonInteractiveNode'}]
 <% when 'new.alpha' %>
      nodeMarkerPredicates: [{field: 'associated_subject_ids', value: <%= Feature::NEW_EXPRESSION_SUBJECT_ID %>, operation: '!includes', mark: 'nonInteractiveNode'}]
+<% when 'nep.alpha' %>
+     nodeMarkerPredicates: [{field: 'associated_subject_ids', value: <%= Feature::NEP_EXPRESSION_SUBJECT_ID %>, operation: '!includes', mark: 'nonInteractiveNode'}]
 <% end %>
   });
 

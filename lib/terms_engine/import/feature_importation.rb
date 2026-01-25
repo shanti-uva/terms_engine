@@ -267,7 +267,7 @@ module TermsEngine
         end
       when 'nep.alpha'
         parent = NepaliTermsService.recursive_trunk_for(names_hash[:deva])
-        if parent.ancestors_by_perspective(self.perspective).count == 0 #!= 2
+        if parent.ancestors_by_perspective(self.perspective).count != 2 #!= 2. First time only under letters
           self.say "There is a problem for term: #{names_hash[:deva]} with calculated parent: #{parent.pid} in herarchy. Skipping term creation."
           return
         end
