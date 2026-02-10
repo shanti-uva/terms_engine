@@ -42,7 +42,8 @@ module TermsEngine
       current_entry = params[:term_name].chomp
       @current_term = Feature.search_english_term(current_entry)
       if @current_term.nil?
-        eng_alpha = Perspective.get_by_code('eng.alpha')
+        eng_alpha = self.current_perspective
+        eng_alpha = Perspective.get_by_code('cont.eng.alpha') if eng_alpha.nil?
         relation_type = FeatureRelationType.get_by_code('is.beginning.of')
         parent = EnglishTermsService.new.trunk_for(current_entry)
         subject_id = params[:feature][:subject_term_associations][:subject_id]

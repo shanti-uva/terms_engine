@@ -7,7 +7,7 @@
     <% url = admin_features_path
     if current_perspective.code == 'tib.alpha'
       url = create_tibetan_term_admin_features_path
-    elsif current_perspective.code == 'eng.alpha'
+    elsif current_perspective.code == 'cont.eng.alpha' || current_perspective.code == 'eng.new.alpha'
       url = create_english_term_admin_features_path
     end %>
     <%= form_with(model: object, url: url, local: true) do |form| %>
@@ -42,7 +42,7 @@
               <%=  globalized_submit_tag 'creat.e.this', class: 'submit btn btn-primary form-submit' %>
             </div>
           </fieldset>
-        <% elsif current_perspective.code == 'eng.alpha' %>
+        <% elsif current_perspective.code == 'cont.eng.alpha' || current_perspective.code == 'eng.new.alpha' %>
           <fieldset>
             <legend><%= ts(:for, what: t('information.general'), whom: Feature.model_name.human.titleize) %></legend>
             <div class="row">

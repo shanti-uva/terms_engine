@@ -1,8 +1,9 @@
 class EnglishTermsService
 
-  def initialize(arg = nil)
+  def initialize(arg = nil, perspective_code: nil)
     if arg.nil?
-      @terms = Feature.current_roots_by_perspective(Perspective.get_by_code('eng.alpha'))
+      per = Perspective.get_by_code(perspective_code || 'cont.eng.alpha')
+      @terms = Feature.current_roots_by_perspective(per)
     elsif arg.instance_of? Array
       @terms = arg
     elsif arg.instance_of? Feature
@@ -54,8 +55,12 @@ class EnglishTermsService
   def reposition
     sorted = self.sorted_terms
     sorted.each_index do |i|
-      sorted[i].update(position: i+1, skip_update: true)
-      sorted[i].index
+      new_position = i+1
+      term = sorted[i]
+      if term.position != new_position
+        term.update(position: i+1, skip_update: true)
+        term.queued_index(priority: Flare::IndexerJob::LOW)
+      end
     end
   end
 

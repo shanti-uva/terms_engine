@@ -9,7 +9,7 @@ module TermsEngine
       def get_by_language_code(code)
         perspective_code = Rails.cache.fetch("perspective/language/#{code}", :expires_in => 1.day) do
           case code
-          when 'eng' then 'eng.alpha'
+          when 'eng' then 'cont.eng.alpha'
           when 'bod' then 'tib.alpha'
           else nil
           end

@@ -29,7 +29,7 @@ RSpec.describe EnglishTermsService do
         es.reposition
         expected = ('A'..'Z').to_a
         v = View.get_by_code('roman.popular')
-        eng_alpha = Perspective.get_by_code('eng.alpha')
+        eng_alpha = Perspective.get_by_code('cont.eng.alpha')
         sorted = Feature.current_roots_by_perspective(eng_alpha).collect{|f| f.prioritized_name(v).name }
         expect(sorted).to eq(expected)
       end

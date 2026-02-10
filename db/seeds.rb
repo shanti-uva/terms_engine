@@ -11,7 +11,7 @@
 ].each{|a| View.update_or_create(a)}
 
 [ { name: 'Tibetan Alphabetical', code: 'tib.alpha', is_public: true },
-  { name: 'English Alphabetical', code: 'eng.alpha', is_public: true }
+  { name: 'English Alphabetical', code: 'cont.eng.alpha', is_public: true }
 ].each { |p| Perspective.update_or_create(p) }
 
 [ { label: 'is beginning of', asymmetric_label: 'starts with', is_hierarchical: true,

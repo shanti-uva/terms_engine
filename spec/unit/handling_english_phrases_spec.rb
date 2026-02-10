@@ -15,7 +15,7 @@ RSpec.describe EnglishTermsService do
       es = EnglishTermsService.new
       es.reposition
       second_level_seed_data = ['Analytic mind', 'Abstract thought', 'Animal insticts', 'Anomaly', 'Absent minded', 'Acquired taste']
-      eng_alpha = Perspective.get_by_code('eng.alpha')
+      eng_alpha = Perspective.get_by_code('cont.eng.alpha')
       relation_type = FeatureRelationType.get_by_code('is.beginning.of')
       a = Feature.current_roots_by_perspective(eng_alpha).first
       r = Random.new
@@ -55,7 +55,7 @@ RSpec.describe EnglishTermsService do
     
     context "Second level phrases" do
       it "Sorts phrases" do
-        eng_alpha = Perspective.get_by_code('eng.alpha')
+        eng_alpha = Perspective.get_by_code('cont.eng.alpha')
         a = Feature.current_roots_by_perspective(eng_alpha).first
         es = EnglishTermsService.new(a)
         expected = ['Absent minded', 'Abstract thought', 'Acquired taste', 'Analytic mind', 'Animal insticts', 'Anomaly']
@@ -65,7 +65,7 @@ RSpec.describe EnglishTermsService do
       end
       
       it "Updates position for phrases" do
-        eng_alpha = Perspective.get_by_code('eng.alpha')
+        eng_alpha = Perspective.get_by_code('cont.eng.alpha')
         a = Feature.current_roots_by_perspective(eng_alpha).first
         es = EnglishTermsService.new(a)
         es.reposition
