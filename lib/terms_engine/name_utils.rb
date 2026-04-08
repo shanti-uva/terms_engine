@@ -1,10 +1,16 @@
 module TermsEngine
   module NameUtils
-    def self.export(fid:, from:, to:) #from, to
-      if (fid.blank?)
-        features = Feature.all.order(:fid)
-        features = features.where(['fid >= ?', from]) if !from.blank?
-        features = features.where(['fid <= ?', to]) if !to.blank?
+    def self.export(fid:, from:, to:, filename:) #from, to
+      if fid.blank?
+        if filename.blank?
+          features = Feature.all.order(:fid)
+          features = features.where(['fid >= ?', from]) if !from.blank?
+          features = features.where(['fid <= ?', to]) if !to.blank?
+        else
+          fids = []
+          CSV.foreach(filename, headers: true, col_sep: "\t") { |row| fids << row['features.fid'].to_i } 
+          features = fids.collect{|fid| Feature.get_by_fid(fid) }
+        end
       else
         features = Feature.where(fid: fid)
       end
@@ -12,7 +18,10 @@ module TermsEngine
       wylie = OrthographicSystem.get_by_code('thl.ext.wyl.translit')
       phonetic = PhoneticSystem.get_by_code('thl.simple.transcrip')
       features.each do |f|
-        next if !f.bod_expression?
+        if f.nil? || !f.bod_expression?
+          puts ''
+          next
+        end
         tibetan_name = f.names.roots.where(writing_system: tib).first
         next if tibetan_name.nil?
         relation = tibetan_name.child_relations.where(orthographic_system: wylie).first

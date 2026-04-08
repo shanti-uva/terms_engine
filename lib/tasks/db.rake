@@ -19,10 +19,10 @@ namespace :terms_engine do
 
     namespace :export do
       schema_export_desc = "Export names.\n" +
-            "Syntax: rake terms_engine:db:export:names FID=fid | [FROM=fid] [TO=fid]"
+            "Syntax: rake terms_engine:db:export:names FID=fid | [FROM=fid] [TO=fid] | FILENAME=filename"
       desc schema_export_desc
       task names: :environment do
-        options = { from: ENV['FROM'], to: ENV['TO'], fid: ENV['FID'] }
+        options = { from: ENV['FROM'], to: ENV['TO'], fid: ENV['FID'], filename: ENV['FILENAME']  }
         if options.values.any?
           TermsEngine::NameUtils.export(**options)
         else
