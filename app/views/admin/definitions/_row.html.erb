@@ -4,6 +4,8 @@
     if @locating_relation %>
 <%=   form_tag new_admin_definition_definition_relation_path(object), {method: :get} %>
 <%=     hidden_field_tag :target_id, item.id %>
+<%=     select_tag "relationship", raw("<option>is a parent of</option><option>is a child of</option>") %>
+
 <%=     globalized_submit_tag 'select.this' %>
       </form>
 <%  else %>
@@ -14,6 +16,12 @@
   </td>
   <td style="padding-left: <%= padding %>px"><%= item.snippet.s %></td>
   <td><%= item.language.name %></td>
-  <td><%= accordion_citation_list_fieldset(object: item) %></td>
+  <td><% if @locating_relation %>
+      &nbsp;
+    <% else %>
+      <%= accordion_citation_list_fieldset(object: item) %>
+    <% end %>
+  </td>
 </tr>
 <%= render partial: 'admin/definitions/row', collection: item.children, as: :item, locals: { level: level+1 } %>
+
