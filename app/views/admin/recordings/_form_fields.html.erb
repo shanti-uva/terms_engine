@@ -36,13 +36,13 @@
   </div>
 </fieldset>
 <%= content_tag :div, "", id: 'subject_association_js_data', data: {
- term_index: Feature.config.url,
+ term_index: Feature.config.public_url,
  domain: 'subjects',
  additional_filters: ['ancestor_id_gen_path:*/638/*']
 } %>
 </div>  <!-- END - recordings-form-fields -->
 <%= content_tag :div, "", id: 'recording_dialect_js_data', data: {
- term_index: Feature.config.url,
+ term_index: Feature.config.public_url,
  asset_index: ShantiIntegration::Source.config.url,
  feature_id: "subjects-638",
  domain: "subjects",

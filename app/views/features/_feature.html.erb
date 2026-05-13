@@ -81,7 +81,7 @@
   </div> <!-- END field-items -->
 </div>
 <%= content_tag :div, "", id: 'related_subjects_js_data', data: {
-      term_index: Feature.config.url,
+      term_index: Feature.config.public_url,
       asset_index: ShantiIntegration::Source.config.url,
       feature_id: "#{Feature.uid_prefix}-#{feature.fid}",
       domain: 'subjects',
@@ -125,7 +125,7 @@
       });
 <%  end %>
 <%= content_tag :div, "", id: 'related_js_data', data: {
- term_index: Feature.config.url,
+ term_index: Feature.config.public_url,
  asset_index: ShantiIntegration::Source.config.url,
  feature_id: "#{Feature.uid_prefix}-#{feature.fid}",
  domain: Feature.uid_prefix,
