@@ -1,7 +1,7 @@
 require 'openai'
 
 class Admin::AssistantsController < ApplicationController
-  allow_unauthenticated_access only: %i[ index show ]
+  allow_unauthenticated_access only: %i[ show ]
   
   # GET /assistant . No id because it is a singular resource (resource :assistant)
   def show
@@ -45,7 +45,7 @@ class Admin::AssistantsController < ApplicationController
       # Call ChatGPT API
       response = client.chat(
         parameters: {
-          model: "gpt-4o-mini", # Required.
+          model: "gpt-5.4-mini", # Required.
           response_format: { type: "json_object" },
           messages: [{ role: "user", content: @prompt}], # Required.
           temperature: 0.1
