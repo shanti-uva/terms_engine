@@ -466,7 +466,7 @@ module TermsEngine
       end
       
       def solr_url
-        URI.join(TermsResource.get_url, "solr/")
+        URI.join(TermsIntegration::TermsResource.get_url, "solr/")
       end
     end
   end
