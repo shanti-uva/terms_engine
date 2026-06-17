@@ -27,6 +27,6 @@ class Admin::InfoSourcesController < ApplicationController
   
   # Only allow a trusted parameter "white list" through.
   def info_source_params
-    params.require(:info_source).permit(:code, :title, :agent, :language_id, :date_published)
+    params.require(:info_source).permit(:code, :title, :agent, :language_id, :processed, :date_published)
   end
 end

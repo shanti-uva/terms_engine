@@ -251,7 +251,7 @@ module TermsEngine
         legacy = {}
         in_house = {}
         all_relations.each do |r|
-          citation = r.legacy_citations
+          citations = r.legacy_citations
           #citations = d.citations.where(info_source_type: InfoSource.model_name.name)
           if citations.blank?
             standard << r

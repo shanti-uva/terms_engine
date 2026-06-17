@@ -21,7 +21,7 @@
      <ul id="terms-def-tabs-<%= full_index_id %>" class="nav nav-tabs terms-def-tabs-<%= full_index_id %>" role="tablist">
 <%     active_pending = true
        if definition_content_available %>
-         <li class="active"><a href="#terms-def-<%= full_index_id %>" role="tab" data-toggle="tab"><%= index_to_text(full_index_id ) %> <%= Definition.model_name.human.s %></a></li>
+         <li class="active"><a href="#terms-def-<%= full_index_id %>" role="tab" data-toggle="tab"><%= Definition.model_name.human.s %> <%= index %></a></li>
 <%       active_pending = false
        end
        if notes_available %>
