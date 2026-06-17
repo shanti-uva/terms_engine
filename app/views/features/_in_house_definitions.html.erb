@@ -11,7 +11,16 @@
      if relations_by_type.size>0 %>
      <dl>
 <%     relations_by_type.each do |label, features| %>
-         <dt><%= label %></dt> <dd><%= features.collect{ |f| link_to feature_name_header(f), feature_path(f.fid) }.join(', ').html_safe %></dd>
+         <dt><%= label %></dt> <dd>
+<%=        features.collect do |h|
+					   f = h[:term]
+             relation = h[:relation]
+             s = link_to(feature_name_header(f), feature_path(f.fid))
+						 citations_with_notes = relation.citations.reject{ |c| c.notes.blank?}
+             s << citation_popup_link_for(relation) if !citations_with_notes.blank?
+						 s << note_popup_link_for(relation) if !relation.notes.blank?
+						 s
+					end.join(', ').html_safe %></dd>
 <%     end %>
      </dl>
 <%   end

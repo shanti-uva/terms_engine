@@ -1,6 +1,10 @@
 <% for branch_id in associations.collect(&:branch_id).uniq
      branch = SubjectsIntegration::Feature.search(branch_id) %>
 <%   if !branch.nil? %>
-       <dt><%= branch['header'] %>:</dt><dd class="related_subject"> <%= associations.select{ |a| a.branch_id == branch_id }.collect{ |a| "#{link_to a.subject['header'], SubjectsIntegration::Feature.get_url(a.subject_id)}#{feature_assets_popup("subjects-"+a.subject_id.to_s)}#{note_popup_link_for(a)}#{time_units_for(a)}#{citation_popup_link_for(a) if include_citation}" }.join(', ').html_safe %></dd>
+       <dt><%= branch['header'] %>:</dt><dd class="related_subject">
+<%=      associations.select{ |a| a.branch_id == branch_id }.collect do |a|
+           citations_with_notes = a.citations.reject{ |c| c.notes.blank?}
+           s = "#{link_to a.subject['header'], SubjectsIntegration::Feature.get_url(a.subject_id)}#{feature_assets_popup("subjects-"+a.subject_id.to_s)}#{note_popup_link_for(a)}#{time_units_for(a)}#{citation_popup_link_for(a) if include_citation || !citations_with_notes.blank?}"
+				 end .join(', ').html_safe %></dd>
 <%   end
    end %>

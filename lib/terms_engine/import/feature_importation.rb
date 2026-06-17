@@ -87,7 +87,7 @@ module TermsEngine
               self.process_kmaps(5)
               process_definitions(87)
               process_translations(64)
-              feature_ids_with_changes.concat(process_feature_relations(10))
+              feature_ids_with_changes.concat(process_feature_relations(34))
               self.progress_bar(num: i, total: total, current: self.feature.pid)
               if self.fields.empty?
                 self.log.debug { "#{Time.now}: #{self.feature.pid} processed." }

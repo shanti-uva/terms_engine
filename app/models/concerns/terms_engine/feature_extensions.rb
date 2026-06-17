@@ -303,27 +303,29 @@ module TermsEngine
       legacy_parent_relations(info_source).each do |r|
         rt = r.feature_relation_type
         f = r.parent_node
+        h = {term: f, relation: r}
         if rt.is_symmetric?
           if hash[rt.label].nil?
-            hash[rt.label] = [f]
+            hash[rt.label] = [h]
           else
-            hash[rt.label] << f
+            hash[rt.label] << h
           end
         else
           if hash[rt.asymmetric_label].nil?
-            hash[rt.asymmetric_label] = [f]
+            hash[rt.asymmetric_label] = [h]
           else
-            hash[rt.asymmetric_label] << f
+            hash[rt.asymmetric_label] << h
           end
         end
       end
       legacy_child_relations(info_source).each do |r|
-        f = r.child_node
         rt = r.feature_relation_type
+        f = r.child_node
+        h = {term: f, relation: r}
         if hash[rt.label].nil?
-          hash[rt.label] = [f]
+          hash[rt.label] = [h]
         else
-          hash[rt.label] << f
+          hash[rt.label] << h
         end
       end
       return hash
