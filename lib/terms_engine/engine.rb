@@ -48,6 +48,10 @@ module TermsEngine
       require_dependency 'terms_engine/sessions_controller_extensions'
       SessionsController.include TermsEngine::SessionsControllerExtensions
       
+      require_dependency 'sitemaps_controller'
+      require_dependency 'terms_engine/sitemaps_controller_overrides'
+      SitemapsController.prepend TermsEngine::SitemapsControllerOverrides
+      
       # Extending / overriding authenticated_system controllers
       require_dependency 'authenticated_system/users_controller'
       require_dependency 'terms_engine/users_controller_overrides'
