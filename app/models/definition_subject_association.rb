@@ -19,6 +19,8 @@
 #
 
 class DefinitionSubjectAssociation < ApplicationRecord
+  include KmapsEngine::IsCitable
+  
   validates_presence_of :definition_id
   validates_presence_of :subject_id
   validates_presence_of :branch_id
