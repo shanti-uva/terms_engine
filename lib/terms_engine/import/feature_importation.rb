@@ -333,16 +333,22 @@ module TermsEngine
         prefix = i>0 ? "#{i}.definitions" : 'definitions'
         definition_id = self.fields.delete("#{prefix}.id")
         definition_content = self.fields.delete("#{prefix}.content")
+        language = Language.get_by_code_or_name(self.fields.delete("#{prefix}.languages.code"), self.fields.delete("#{prefix}.languages.name"))
         info_source = self.get_info_source(prefix)
         if definition_id.blank?
           if !definition_content.blank?
-            def_begining = definition_content[0...200]
-            def_begining = def_begining.split("\n").first
-            def_with_tags = '<p>' + def_begining
-            matches = definitions.where(["LEFT(content, #{def_begining.size}) = ? OR LEFT(content, #{def_with_tags.size}) = ?", def_begining, def_with_tags]) # find_by(content: definition_content)
+            if definition_content.size>200
+              def_begining = definition_content[0...200]
+              def_begining = def_begining.split("\n").first
+              def_with_tags = '<p>' + def_begining
+              matches = definitions.where(["LEFT(content, #{def_begining.size}) = ? OR LEFT(content, #{def_with_tags.size}) = ?", def_begining, def_with_tags]) # find_by(content: definition_content)
+            else
+              def_with_tags = '<p>' + definition_content + '</p>'
+              matches = definitions.where(["content = ? OR content = ?", definition_content, def_with_tags]) #find_by(content: definition_content)
+            end
             definition[i] = matches.select do |d|
               citation = d.citations.order(:created_at).first
-              !citation.nil? && info_source==citation.info_source
+              !citation.nil? && info_source==citation.info_source && d.language == language
             end.first
           end
         else
@@ -356,7 +362,6 @@ module TermsEngine
         end
         if definition[i].nil?
           if !definition_content.blank?
-            language = Language.get_by_code_or_name(self.fields.delete("#{prefix}.languages.code"), self.fields.delete("#{prefix}.languages.name"))
             position = definitions.maximum(:position)
             position = position.nil? ? 1 : position + 1
             attributes = {content: definition_content, is_public: true, position: position}
