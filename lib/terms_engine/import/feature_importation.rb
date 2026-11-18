@@ -8,6 +8,7 @@ module TermsEngine
     
     # Currently supported fields:
     # features.fid, features.old_pid, features.position, feature_names.delete, feature_names.is_primary.delete
+    # features.transfer
     # i.feature_names.existing_name
     # i.feature_names.name, i.feature_names.position, i.feature_names.is_primary,
     # i.languages.code/name, i.writing_systems.code/name, i.alt_spelling_systems.code/name
@@ -307,6 +308,24 @@ module TermsEngine
           self.log.debug "Adding new term #{names_hash[:deva]}"
         end
       end
+    end
+    
+    # Valid columns: features.position, features.transfer
+    def process_feature
+      super  # Calls KmapsEngine::FeatureImportation#process_feature
+      new_fid = self.fields.delete('features.transfer')
+      return if new_fid.blank?
+      new_f = Feature.get_by_fid(new_fid)
+      return if new_f.blank?
+      new_f_id = new_f.id
+      self.feature.definitions.update_all(feature_id: new_f_id)
+      self.feature.non_phoneme_term_associations.update_all(feature_id: new_f_id)
+      self.feature.subject_term_associations.destroy_all
+      self.feature.translation_equivalents.update_all(feature_id: new_f_id)
+      self.feature.all_parent_relations.where.not(feature_relation_type_id: FeatureRelationType.hierarchy_ids).update_all(child_node_id: new_f_id)
+      self.feature.all_parent_relations.reload.destroy_all
+      self.feature.names.destroy_all
+      self.feature.update(is_blank: true, is_public: false)
     end
     
     def reposition_parent
