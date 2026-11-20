@@ -109,13 +109,13 @@ module TermsEngine
         destroy_features(get_new_terms_under_letter_by_phoneme(letter, Feature::NEW_PLACE_HOLDER_SUBJECT_ID))
         head = nil
         i = 0
-        size = expressions.size
+        size = sorted_expressions.size
         puts "#{Time.now}: Processing expressions under letter #{letter.prioritized_name(v).name}..."
         while i<size
           limit = i+@fixed_size
           sid = Spawnling.new(kill: true) do
             begin
-              head_range = expressions[i...limit]
+              head_range = sorted_expressions[i...limit]
               f = head_range.first
               head = f.clone_with_names
               puts "#{Time.now}: Spawning sub-process #{Process.pid} for head #{head.prioritized_name(v).name} (#{head.fid})..."
@@ -163,13 +163,13 @@ module TermsEngine
         destroy_features(get_nep_terms_under_letter_by_phoneme(letter, Feature::NEP_PLACE_HOLDER_SUBJECT_ID))
         head = nil
         i = 0
-        size = expressions.size
+        size = sorted_expressions.size
         puts "#{Time.now}: Processing expressions under letter #{letter.prioritized_name(v).name}..."
         while i<size
           limit = i+@fixed_size
           sid = Spawnling.new(kill: true) do
             begin
-              head_range = expressions[i...limit]
+              head_range = sorted_expressions[i...limit]
               f = head_range.first
               head = f.clone_with_names
               puts "#{Time.now}: Spawning sub-process #{Process.pid} for head #{head.prioritized_name(v).name} (#{head.fid})..."
