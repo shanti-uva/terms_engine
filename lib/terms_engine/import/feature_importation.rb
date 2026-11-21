@@ -319,10 +319,41 @@ module TermsEngine
       return if new_f.blank?
       new_f_id = new_f.id
       self.feature.definitions.update_all(feature_id: new_f_id)
-      self.feature.non_phoneme_term_associations.update_all(feature_id: new_f_id)
+      self.feature.non_phoneme_term_associations.each do |a|
+        new_a = new_f.non_phoneme_term_associations.where(branch_id: a.branch_id, subject_id: a.subject_id).first
+        if new_a.nil?
+          a.update(feature_id: new_f_id)
+        else
+          a.citations.each do |c|
+            new_c = new_a.citations.select{ |nc| nc.info_source == c.info_source }
+            c.citable = new_a if new_c.nil?
+          end
+        end
+      end
       self.feature.subject_term_associations.destroy_all
-      self.feature.translation_equivalents.update_all(feature_id: new_f_id)
-      self.feature.all_parent_relations.where.not(feature_relation_type_id: FeatureRelationType.hierarchy_ids).update_all(child_node_id: new_f_id)
+      self.feature.translation_equivalents.each do |t|
+        new_t = new_f.translation_equivalents.where(content: t.content, language_id: t.language_id).first
+        if new_t.nil?
+          t.update(feature_id: new_f_id)
+        else
+          t.citations.each do |c|
+            new_c = new_a.citations.select{ |nc| nc.info_source == c.info_source }
+            c.citable = new_t if new_c.nil?
+          end
+        end
+      end
+      self.feature.translation_equivalents.reload.destroy_all
+      self.feature.all_parent_relations.where.not(feature_relation_type_id: FeatureRelationType.hierarchy_ids).each do |r|
+        new_r = new_f.all_parent_relations.where(parent_node_id: r.parent_node_id, feature_relation_type_id: r.feature_relation_type_id, perspective_id: r.perspective_id).first
+        if new_r.nil?
+          r.update(child_node_id: new_f_id)
+        else
+          r.citations.each do |c|
+            new_c = new_r.citations.select{ |nc| nc.info_source == c.info_source }
+            c.citable = new_r if new_c.nil?
+          end
+        end
+      end
       self.feature.all_parent_relations.reload.destroy_all
       self.feature.names.destroy_all
       self.feature.update(is_blank: true, is_public: false)
